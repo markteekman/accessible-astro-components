@@ -1,0 +1,19 @@
+{
+  "name": "accessible-astro-components",
+  "version": "1.0.0",
+  "description": "A set of accessible front-end components for the Astro static site builder.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markteekman/accessible-astro-components.git"
+  },
+  "keywords": [
+    "astro-component"
+  ],
+  "author": "Mark Teekman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/markteekman/accessible-astro-components/issues"
+  },
+  "homepage": "https://github.com/markteekman/accessible-astro-components#readme"
+}
