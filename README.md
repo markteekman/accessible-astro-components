@@ -19,6 +19,7 @@ import AccordionItem from '@markteekman/accessible-astro-components/AccordionIte
     header="First Item"
   >
     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto quasi nobis optio? Qui in quo accusantium debitis sapiente obcaecati magnam incidunt sit. Molestiae exercitationem quibusdam quod veritatis laboriosam est tenetur. </p>
+    <a href="#">Tab to me!</a>
   </AccordionItem>
   <AccordionItem
     header="Second Item"
