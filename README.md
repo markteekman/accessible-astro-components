@@ -1,18 +1,26 @@
 # Accessible Astro Components
 A set of accessible front-end components for the Astro static site builder. Can be used with the [Accessible Astro Starter](https://github.com/markteekman/accessible-astro-starter), which also contains accessible `SkipLink.astro`, `DarkMode.astro` and `Navigation.astro` components.
 
-## Accordion
+## Installation
+Run the following command in your project folder to get started:
+```console
+npm install accessible-astro-compoments --save-dev
+```
+
+## Usage
+
+### Accordion
 Accordions are great from grouping bug chunks of content into easer to scan headers which the user can expand when he want to read what associated with that header. This accordion is made accessible by using `aria-controls`, `aria-labelledby`, `aria-expanded` and by integrating keyboard interactions such as moving through the headers using the ArrowUp and ArrowDown keys and closing the panel by using the Escape key.
 
 - [Live demo](https://accessible-astro.markteekman.nl/accordion)
 - [When (not) to use](https://www.nngroup.com/articles/accordions-complex-content/)
 
-### Usage
+#### Import
 
 ```html
 ---
-import Accordion from '@markteekman/accessible-astro-components/Accordion.astro'
-import AccordionItem from '@markteekman/accessible-astro-components/AccordionItem.astro'
+import Accordion from 'accessible-astro-components/Accordion.astro'
+import AccordionItem from 'accessible-astro-components/AccordionItem.astro'
 ---
 <Accordion>
   <AccordionItem
