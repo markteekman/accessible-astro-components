@@ -1,2 +1,2 @@
-export { default as Accordion } from './Accordion.astro'
-export { default as AccordionItem } from './AccordionItem.astro'
+export const Accordion = lazy(() => import('./Accordion.astro'))
+export const AccordionItem = lazy(() => import('./AccordionItem.astro'))
