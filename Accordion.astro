@@ -4,15 +4,14 @@
   </ul>
 </div>
 
-<script>
+<script type="module">
   /* -------------------------------------------------------------
   | variables
   | -------------------------------------------------------------
   */
 
-  const accordion = document.querySelector('.accordion')
-  const accordionWrapper = accordion.querySelector('.accordion__wrapper')
-  const accordionItems = [...accordionWrapper.querySelectorAll('.accordion__item')]
+  const accordionWrappers = [...document.querySelectorAll('.accordion__wrapper')]
+  const accordionItems = [...document.querySelectorAll('.accordion__item')]
 
   /* -------------------------------------------------------------
   | functions
@@ -99,13 +98,17 @@
   })
 
   // add the event listener for every individual accordion
-  accordionWrapper.addEventListener('click', event => {
-    const accordionItem = event.target.closest('.accordion__item')
-    if (!accordionItem || event.target.closest('.accordion__panel')) return
+  accordionWrappers.forEach(accordionWrapper => {
+    accordionWrapper.addEventListener('click', event => {
+      const accordionItem = event.target.closest('.accordion__item')
+      if (!accordionItem || event.target.closest('.accordion__panel')) return
 
-    isAccordionOpen(accordionItem)
-      ? closeAccordionItem(accordionItem)
-      : openAccordionItem(accordionItem)
+      console.log('clicked')
+
+      isAccordionOpen(accordionItem)
+        ? closeAccordionItem(accordionItem)
+        : openAccordionItem(accordionItem)
+    })
   })
 
   // add keyboard event escape to close an accordion items
