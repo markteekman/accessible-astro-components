@@ -9,6 +9,8 @@ npm install accessible-astro-compoments --save-dev
 
 ## Usage
 
+> :warning: **At this moment there is a bug in Astro where component styles aren't imported when you use this package. I've submitted a bug and I'm trying to see if it can be resolved. In the meantime you can copy the styles from AccordionItem.astro into the page where you are using the accordion if you would like to use it anyways.**
+
 ### Accordion
 Accordions are great from grouping bug chunks of content into easer to scan headers which the user can expand when he want to read what associated with that header. This accordion is made accessible by using `aria-controls`, `aria-labelledby`, `aria-expanded` and by integrating keyboard interactions such as moving through the headers using the ArrowUp and ArrowDown keys and closing the panel by using the Escape key.
 
