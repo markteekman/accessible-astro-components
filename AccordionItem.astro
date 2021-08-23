@@ -8,6 +8,7 @@ const {header} = Astro.props
       class="accordion__header"
       aria-expanded="false"
       aria-controls="accordion-panel-1"
+      onclick="toggleAccordionItem()"
     >
       {header}
       <svg class="header__toggle-indicator" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
@@ -26,7 +27,7 @@ const {header} = Astro.props
   </div>
 </li>
 
-<style global lang="scss">
+<style lang="scss">
   .accordion__item,
   .accordion__header {
     width: 100%;
