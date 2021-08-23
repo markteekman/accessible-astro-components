@@ -10,7 +10,6 @@
   | -------------------------------------------------------------
   */
 
-  const accordionWrappers = [...document.querySelectorAll('.accordion__wrapper')]
   const accordionItems = [...document.querySelectorAll('.accordion__item')]
 
   /* -------------------------------------------------------------
@@ -78,6 +77,19 @@
     return accordionItem.classList.contains('is-active')
   }
 
+  /**
+   * Toggle accordion item on click event
+   * @param  {HTMLElement} accordionItem the <li> of the accordion
+   */
+  function toggleAccordionItem () {
+    const accordionItem = event.target.closest('.accordion__item')
+    if (!accordionItem || event.target.closest('.accordion__panel')) return
+
+    isAccordionOpen(accordionItem)
+      ? closeAccordionItem(accordionItem)
+      : openAccordionItem(accordionItem)
+  }
+
   /* -------------------------------------------------------------
   | execution
   | -------------------------------------------------------------
@@ -95,20 +107,6 @@
     // add aria-controls and aria-labelledby to header and the panels to relate them
     accordionItemHeader.setAttribute('aria-controls', `item${index + 1}`)
     accordionItemPanel.setAttribute('aria-labelledby', `accordion-title${index + 1}`)
-  })
-
-  // add the event listener for every individual accordion
-  accordionWrappers.forEach(accordionWrapper => {
-    accordionWrapper.addEventListener('click', event => {
-      const accordionItem = event.target.closest('.accordion__item')
-      if (!accordionItem || event.target.closest('.accordion__panel')) return
-
-      console.log('clicked')
-
-      isAccordionOpen(accordionItem)
-        ? closeAccordionItem(accordionItem)
-        : openAccordionItem(accordionItem)
-    })
   })
 
   // add keyboard event escape to close an accordion items
@@ -159,4 +157,7 @@
       targetItem.querySelector('.accordion__header').focus()
     }
   })
+
+  // expose toggleAccordionItem to the window outside module scope
+  window.toggleAccordionItem = toggleAccordionItem
 </script>
