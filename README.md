@@ -9,7 +9,7 @@ npm install accessible-astro-components --save-dev
 
 ## Usage
 
-> :warning: **At the moment there is a bug in Astro's compiler which prevents styles from being loaded. It will be fixed in upcoming compiler versions. In the meantime you can just copy the Accordion.astro and AccordionItem.astro components directly into your project 🙂**
+> :warning: **Notice: At the moment there is a bug in Astro's compiler which prevents styles from being loaded. It will be fixed in upcoming compiler versions. In the meantime you can just copy the Accordion.astro and AccordionItem.astro components directly into your project 🙂**
 
 ### Accordion
 Accordions are great from grouping bug chunks of content into easer to scan headers which the user can expand when he want to read what associated with that header. This accordion is made accessible by using `aria-controls`, `aria-labelledby`, `aria-expanded`, by using an unordered list structure so screen readers users get notified about the amount of items and which item they are currently on and by integrating keyboard interactions such as moving through the headers using the `ArrowUp` and `ArrowDown` keys and closing the panel by using the `Escape` key.
