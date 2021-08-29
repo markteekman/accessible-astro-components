@@ -79,7 +79,6 @@
 
   /**
    * Toggle accordion item on click event
-   * @param  {HTMLElement} accordionItem the <li> of the accordion
    */
   function toggleAccordionItem () {
     const accordionItem = event.target.closest('.accordion__item')
@@ -88,6 +87,18 @@
     isAccordionOpen(accordionItem)
       ? closeAccordionItem(accordionItem)
       : openAccordionItem(accordionItem)
+  }
+
+  /**
+   * Recalculate the panel height of accordion items that are toggled
+   */
+  function recalculateHeight () {
+    const toggledAccordionItems = accordionItems.filter(element => element.classList.contains('is-active'))
+
+    toggledAccordionItems.forEach(toggledAccordionItem => {
+      const accordionPanel = toggledAccordionItem.querySelector('.accordion__panel')
+      accordionPanel.style.height = `${getPanelHeight(toggledAccordionItem)}px`
+    })
   }
 
   /* -------------------------------------------------------------
@@ -160,6 +171,9 @@
 
   // expose toggleAccordionItem to the window outside module scope
   window.toggleAccordionItem = toggleAccordionItem
+
+  // recalculate height of toggled accordion items on window resize
+  window.onresize = recalculateHeight
 </script>
 
 <style lang="scss">
