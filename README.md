@@ -1,5 +1,5 @@
 # Accessible Astro Components
-A set of accessible front-end components for the Astro static site builder. Can be used with the [Accessible Astro Starter](https://github.com/markteekman/accessible-astro-starter), which also contains accessible `SkipLink.astro`, `DarkMode.astro` and `Navigation.astro` components.
+A set of accessible front-end components for [Astro](https://astro.build/). Can be used with the [Accessible Astro Starter](https://github.com/markteekman/accessible-astro-starter), which also contains accessible `DarkMode.astro`, `Navigation.astro`, `ResponsiveToggle.astro` and `SkipLink.astro` components.
 
 ## Installation
 Run the following command in your project folder to get started:
@@ -8,8 +8,12 @@ npm install accessible-astro-components --save-dev
 ```
 
 ## Usage
-
-> :warning: **Notice: At the moment there is a bug in Astro's compiler which prevents styles from being loaded. It will be fixed in upcoming compiler versions. In the meantime you can just copy the Accordion.astro and AccordionItem.astro components directly into your project 🙂**
+You can import the different components from the package using the following import statement:
+```html
+---
+import { Accordion, AccordionItem, ... } from 'accessible-astro-components'
+---
+```
 
 ### Accordion
 Accordions are great from grouping bug chunks of content into easer to scan headers which the user can expand when he want to read what associated with that header. This accordion is made accessible by using `aria-controls`, `aria-labelledby`, `aria-expanded`, by using an unordered list structure so screen readers users get notified about the amount of items and which item they are currently on and by integrating keyboard interactions such as moving through the headers using the `ArrowUp` and `ArrowDown` keys and closing the panel by using the `Escape` key.
@@ -17,12 +21,11 @@ Accordions are great from grouping bug chunks of content into easer to scan head
 - [Live demo](https://accessible-astro.markteekman.nl/accordion)
 - [When (not) to use](https://www.nngroup.com/articles/accordions-complex-content/)
 
-#### Import
+#### Example
 
 ```html
 ---
-import Accordion from 'accessible-astro-components/Accordion.astro'
-import AccordionItem from 'accessible-astro-components/AccordionItem.astro'
+import { Accordion, AccordionItem } from 'accessible-astro-components'
 ---
 <Accordion>
   <AccordionItem
