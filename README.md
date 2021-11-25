@@ -45,6 +45,28 @@ import { Accordion, AccordionItem } from 'accessible-astro-components'
 </Accordion>
 ```
 
+#### Overwriting styles
+You can apply your own styles by either setting the individual properties using `:global(.accordion__item)` for example, or set up a global style tag and define your styles in there:
+
+```scss
+<style lang="scss" global>
+  .accordion__item {
+    button {
+      background-color: purple;
+
+      &:hover
+      &:focus {
+        background-color: peru;
+      }
+    }
+
+    &.is-active button {
+      background-color: peru;
+    }
+  }
+</style>
+```
+
 ## Roadmap/Ideas
 - [x] Accordions
 - [ ] Breadcrumbs
