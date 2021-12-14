@@ -1,0 +1,85 @@
+---
+const { 
+  url = '#', 
+  img = 'https://fakeimg.pl/640x360', 
+  title = 'Default title', 
+  footer = 'Your name'
+} = Astro.props
+---
+
+<div class="card">
+  <div class="card__image">
+    <img src={img} alt="">
+  </div>
+  <div class="card__content">
+    <h3>
+      <a href={url}>{title}</a>
+    </h3>
+    <p>
+      <slot>Default description.</slot>
+    </p>
+    <small>
+      {footer}
+    </small>
+  </div>
+</div>
+
+<style lang="scss">
+  .card {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid black;
+    border-radius: 0.5rem;
+    max-width: 60ch;
+    min-height: 100%;
+    position: relative;
+    overflow: hidden;
+
+    &:hover,
+    &:focus-within {
+      box-shadow: 0 0 0 0.25rem;
+    }
+
+    &:focus-within a:focus {
+      text-decoration: none;
+      box-shadow: none;
+      outline: none;
+    }
+  }
+
+  .card__image {
+    height: 10rem;
+
+    img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .card__content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 1rem;
+
+    a {
+      text-decoration: none;
+
+      &:focus {
+        text-decoration: underline;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+      }
+    }
+
+    :last-child {
+      margin-top: auto;
+      padding-top: 2rem;
+    }
+  }
+</style>
