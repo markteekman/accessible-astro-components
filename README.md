@@ -67,11 +67,81 @@ You can apply your own styles by either setting the individual properties using 
 </style>
 ```
 
+### Card
+Cards are usually used in groups. By wrapping them in an unordered list we provide screen reader users with shortcuts to lists and list items. Screen readers also let the users know how many items there are in a list. In the example below you'll find the structure using an unordered list and `display: grid`, making sure we leave enough of a gap between Cards on touch devices for people who find they have low accuracy when targeting items, including those with Parkinson's disease and rheumatism. Leaving a bigger gap makes it easer to scroll without accidentally activating a Cards link.
+
+Some other accessibility concerns which are applied to this component: the whole Card is made clickable using the `<a>` `::after` pseudo element. This also gives users access to the context menu when right clicking on the Card. The title is an `<h3>` so it can be used in many contexts (`<h2>` would be too limiting). To maintain readable text within the Card on larger screen sizes, `max-width` is set to `70ch`.
+
+- [Live demo](https://accessible-astro.markteekman.nl/card)
+
+#### Example
+
+```html
+---
+import { Card } from 'accessible-astro-components'
+---
+<ul>
+  <li>
+    <Card
+      url="/link-to-my-post"
+      img="/assets/post-cover.jpg"
+      title="My Awesome Post"
+      footer="Tony Stark"
+    >
+      Lorem ipsum dolor sit amet.
+    </Card>
+  </li>
+  <li>
+    <!-- ... -->
+  </li>
+</ul>
+
+```
+```scss
+<style lang="scss">
+  ul {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 4rem;
+
+    @media (min-width: 550px) {
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 2rem;
+    }
+
+    @media (min-width: 950px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
+```
+
+#### Overwriting styles
+You can apply your own styles by either setting the individual properties using `:global(.card)` for example, or set up a global style tag and define your styles in there:
+
+```scss
+<style lang="scss" global>
+  .card {
+    color: purple;
+    background-color: blue;
+
+    a {
+      color: gold;
+    }
+  }
+
+  // set your own image height
+  .card__image {
+    height: 10rem;
+  }
+</style>
+```
+
 ## Roadmap/Ideas
 - [x] Accordions
+- [x] Cards
 - [ ] Breadcrumbs
 - [ ] Callouts
-- [ ] Cards
 - [ ] Form Elements
 - [ ] Menu's & Menu Buttons
 - [ ] Modals Dialogs
@@ -89,4 +159,4 @@ If you find that something isn't working right then I'm also happy to hear it to
 
 ## Thank you!
 
-A big thank you to the creators of this awesome Astro static site builder and to all using these components to make the web a bit more accessible for all people around the world :)
+A big thank you to the creators of Astro and to all using these components and the information to make the web a bit more accessible for all people around the world :) Also a big thanks to creators around the web for providing us with information to build accessible web interfaces, such as Zell Liew from Learn JavaScript Today and Heydon Pickering, the author of Inclusive Components and many more.
