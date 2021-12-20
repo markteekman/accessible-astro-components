@@ -1,7 +1,7 @@
 {
   "name": "accessible-astro-components",
   "version": "1.2.0",
-  "description": "A set of accessible front-end components for the Astro static site builder.",
+  "description": "A set of accessible front-end components for Astro.",
   "main": "index.js",
   "exports": "./index.js",
   "repository": {
