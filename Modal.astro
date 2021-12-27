@@ -111,7 +111,7 @@ const {
 
   .modal {
     height: 0;
-    position: absolute;
+    position: fixed;
     visibility: hidden;
     z-index: -10;
 
@@ -121,7 +121,6 @@ const {
       visibility: visible;
       height: auto;
       background-color: rgba(0, 0, 0, 0.5);
-      padding: 1rem;
       inset: 0;
       z-index: 10;
 
@@ -132,7 +131,7 @@ const {
   }
 
   .modal__inner {
-    width: clamp(45ch, 50%, 75ch);
+    width: clamp(30ch, 70%, 75ch);
     color: black;
     background-color: white;
     border: 0.5rem solid black;
