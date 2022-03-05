@@ -319,7 +319,7 @@ If you find that something isn't working right then I'm also happy to hear it to
 
 1. [Filing an issue](https://github.com/markteekman/accessible-astro-components/issues)
 2. [Submitting a pull request](https://github.com/markteekman/accessible-astro-components/pulls)
-2. [Starting a discussion](https://github.com/markteekman/accessible-astro-components/discussions)
+3. [Starting a discussion](https://github.com/markteekman/accessible-astro-components/discussions)
 
 ## Thank you!
 
