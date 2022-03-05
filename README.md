@@ -226,7 +226,7 @@ You can apply your own styles by either setting the individual properties using 
 
 - [Live demo](https://accessible-astro.markteekman.nl/notification)
 
-Notifications are often used to keep the user updated about changing state on a website or application. They can also be used as a general way to display some highlighted information in an article for example. There are two rules of thumb when it comes to Notifications and those are to always add contextual information about the Notification (such as starting with "Tip:", "Info:", "Error:") and when adding a Notification to the DOM in response to a user action, you should always use`role="status"` and `aria-live="polite"` tot inform screen reader users.
+Notifications are often used to keep the user updated about changing state on a website or application. They can also be used as a general way to display some highlighted information in an article for example. There are two rules of thumb when it comes to Notifications and those are to always add contextual information about the Notification (such as starting with "Tip:", "Info:", "Error:") and when adding a Notification to the DOM in response to a user action, you should always use`role="status"` and `aria-live="polite"` tot inform screen reader users. To add some extra visuals you can combine the Notification component with [Astro Icon](https://github.com/natemoo-re/astro-icon).
 
 **Some (accessibility) features of the Notification**:
 - Use color to identify the type of Notification (info, success, warning, error)
@@ -243,6 +243,13 @@ import { Notification } from 'accessible-astro-components'
   type="info"
 >
   <p><strong>Info:</strong> This is a notification of type info.</p>
+</Notification>
+
+<!-- example using Astro Icon -->
+<Notification
+  type="info"
+>
+  <Icon pack="ion" name="information-circle-outline" /><p><strong>Info:</strong> This is a notification of type info.</p>
 </Notification>
 
 <!-- when added to the DOM after a user interaction -->
