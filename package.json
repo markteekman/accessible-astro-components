@@ -1,6 +1,6 @@
 {
   "name": "accessible-astro-components",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "A set of accessible front-end components for Astro.",
   "main": "index.js",
   "exports": "./index.js",
