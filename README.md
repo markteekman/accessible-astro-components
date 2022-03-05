@@ -15,7 +15,7 @@ import { Accordion, AccordionItem, Card, Modal, ... } from 'accessible-astro-com
 ---
 ```
 
-**Skip to**: [Accordion](#accordion), [Card](#card), [Modal](#Modal)
+**Skip to**: [Accordion](#accordion), [Card](#card), [Modal](#Modal), [Notification](#Notification)
 
 ### Accordion
 
@@ -29,7 +29,6 @@ Accordions are great from grouping big chunks of content into easer to scan head
 - Closing an opened AccordionItem using the <kbd>Escape</kbd> key
 - Help identify content to screen reader users with `aria-controls`, `aria-labelledby`, `aria-expanded`
 - Using an unordered list structure to tell screen readers users how many items there are and which they are currently on
-
 
 #### Example
 
@@ -223,15 +222,85 @@ You can apply your own styles by either setting the individual properties using 
 </style>
 ```
 
+### Notification
+
+- [Live demo](https://accessible-astro.markteekman.nl/notification)
+
+Notifications are often used to keep the user updated about changing state on a website or application. They can also be used as a general way to display some highlighted information in an article for example. There are two rules of thumb when it comes to Notifications and those are to always add contextual information about the Notification (such as starting with "Tip:", "Info:", "Error:") and when adding a Notification to the DOM in response to a user action, you should always use`role="status"` and `aria-live="polite"` tot inform screen reader users.
+
+**Some (accessibility) features of the Notification**:
+- Use color to identify the type of Notification (info, success, warning, error)
+- Provide contextual feedback besides just color by mentioning what type of Notification is displayed
+- Help identify content to screen reader users with `role="status"` and `aria-live="polite"`
+
+#### Example
+
+```html
+---
+import { Notification } from 'accessible-astro-components'
+---
+<Notification
+  type="info"
+>
+  <p><strong>Info:</strong> This is a notification of type info.</p>
+</Notification>
+
+<!-- when added to the DOM after a user interaction -->
+<Notification
+  type="info"
+  role="status"
+  aria-live="polite"
+>
+  <p><strong>Info:</strong> This is a notification of type info.</p>
+</Notification>
+```
+
+#### Overwriting styles
+You can apply your own styles by either setting the individual properties using `:global(.notification)` for example, or set up a global style tag and define your styles in there:
+
+```scss
+<style lang="scss">
+  .notification {
+    color: var(--neutral-900, #202427);
+    background-color: var(--neutral-200, #f6f8f9);
+    border: 2px solid var(--neutral-600, #858d93);
+
+    &.type-info {
+      color: var(--info-900, #035486);
+      background-color: var(--info-100, #e0f7ff);
+      border-color: var(--info-600, #1a91d1);
+    }
+
+    &.type-success {
+      color: var(--success-900, #014b3e);
+      background-color: var(--success-100, #eefcf6);
+      border-color: var(--success-500, #28a980);
+    }
+
+    &.type-warning {
+      color: var(--warning-900, #8e2a0b);
+      background-color: var(--warning-100, #fffbeb);
+      border-color: var(--warning-600, #dc901e);
+    }
+
+    &.type-error {
+      color: var(--error-900, #5e0317);
+      background-color: var(--error-100, #ffe0e0);
+      border-color: var(--error-500, #df2a39);
+    }
+  }
+</style>
+```
+
 ## Roadmap/Ideas
 - [x] Accordions
 - [x] Cards
 - [X] Modals
+- [X] Notifications
 - [ ] Breadcrumbs
 - [ ] Form Elements
 - [ ] Menu's & Menu Buttons
 - [ ] Navigation
-- [ ] Notifications
 - [ ] Tabbed Interface
 - [ ] Toggle Buttons
 - [ ] Tooltips & Toggle tips
@@ -241,8 +310,9 @@ You can apply your own styles by either setting the individual properties using 
 
 If you find that something isn't working right then I'm also happy to hear it to improve this starter! Let me know by either:
 
-1. [Filing an issue](https://github.com/markteekman/accessible-astro-components/pulls)
-2. Or sending a [pull request](https://github.com/markteekman/accessible-astro-components/pulls)
+1. [Filing an issue](https://github.com/markteekman/accessible-astro-components/issues)
+2. [Submitting a pull request](https://github.com/markteekman/accessible-astro-components/pulls)
+2. [Starting a discussion](https://github.com/markteekman/accessible-astro-components/discussions)
 
 ## Thank you!
 
