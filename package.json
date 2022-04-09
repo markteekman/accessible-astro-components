@@ -1,26 +1,29 @@
 {
   "name": "accessible-astro-components",
+  "description": "A set of Accessible Front-end UI Components for Astro.",
   "version": "1.4.2",
-  "description": "A set of accessible front-end components for Astro.",
-  "main": "index.js",
+  "author": "Mark Teekman",
+  "homepage": "https://accessible-astro.dev",
+  "type": "module",
   "exports": "./index.js",
+  "keywords": [
+    "astro",
+    "astro-component",
+    "astro-components",
+    "accessible",
+    "accessibility",
+    "a11y",
+    "wcag",
+    "responsive",
+    "ui-library",
+    "ui-components"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/markteekman/accessible-astro-components.git"
   },
-  "keywords": [
-    "astro-component",
-    "astro-components",
-    "accessible",
-    "a11y",
-    "wcag",
-    "responsive",
-    "ui-library"
-  ],
-  "author": "Mark Teekman",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/markteekman/accessible-astro-components/issues"
   },
-  "homepage": "https://github.com/markteekman/accessible-astro-components#readme"
+  "license": "MIT"
 }

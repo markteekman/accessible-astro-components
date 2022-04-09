@@ -315,11 +315,12 @@ You can apply your own styles by either setting the individual properties using 
 
 ## Helping out
 
-If you find that something isn't working right then I'm also happy to hear it to improve this starter! Let me know by either:
+If you find that something isn't working right then I'm always happy to hear it to improve these components! You can contribute in many ways and forms. Let me know by either:
 
 1. [Filing an issue](https://github.com/markteekman/accessible-astro-components/issues)
 2. [Submitting a pull request](https://github.com/markteekman/accessible-astro-components/pulls)
 3. [Starting a discussion](https://github.com/markteekman/accessible-astro-components/discussions)
+4. [Buying me a coffee!](https://www.buymeacoffee.com/markteekman) This keeps the servers up and running 😊
 
 ## Thank you!
 
