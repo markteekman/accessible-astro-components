@@ -58,7 +58,7 @@ import { Accordion, AccordionItem } from 'accessible-astro-components'
 You can apply your own styles by either setting the individual properties using `:global(.accordion__item)` for example, or set up a global style tag and define your styles in there:
 
 ```scss
-<style lang="scss" global>
+<style lang="scss" is:global>
   .accordion__item {
     button {
       background-color: purple;
@@ -134,7 +134,7 @@ import { Card } from 'accessible-astro-components'
 You can apply your own styles by either setting the individual properties using `:global(.card)` for example, or set up a global style tag and define your styles in there:
 
 ```scss
-<style lang="scss" global>
+<style lang="scss" is:global>
   .card {
     color: purple;
     background-color: blue;
@@ -199,7 +199,7 @@ import { Modal } from 'accessible-astro-components'
 You can apply your own styles by either setting the individual properties using `:global(.modal)` for example, or set up a global style tag and define your styles in there:
 
 ```scss
-<style lang="scss" global>
+<style lang="scss" is:global>
   .modal__inner {
     color: purple;
     background-color: gold;
@@ -266,7 +266,7 @@ import { Notification } from 'accessible-astro-components'
 You can apply your own styles by either setting the individual properties using `:global(.notification)` for example, or set up a global style tag and define your styles in there:
 
 ```scss
-<style lang="scss">
+<style lang="scss" is:global>
   .notification {
     color: var(--neutral-900, #202427);
     background-color: var(--neutral-200, #f6f8f9);
@@ -304,14 +304,15 @@ You can apply your own styles by either setting the individual properties using 
 - [x] Cards
 - [X] Modals
 - [X] Notifications
+- [ ] Avatars
 - [ ] Breadcrumbs
+- [ ] Buttons
 - [ ] Form Elements
 - [ ] Menu's & Menu Buttons
 - [ ] Navigation
 - [ ] Tabbed Interface
 - [ ] Toggle Buttons
 - [ ] Tooltips & Toggle tips
-- [ ] Skip links
 
 ## Helping out
 
