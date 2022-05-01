@@ -19,7 +19,7 @@ import { Accordion, AccordionItem, Card, Modal, ... } from 'accessible-astro-com
 
 ### Accordion
 
-- [Live demo](https://accessible-astro.markteekman.nl/accordion)
+- [Live demo](https://components.accessible-astro.dev/accordion)
 - [When (not) to use](https://www.nngroup.com/articles/accordions-complex-content/)
 
 Accordions are great from grouping big chunks of content into easer to scan headers which the user can expand when he or she wants to read what is associated with that header.
@@ -78,7 +78,7 @@ You can apply your own styles by either setting the individual properties using 
 
 ### Card
 
-- [Live demo](https://accessible-astro.markteekman.nl/card)
+- [Live demo](https://components.accessible-astro.dev/card)
 
 Cards are usually used in groups. By wrapping them in an unordered list we provide screen reader users with shortcuts to lists and list items. Screen readers also let the users know how many items there are in a list. In the example below you'll find the structure using an unordered list and `display: grid`, making sure we leave enough of a gap between Cards on touch devices for people who find they have low accuracy when targeting items, including those with Parkinson's disease and rheumatism. Leaving a bigger gap makes it easer to scroll without accidentally activating a Cards link.
 
@@ -153,7 +153,7 @@ You can apply your own styles by either setting the individual properties using 
 
 ### Modal
 
-- [Live demo](https://accessible-astro.markteekman.nl/modal)
+- [Live demo](https://components.accessible-astro.dev/modal)
 - [When (not) to use](https://www.nngroup.com/articles/modal-nonmodal-dialog/)
 
 Modals are windows that appear on top of the parent screen, usually disabling the use of the parent screen and demanding immediate action from the user. They are pretty intrusive, so use them wisely. Though, they can be handy to confirm (destructive) actions from the user before proceeding. If you only want to communicate a notification, don't use a Modal but use the Notification component (**coming soon**) instead. Always combine the Modal with some kind of user action, for example, confirming the deletion of an item in an application. Modals are usually triggered by a `<button>`. By providing the button with an `id` you can link the button to the Modal, providing necessary functionality for opening the targeted Modal. You can also customize the text of the close Modal action using the `closeText` prop on the Modal.
@@ -224,7 +224,7 @@ You can apply your own styles by either setting the individual properties using 
 
 ### Notification
 
-- [Live demo](https://accessible-astro.markteekman.nl/notification)
+- [Live demo](https://components.accessible-astro.dev/notification)
 
 Notifications are often used to keep the user updated about changing state on a website or application. They can also be used as a general way to display some highlighted information in an article for example. There are two rules of thumb when it comes to Notifications and those are to always add contextual information about the Notification (such as starting with "Tip:", "Info:", "Error:") and when adding a Notification to the DOM in response to a user action, you should always use`role="status"` and `aria-live="polite"` tot inform screen reader users. To add some extra visuals you can combine the Notification component with [Astro Icon](https://github.com/natemoo-re/astro-icon).
 
