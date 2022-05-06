@@ -1,5 +1,5 @@
 # Accessible Astro Components
-A set of accessible front-end components for [Astro](https://astro.build/). Can be used with the [Accessible Astro Starter](https://github.com/markteekman/accessible-astro-starter), which also contains accessible `DarkMode.astro`, `Navigation.astro`, `ResponsiveToggle.astro` and `SkipLink.astro` components.
+A set of accessible front-end components for [Astro](https://astro.build/). Can be used with the [Accessible Astro Starter](https://github.com/markteekman/accessible-astro-starter) or the [Accessible Astro Dashboard](https://github.com/markteekman/accessible-astro-dashboard), which also contain accessible `DarkMode.astro`, `Navigation.astro`, `ResponsiveToggle.astro` and `SkipLink.astro` components.
 
 ## Installation
 Run the following command in your project folder to get started:
@@ -314,6 +314,12 @@ You can apply your own styles by either setting the individual properties using 
 - [ ] Toggle Buttons
 - [ ] Tooltips & Toggle tips
 
+## Other Accessible Astro projects
+
+- [Accessible Astro Starter](https://github.com/markteekman/accessible-astro-starter/)
+- [Accessible Astro Dashboard](https://github.com/markteekman/accessible-astro-dashboard/)
+- [Accessible Astro Documentation](https://accessible-astro.dev)
+
 ## Helping out
 
 If you find that something isn't working right then I'm always happy to hear it to improve these components! You can contribute in many ways and forms. Let me know by either:
@@ -321,7 +327,7 @@ If you find that something isn't working right then I'm always happy to hear it 
 1. [Filing an issue](https://github.com/markteekman/accessible-astro-components/issues)
 2. [Submitting a pull request](https://github.com/markteekman/accessible-astro-components/pulls)
 3. [Starting a discussion](https://github.com/markteekman/accessible-astro-components/discussions)
-4. [Buying me a coffee!](https://www.buymeacoffee.com/markteekman) This keeps the servers up and running 😊
+4. [Buying me a coffee!](https://www.buymeacoffee.com/markteekman)
 
 ## Thank you!
 
