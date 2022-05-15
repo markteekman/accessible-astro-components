@@ -8,7 +8,7 @@ const {
 ---
 
 <nav class="pagination" aria-label="Pagination">
-  <ul>
+  <ul class="pagination__list">
     <li>
       <a href="${previousPage}" aria-label="Previous page">
         <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14 7-5 5 5 5"/></svg>
@@ -27,7 +27,7 @@ const {
 
 <style lang="scss" is:global>
   .pagination {
-    ul {
+    .pagination__list {
       display: flex;
       align-items: center;
       gap: 1rem;
