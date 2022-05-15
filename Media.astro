@@ -1,0 +1,14 @@
+---
+const {
+  classes = null,
+  src = 'https://shorturl.at/tCPS2',
+  alt = ''
+} = Astro.props
+---
+
+<img 
+  class="${classes}" 
+  src="${src}" 
+  alt="${alt}"
+  loading="lazy"
+>
