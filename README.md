@@ -55,11 +55,11 @@ import { Accordion, AccordionItem } from 'accessible-astro-components'
 ```
 
 #### Overwriting styles
-You can apply your own styles by either setting the individual properties using `:global(.accordion__item)` for example, or set up a global style tag and define your styles in there:
+You can apply your own styles by either setting the individual properties using `:global(body .accordion__item)` for example, or set up a global style tag and define your styles in there:
 
 ```scss
 <style lang="scss" is:global>
-  .accordion__item {
+  body .accordion__item {
     button {
       background-color: purple;
 
@@ -131,11 +131,11 @@ import { Card } from 'accessible-astro-components'
 ```
 
 #### Overwriting styles
-You can apply your own styles by either setting the individual properties using `:global(.card)` for example, or set up a global style tag and define your styles in there:
+You can apply your own styles by either setting the individual properties using `:global(body .card)` for example, or set up a global style tag and define your styles in there:
 
 ```scss
 <style lang="scss" is:global>
-  .card {
+  body .card {
     color: purple;
     background-color: blue;
 
@@ -247,27 +247,29 @@ import { Modal } from 'accessible-astro-components'
 ```
 
 #### Overwriting styles
-You can apply your own styles by either setting the individual properties using `:global(.modal)` for example, or set up a global style tag and define your styles in there:
+You can apply your own styles by either setting the individual properties using `:global(body .modal)` for example, or set up a global style tag and define your styles in there:
 
 ```scss
 <style lang="scss" is:global>
-  .modal__inner {
-    color: purple;
-    background-color: gold;
-    border-color: orange;
-  }
+  body {
+    .modal__inner {
+      color: purple;
+      background-color: gold;
+      border-color: orange;
+    }
 
-  .modal__content {
-    gap: 1.5rem;
-    padding: 1rem;
-  }
+    .modal__content {
+      gap: 1.5rem;
+      padding: 1rem;
+    }
 
-  .modal__close button {
-    background-color: blue;
+    .modal__close button {
+      background-color: blue;
 
-    &:hover,
-    &:focus {
-      background-color: green;
+      &:hover,
+      &:focus {
+        background-color: green;
+      }
     }
   }
 </style>
@@ -314,37 +316,39 @@ import { Notification } from 'accessible-astro-components'
 ```
 
 #### Overwriting styles
-You can apply your own styles by either setting the individual properties using `:global(.notification)` for example, or set up a global style tag and define your styles in there:
+You can apply your own styles by either setting the individual properties using `:global(body .notification)` for example, or set up a global style tag and define your styles in there:
 
 ```scss
 <style lang="scss" is:global>
-  .notification {
-    color: var(--neutral-900, #202427);
-    background-color: var(--neutral-200, #f6f8f9);
-    border: 2px solid var(--neutral-600, #858d93);
+  body {
+    .notification {
+      color: var(--neutral-900, #202427);
+      background-color: var(--neutral-200, #f6f8f9);
+      border: 2px solid var(--neutral-600, #858d93);
 
-    &.type-info {
-      color: var(--info-900, #035486);
-      background-color: var(--info-100, #e0f7ff);
-      border-color: var(--info-600, #1a91d1);
-    }
+      &.type-info {
+        color: var(--info-900, #035486);
+        background-color: var(--info-100, #e0f7ff);
+        border-color: var(--info-600, #1a91d1);
+      }
 
-    &.type-success {
-      color: var(--success-900, #014b3e);
-      background-color: var(--success-100, #eefcf6);
-      border-color: var(--success-500, #28a980);
-    }
+      &.type-success {
+        color: var(--success-900, #014b3e);
+        background-color: var(--success-100, #eefcf6);
+        border-color: var(--success-500, #28a980);
+      }
 
-    &.type-warning {
-      color: var(--warning-900, #8e2a0b);
-      background-color: var(--warning-100, #fffbeb);
-      border-color: var(--warning-600, #dc901e);
-    }
+      &.type-warning {
+        color: var(--warning-900, #8e2a0b);
+        background-color: var(--warning-100, #fffbeb);
+        border-color: var(--warning-600, #dc901e);
+      }
 
-    &.type-error {
-      color: var(--error-900, #5e0317);
-      background-color: var(--error-100, #ffe0e0);
-      border-color: var(--error-500, #df2a39);
+      &.type-error {
+        color: var(--error-900, #5e0317);
+        background-color: var(--error-100, #ffe0e0);
+        border-color: var(--error-500, #df2a39);
+      }
     }
   }
 </style>
@@ -375,11 +379,11 @@ import { Pagination } from 'accessible-astro-components'
 ```
 
 #### Overwriting styles
-You can apply your own styles by either setting the individual properties using `:global(.pagination)` for example, or set up a global style tag and define your styles in there:
+You can apply your own styles by either setting the individual properties using `:global(body .pagination)` for example, or set up a global style tag and define your styles in there:
 
 ```scss
 <style lang="scss" is:global>
-  .pagination a {
+  body .pagination a {
     svg path {
       stroke: gold;
     }
@@ -415,11 +419,11 @@ import { SkipLink } from 'accessible-astro-components'
 ```
 
 #### Overwriting styles
-You can apply your own styles by either setting the individual properties using `:global(.skiplinks)` for example, or set up a global style tag and define your styles in there:
+You can apply your own styles by either setting the individual properties using `:global(body .skiplinks)` for example, or set up a global style tag and define your styles in there:
 
 ```scss
 <style lang="scss" is:global>
-  .skiplinks a {
+  body .skiplinks a {
     color: white;
     background-color: purple;
 
