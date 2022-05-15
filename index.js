@@ -1,5 +1,8 @@
 export { default as Accordion } from './Accordion.astro'
 export { default as AccordionItem } from './AccordionItem.astro'
 export { default as Card } from './Card.astro'
+export { default as DarkMode } from './DarkMode.astro'
 export { default as Modal } from './Modal.astro'
 export { default as Notification } from './Notification.astro'
+export { default as Pagination } from './Pagination.astro'
+export { default as SkipLinks } from './SkipLinks.astro'
