@@ -371,10 +371,10 @@ A fairly simple yet effective Pagination component, showing a previous and next 
 import { Pagination } from 'accessible-astro-components'
 ---
 <Pagination 
-  previous-page="/page2"
-  next-page="/page4"
-  current-page="3"
-  total-pages="12"
+  previousPage="/page2"
+  nextPage="/page4"
+  currentPage="3"
+  totalPages="12"
 />
 ```
 
