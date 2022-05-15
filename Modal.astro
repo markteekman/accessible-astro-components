@@ -1,12 +1,12 @@
 ---
 const {
-  id,
+  triggerId,
   title,
   closeText = 'Close'
 } = Astro.props
 ---
 
-<div class="modal" role="dialog" aria-labelledby={id}>
+<div class="modal" role="dialog" aria-labelledby={triggerId}>
   <div class="modal__inner">
     <div class="modal__content">
       <h3 tabindex="-1">
