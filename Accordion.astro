@@ -5,16 +5,10 @@
 </div>
 
 <script type="module">
-  /* -------------------------------------------------------------
-  | variables
-  | -------------------------------------------------------------
-  */
+  // variables
   const accordionItems = [...document.querySelectorAll('.accordion__item')]
 
-  /* -------------------------------------------------------------
-  | functions
-  | -------------------------------------------------------------
-  */
+  // functions
   const getPanelHeight = accordionItem => {
     const accordionInner = accordionItem.querySelector('.panel__inner')
     return accordionInner.getBoundingClientRect().height
@@ -65,10 +59,7 @@
     })
   }
 
-  /* -------------------------------------------------------------
-  | execution
-  | -------------------------------------------------------------
-  */
+  // execution
   accordionItems.forEach((item, index) => {
     const accordionItemHeader = item.querySelector('.accordion__header')
     const accordionItemPanel = item.querySelector('.accordion__panel')

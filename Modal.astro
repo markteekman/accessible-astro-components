@@ -21,20 +21,14 @@ const {
 </div>
 
 <script type="module">
-  /* -------------------------------------------------------------
-  | variables
-  | -------------------------------------------------------------
-  */
+  // variables
   const body = document.querySelector('body')
   const modal = document.querySelector('.modal')
   const modalId = modal.getAttribute('aria-labelledby')
   const modalCloseButton = modal.querySelector('.modal__close button')
   const modalTrigger = document.querySelector(`#${modalId}`)
   
-  /* -------------------------------------------------------------
-  | functions
-  | -------------------------------------------------------------
-  */
+  // functions
   const teleportToRoot = element => {
     element.remove()
     body.appendChild(element)
@@ -85,10 +79,7 @@ const {
     document.removeEventListener('keydown', trapFocus)
   }
 
-  /* -------------------------------------------------------------
-  | execution
-  | -------------------------------------------------------------
-  */
+  // execution
   teleportToRoot(modal)
 
   modalTrigger.addEventListener('click', openModal)
