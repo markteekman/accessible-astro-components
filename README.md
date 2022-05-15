@@ -223,17 +223,17 @@ Modals are windows that appear on top of the parent screen, usually disabling th
 ---
 import { Modal } from 'accessible-astro-components'
 ---
-<button id="modal1">Modal 1</button>
-<button id="modal2">Modal 2</button>
+<button id="modal1-trigger">Modal 1</button>
+<button id="modal2-trigger">Modal 2</button>
 
 <Modal
-  id="modal1"
+  triggerId="modal1-trigger"
   title="Modal 1"
 >
   <p>Why hello, I be the <strong>first</strong> Modal.</p>
 </Modal>
 <Modal
-  id="modal2"
+  triggerId="modal2-trigger"
   title="Modal 2"
   closeText="Cancel"
 >
