@@ -95,8 +95,8 @@ const {
   window.closeModal = closeModal
 </script>
 
-<style lang="scss">
-  :global(body.modal-is-active > *:not(.modal)) {
+<style lang="scss" is:global>
+  body.modal-is-active > *:not(.modal) {
     filter: blur(6px);
   }
 

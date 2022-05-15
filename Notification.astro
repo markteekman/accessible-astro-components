@@ -12,7 +12,7 @@ const {
   </slot>
 </div>
 
-<style lang="scss">
+<style lang="scss" is:global>
   .notification {
     display: flex;
     align-items: center;
@@ -47,7 +47,7 @@ const {
       border-color: var(--error-500, #df2a39);
     }
 
-    :global([astro-icon]) {
+    [astro-icon] {
       flex-shrink: 0;
       width: 40px;
     }
