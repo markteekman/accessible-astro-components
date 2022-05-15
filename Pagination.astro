@@ -26,24 +26,26 @@ const {
 </nav>
 
 <style lang="scss" is:global>
-  ul {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-    
-  a {
-    display: block;
-    border: 2px solid currentColor;
-    border-radius: 3px;
-    transition: background-color 0.15s ease-in-out;
+  .pagination {
+    ul {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+      
+    a {
+      display: block;
+      border: 2px solid currentColor;
+      border-radius: 3px;
+      transition: background-color 0.15s ease-in-out;
 
-    &:hover,
-    &:focus-visible {
-      background-color: orange;
+      &:hover,
+      &:focus-visible {
+        background-color: orange;
 
-      svg path {
-        stroke: #222;
+        svg path {
+          stroke: #222;
+        }
       }
     }
   }
