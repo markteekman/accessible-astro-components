@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/markteekman/accessible-astro-components/issues"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "sass": "^1.49.9"
+  }
 }
