@@ -75,7 +75,7 @@ const {
   const closeModal = _ => {
     modal.classList.remove('show')
     body.classList.remove('modal-is-active')
-    modalTrigger.focus()
+    modalTrigger.focus({ preventScroll: true })
     document.removeEventListener('keydown', trapFocus)
   }
 
