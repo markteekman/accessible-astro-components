@@ -1,48 +1,32 @@
-<div>
-  <nav class="skip-links" aria-label="Skiplinks">
-    <ul>
-      <li>
-        <a href="#main-navigation">
-          Skip to main menu
-        </a>
-      </li>
-      <li>
-        <a href="#main-content">
-          Skip to main content
-        </a>
-      </li>
-    </ul>
-  </nav>
+<div class="skip-links">
+  <a href="#main-content">Skip to main content</a>
 </div>
 
 <script type="module">
   // variables
-  const skipLinks = [...document.querySelectorAll('.skip-links a')]
+  const skipLink = document.querySelector('.skip-links a')
 
   // execution
-  if (skipLinks.length > 0) {
-    skipLinks.forEach(link => {
-      link.addEventListener('keydown', event => {
-        if (!event.target.closest('a')) return
-        const key = event.key
+  skipLink.addEventListener('keydown', event => {
+    if (!event.target.closest('a')) return
+    const key = event.key
 
-        if (key !== 'Enter') return
-        event.preventDefault()
-        const target = event.target.getAttribute('href')
+    if (key !== 'Enter') return
+    event.preventDefault()
+    const target = event.target.getAttribute('href')
 
-        if (target === '#main-navigation') {
-          const navigation = document.querySelector('#main-navigation')
-          navigation.querySelector('a').focus()
-        }
-
-        if (target === '#main-content') {
-          const h1 = document.querySelector('h1')
-          h1.setAttribute('tabindex', '-1')
-          h1.focus()
-        }
-      })
-    })
-  }
+    if (document.querySelector(target)) {
+      const targetElement = document.querySelector(target)
+      targetElement.setAttribute('tabindex', '-1')
+      targetElement.focus()
+    } else if (!document.querySelector(target) && document.querySelector('h1')) {
+      const h1 = document.querySelector('h1')
+      h1.setAttribute('tabindex', '-1')
+      h1.focus()
+    } else {
+      console.warn('SkipLinks are not set, either missing an h1 or main content id on the page.')
+    }
+  })
 </script>
 
 <style lang="scss" is:global>
