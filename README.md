@@ -404,7 +404,7 @@ You can apply your own styles by either setting the individual properties using 
 
 - [Live demo](https://components.accessible-astro.dev/skiplinks)
 
-SkipLinks provide a way for users using assistive technologies to skip repeated content on pages to go directly to either the main navigation or the main content of a website or application. To use this component properly, make sure you give the main navigation of your project an `id` of `#main-navigation` and the main content of your project an `id` of `#main-content` so the SkipLinks can target them.
+SkipLinks provide a way for users using assistive technologies to skip repeated content on pages to go directly to the main content of a website or application. To use this component properly, make sure you give the main content of your project an `id` of `#main-content` so the SkipLink can target it. As a fallback the SkipLink will try to target the `h1` of the page. If neither are found a warning will be logged to the console.
 
 **Some (accessibility) features of the SkipLinks**:
 - Let's assistive technologies skip to the main navigation and main content of a website
