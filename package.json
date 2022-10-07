@@ -1,11 +1,7 @@
 {
   "name": "accessible-astro-components",
   "description": "A set of Accessible, easy to use, Front-end UI Components for Astro.",
-<<<<<<< Updated upstream
-  "version": "1.5.6",
-=======
   "version": "1.5.8",
->>>>>>> Stashed changes
   "author": "Mark Teekman",
   "homepage": "https://accessible-astro.dev",
   "type": "module",
