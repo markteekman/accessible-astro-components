@@ -15,7 +15,7 @@ import { Accordion, AccordionItem, Card, Modal, ... } from 'accessible-astro-com
 ---
 ```
 
-**Skip to**: [Accordion](#Accordion), [Card](#card), [DarkMode](#DarkMode), [Media](#Media), [Modal](#Modal), [Notification](#Notification), [Pagination](#Pagination), [SkipLinks](#SkipLinks)
+**Skip to**: [Accordion](#Accordion), [Breadcrumbs](#Breadcrumbs), [Card](#card), [DarkMode](#DarkMode), [Media](#Media), [Modal](#Modal), [Notification](#Notification), [Pagination](#Pagination), [SkipLinks](#SkipLinks)
 
 ### Accordion
 
@@ -71,6 +71,53 @@ You can apply your own styles by either setting the individual properties using 
 
     &.is-active button {
       background-color: peru;
+    }
+  }
+</style>
+```
+
+### Breadcrumbs
+
+- [Live demo](https://components.accessible-astro.dev/breadcrumbs)
+- [When (not) to use](https://www.nngroup.com/articles/breadcrumbs/)
+
+Breadcrumbs are a great way to help users navigate back to a previous page or section. They are also a great way to help screen reader users understand where they are in the website.
+
+**Some (accessibility) features of the Breadcrumbs**:
+- Helps identify content to screen reader users with `aria-label="Breadcrumbs"`
+- Using an unordered list structure to tell screen readers users how many items there are and which they are currently on
+- Using a `<nav>` element to tell screen readers users that this is a navigation element
+
+#### Example
+
+```jsx
+---
+import { Breadcrumbs, BreadcrumbsItem } from 'accessible-astro-components'
+---
+<Breadcrumbs>
+  <BreadcrumbsItem 
+    href="/"
+    label="Home"
+  />
+  <BreadcrumbsItem
+    href="/blog"
+    label="Blog"
+  />
+  <BreadcrumbsItem
+    currentPage={true}
+    label="My blog post"
+  />
+</Breadcrumbs>
+```
+
+#### Overwriting styles
+You can apply your own styles by either setting the individual properties using `:global(body .breadcrumbs__item)` for example, or set up a global style tag and define your styles in there:
+
+```scss
+<style lang="scss" is:global>
+  body .breadcrumbs__item {
+    li::after {
+      content: '>';
     }
   }
 </style>
