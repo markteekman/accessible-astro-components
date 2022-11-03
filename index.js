@@ -1,5 +1,7 @@
 export { default as Accordion } from './Accordion.astro'
 export { default as AccordionItem } from './AccordionItem.astro'
+export { default as Breadcrumbs } from './Breadcrumbs.astro'
+export { default as BreadcrumbsItem } from './BreadcrumbsItem.astro'
 export { default as Card } from './Card.astro'
 export { default as DarkMode } from './DarkMode.astro'
 export { default as Media } from './Media.astro'
