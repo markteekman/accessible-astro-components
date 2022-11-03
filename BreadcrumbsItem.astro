@@ -1,0 +1,30 @@
+---
+const {
+  href = '#',
+  label = 'Breadcrumb',
+  currentPage = false,
+} = Astro.props
+---
+
+<li class="breadcrumbs__item">
+  {
+    currentPage
+      ? <span>{label}</span>
+      : <a href={href}>{label}</a>
+  }
+</li>
+
+<style lang="scss">
+  .breadcrumbs__item {
+    display: inline;
+
+    &::after {
+      content: '/';
+      margin: 0 0.5rem;
+    }
+
+    &:last-child::after {
+      content: '';
+    }
+  }
+</style>
