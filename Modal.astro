@@ -95,7 +95,7 @@ const {
   window.closeModal = closeModal
 </script>
 
-<style lang="scss" is:global>
+<style is:global>
   body.modal-is-active > *:not(.modal) {
     filter: blur(6px);
   }
@@ -105,20 +105,20 @@ const {
     position: fixed;
     visibility: hidden;
     z-index: -10;
+  }
 
-    &.show {
-      display: grid;
-      place-items: center;
-      visibility: visible;
-      height: auto;
-      background-color: rgba(0, 0, 0, 0.5);
-      inset: 0;
-      z-index: 10;
+  .modal.show {
+    display: grid;
+    place-items: center;
+    visibility: visible;
+    height: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    inset: 0;
+    z-index: 10;
+  }
 
-      .modal__inner {
-        opacity: 1;
-      }
-    }
+  .modal.show .modal__inner {
+    opacity: 1;
   }
 
   .modal__inner {
@@ -147,11 +147,11 @@ const {
     border-bottom-right-radius: 0.4rem;
     text-align: right;
     transition: background-color 0.15s ease-in-out;
+  }
 
-    &:hover,
-    &:focus {
-      background-color: grey;
-      text-decoration: underline;
-    }
+  .modal__close button:hover,
+  .modal__close button:focus {
+    background-color: grey;
+    text-decoration: underline;
   }
 </style>

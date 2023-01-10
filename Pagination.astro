@@ -45,39 +45,37 @@ const {
   </ul>
 </nav>
 
-<style lang="scss" is:global>
-  .pagination {
-    .pagination__list {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
+<style is:global>
+  .pagination .pagination__list {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
 
-    a,
-    .disabled {
-      display: block;
-      border-width: 2px;
-      border-style: solid;
-      border-radius: 3px;
-    }
-      
-    a {
-      border-color: currentColor;
-      transition: background-color 0.15s ease-in-out;
+  .pagination a,
+  .pagination .disabled {
+    display: block;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 3px;
+  }
 
-      &:hover,
-      &:focus-visible {
-        background-color: orange;
+  .pagination a {
+    border-color: currentColor;
+    transition: background-color 0.15s ease-in-out;
+  }
 
-        svg path {
-          stroke: #222;
-        }
-      }
-    }
+  .pagination a:hover,
+  .pagination a:focus-visible {
+    background-color: orange;
+  }
 
-    .disabled {
-      border-color: grey;
-      opacity: 0.5;
-    }
+  .pagination a:focus-visible svg path {
+    stroke: #222;
+  }
+
+  .pagination .disabled {
+    border-color: grey;
+    opacity: 0.5;
   }
 </style>

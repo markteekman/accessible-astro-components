@@ -29,24 +29,22 @@
   })
 </script>
 
-<style lang="scss" is:global>
-  .skip-links {
-    a {
-      color: var(--action-color, #222);
-      background-color: var(--background, #fff);
-      border-bottom-right-radius: 6px;
-      padding: 1rem 3.25rem;
-      position: absolute;
-      display: block;
-      z-index: 10;
-      top: -100vh;
-      left: 0;
+<style is:global>
+  .skip-links a {
+    color: var(--action-color, #222);
+    background-color: var(--background, #fff);
+    border-bottom-right-radius: 6px;
+    padding: 1rem 3.25rem;
+    position: absolute;
+    display: block;
+    z-index: 10;
+    top: -100vh;
+    left: 0;
+  }
 
-      &:hover,
-      &:focus {
-        top: 0;
-        outline-offset: 2px;
-      }
-    }
+  .skip-links a:hover,
+  .skip-links a:focus {
+    top: 0;
+    outline-offset: 2px;
   }
 </style>

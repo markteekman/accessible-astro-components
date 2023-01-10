@@ -29,7 +29,7 @@ const {header} = Astro.props
   </div>
 </li>
 
-<style lang="scss" is:global>
+<style is:global>
   .accordion__item,
   .accordion__header {
     width: 100%;
@@ -44,24 +44,21 @@ const {header} = Astro.props
 
   .accordion__item .accordion__header {
     border-bottom: 0;
+  }
 
-    // improved focus outline
-    &:focus {
-      outline-offset: -6px;
-      box-shadow: inset 0 0 0 2px white;
-    }
+  .accordion__item .accordion__header:focus {
+    outline-offset: -6px;
+    box-shadow: inset 0 0 0 2px white;
   }
   
-  // add border if there is only one and to the last one
-  .accordion__item:only-of-type,
-  .accordion__item:last-of-type {
-    .accordion__header {
-      border: 2px solid #202020;
-    }
+  .accordion__item:only-of-type .accordion__header,
+  .accordion__item:last-of-type .accordion__header {
+    border: 2px solid #202020;
+  }
 
-    .accordion__panel {
-      border-bottom: 2px solid #202020;
-    }
+  .accordion__item:only-of-type .accordion__panel,
+  .accordion__item:last-of-type .accordion__panel {
+    border-bottom: 2px solid #202020;
   }
 
   .header__toggle-indicator {
@@ -81,15 +78,13 @@ const {header} = Astro.props
     padding: 2rem 1rem;
   }
 
-  .is-active {
-    .accordion__header {
-      border: 2px solid #202020;
-    }
+  .is-active .accordion__header {
+    border: 2px solid #202020;
+  }
 
-    .accordion__panel {
-      visibility: visible;
-      height: auto;
-      transition: height 0.3s ease-in-out, visibility 0s 0s;
-    }
+  .is-active .accordion__panel {
+    visibility: visible;
+    height: auto;
+    transition: height 0.3s ease-in-out, visibility 0s 0s;
   }
 </style>
