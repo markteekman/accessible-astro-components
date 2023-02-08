@@ -1,11 +1,13 @@
 ---
 const {
+  class: classNames,
   src = 'https://shorturl.at/tCPS2',
   alt = ''
 } = Astro.props
 ---
 
 <img
+  class={classNames}
   src={src}
   alt={alt}
   loading="lazy"
