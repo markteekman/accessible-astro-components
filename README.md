@@ -1,6 +1,8 @@
 # Accessible Astro Components
 A set of Accessible, easy to use, Front-end UI Components for [Astro](https://astro.build/). Most of these components are used in the [Accessible Astro Starter](https://github.com/markteekman/accessible-astro-starter) and the [Accessible Astro Dashboard](https://github.com/markteekman/accessible-astro-dashboard) themes and they provide exemplary use cases for these components. As a bonus, these themes also have their own dedicated components (like keyboard accessible and responsive navigations) and many **Design System** utility classes, patterns and primatives (such as grids, buttons, lists, spacings, sizes and more).
 
+🚀 [Live preview](https://www.accessible-astro.dev/accessible-components/)
+
 ## Installation
 Run the following command in your project folder to get started:
 ```console
@@ -19,7 +21,6 @@ import { Accordion, AccordionItem, Card, Modal, ... } from 'accessible-astro-com
 
 ### Accordion
 
-- [Live demo](https://components.accessible-astro.dev/accordion)
 - [When (not) to use](https://www.nngroup.com/articles/accordions-complex-content/)
 
 Accordions are great from grouping big chunks of content into easer to scan headers which the user can expand when he or she wants to read what is associated with that header.
@@ -78,7 +79,6 @@ You can apply your own styles by either setting the individual properties using 
 
 ### Breadcrumbs
 
-- [Live demo](https://components.accessible-astro.dev/breadcrumbs)
 - [When (not) to use](https://www.nngroup.com/articles/breadcrumbs/)
 
 Breadcrumbs are a great way to help users navigate back to a previous page or section. They are also a great way to help screen reader users understand where they are in the website.
@@ -124,8 +124,6 @@ You can apply your own styles by either setting the individual properties using 
 ```
 
 ### Card
-
-- [Live demo](https://components.accessible-astro.dev/card)
 
 Cards are usually used in groups. By wrapping them in an unordered list we provide screen reader users with shortcuts to lists and list items. Screen readers also let the users know how many items there are in a list. In the example below you'll find the structure using an unordered list and `display: grid`, making sure we leave enough of a gap between Cards on touch devices for people who find they have low accuracy when targeting items, including those with Parkinson's disease and rheumatism. Leaving a bigger gap makes it easer to scroll without accidentally activating a Cards link.
 
@@ -200,8 +198,6 @@ You can apply your own styles by either setting the individual properties using 
 
 ### DarkMode
 
-- [Live demo](https://components.accessible-astro.dev/darkmode)
-
 DarkMode is a toggle button component to add and remove a class of `.darkmode` to the `<body>` based on the users preference for either a light or dark color scheme. The users preference is saved to the `localStorage` to preserve their choice for future visits.
 
 **Some (accessibility) features of the DarkMode**:
@@ -228,7 +224,6 @@ import { DarkMode } from 'accessible-astro-components'
 
 ### Media
 
-- [Live demo](https://components.accessible-astro.dev/media)
 - [When is an image descriptive](https://www.w3.org/WAI/tutorials/images/decorative/)
 
 Media is a very simple component used for `<img>` tags. It has a default empty `alt` tag which is required for non-decorative images. Should the image be descriptive, for example when there's no (complementary) text, then you should always write a good descriptive `alt` tag. The Media component also utilizes the `loading="lazy"` tag to optimize performance from the browsers side.
@@ -251,7 +246,6 @@ import { Media } from 'accessible-astro-components'
 
 ### Modal
 
-- [Live demo](https://components.accessible-astro.dev/modal)
 - [When (not) to use](https://www.nngroup.com/articles/modal-nonmodal-dialog/)
 
 Modals are windows that appear on top of the parent screen, usually disabling the use of the parent screen and demanding immediate action from the user. They are pretty intrusive, so use them wisely. Though, they can be handy to confirm (destructive) actions from the user before proceeding. If you only want to communicate a notification, don't use a Modal but use the Notification component (**coming soon**) instead. Always combine the Modal with some kind of user action, for example, confirming the deletion of an item in an application. Modals are usually triggered by a `<button>`. By providing the button with an `id` you can link the button to the Modal, providing necessary functionality for opening the targeted Modal. You can also customize the text of the close Modal action using the `closeText` prop on the Modal.
@@ -323,8 +317,6 @@ You can apply your own styles by either setting the individual properties using 
 ```
 
 ### Notification
-
-- [Live demo](https://components.accessible-astro.dev/notification)
 
 Notifications are often used to keep the user updated about changing state on a website or application. They can also be used as a general way to display some highlighted information in an article for example. There are two rules of thumb when it comes to Notifications and those are to always add contextual information about the Notification (such as starting with "Tip:", "Info:", "Error:") and when adding a Notification to the DOM in response to a user action, you should always use`role="status"` and `aria-live="polite"` tot inform screen reader users. To add some extra visuals you can combine the Notification component with [Astro Icon](https://github.com/natemoo-re/astro-icon).
 
@@ -402,8 +394,6 @@ You can apply your own styles by either setting the individual properties using 
 ```
 
 ### Pagination
-
-- [Live demo](https://components.accessible-astro.dev/pagination)
 
 A fairly simple yet effective Pagination component which has a first, previous, next, and last page button. It also tells the user how many pages there are and what page they are currently on. The Pagination component is also fully accessible and keyboard navigable.
 
@@ -483,8 +473,6 @@ You can apply your own styles by either setting the individual properties using 
 
 ### SkipLinks
 
-- [Live demo](https://components.accessible-astro.dev/skiplinks)
-
 SkipLinks provide a way for users using assistive technologies to skip repeated content on pages to go directly to the main content of a website or application. To use this component properly, make sure you give the main content of your project an `id` of `#main-content` so the SkipLink can target it. As a fallback the SkipLink will try to target the `h1` of the page. If neither are found a warning will be logged to the console.
 
 **Some (accessibility) features of the SkipLinks**:
@@ -516,13 +504,12 @@ You can apply your own styles by either setting the individual properties using 
 </style>
 ```
 
-## Other Accessible Astro projects
+## 📦 Other Accessible Astro projects
 
 - [Accessible Astro Starter](https://github.com/markteekman/accessible-astro-starter/)
 - [Accessible Astro Dashboard](https://github.com/markteekman/accessible-astro-dashboard/)
-- [Accessible Astro Documentation](https://accessible-astro.dev)
 
-## Helping out
+## ❤️ Helping out
 
 If you find that something isn't working right then I'm always happy to hear it to improve these components! You can contribute in many ways and forms. Let me know by either:
 
@@ -531,7 +518,7 @@ If you find that something isn't working right then I'm always happy to hear it 
 3. [Starting a discussion](https://github.com/markteekman/accessible-astro-components/discussions)
 4. [Buying me a coffee!](https://www.buymeacoffee.com/markteekman)
 
-## Thank you!
+## ☕ Thank you!
 
 A big thank you to the creators of Astro and to all using these components and the information to make the web a bit more accessible for all people around the world :) Also a big thanks to creators around the web for providing us with information to build accessible web interfaces, such as Zell Liew from Learn JavaScript Today and Heydon Pickering, the author of Inclusive Components and many more.
 
