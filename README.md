@@ -1,7 +1,7 @@
 # Accessible Astro Components
 A set of Accessible, easy to use, Front-end UI Components for [Astro](https://astro.build/). Most of these components are used in the [Accessible Astro Starter](https://github.com/markteekman/accessible-astro-starter) and the [Accessible Astro Dashboard](https://github.com/markteekman/accessible-astro-dashboard) themes and they provide exemplary use cases for these components. As a bonus, these themes also have their own dedicated components (like keyboard accessible and responsive navigations) and many **Design System** utility classes, patterns and primatives (such as grids, buttons, lists, spacings, sizes and more).
 
-🚀 [Live preview](https://www.accessible-astro.dev/accessible-components/)
+🚀 [Live preview](https://accessible-astro.netlify.app/accessible-components/)
 
 ## Installation
 Run the following command in your project folder to get started:
