@@ -1,7 +1,7 @@
 {
   "name": "accessible-astro-components",
   "description": "A set of Accessible, easy to use, Front-end UI Components for Astro.",
-  "version": "1.6.5",
+  "version": "1.6.6",
   "author": "Mark Teekman",
   "homepage": "https://accessible-astro.dev",
   "type": "module",
