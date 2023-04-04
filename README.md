@@ -482,7 +482,7 @@ SkipLinks provide a way for users using assistive technologies to skip repeated 
 
 ```jsx
 ---
-import { SkipLink } from 'accessible-astro-components'
+import { SkipLinks } from 'accessible-astro-components'
 ---
 <SkipLinks />
 ```
