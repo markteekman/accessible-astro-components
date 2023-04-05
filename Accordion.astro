@@ -1,3 +1,11 @@
+---
+import type { AccordionItem } from '.'
+
+interface Props {
+  children: AccordionItem | AccordionItem[]
+}
+---
+
 <div class="accordion">
   <ul class="accordion__wrapper">
     <slot />

@@ -1,4 +1,10 @@
 ---
+interface Props {
+  class: string
+  src?: string
+  alt?: string
+}
+
 const { class: classNames, src = 'https://shorturl.at/tCPS2', alt = '' } = Astro.props
 ---
 

@@ -1,4 +1,11 @@
 ---
+interface Props {
+  triggerId: string
+  title: string
+  closeText?: string
+  children?: HTMLElement | HTMLElement[]
+}
+
 const { triggerId, title, closeText = 'Close' } = Astro.props
 ---
 

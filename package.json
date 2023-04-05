@@ -6,6 +6,8 @@
   "homepage": "https://accessible-astro.dev",
   "type": "module",
   "exports": "./index.js",
+  "main": "./index.js",
+  "types": "./types",
   "keywords": [
     "astro",
     "astro-component",

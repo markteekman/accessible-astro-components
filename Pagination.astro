@@ -1,4 +1,17 @@
 ---
+// Pagination Props type helpers
+export type NumericalString = `${number}`
+export type RouteString = string | null | undefined
+
+interface Props {
+  firstPage?: RouteString
+  previousPage?: RouteString
+  nextPage?: RouteString
+  lastPage?: RouteString
+  currentPage?: string | number
+  totalPages?: NumericalString | number
+}
+
 const {
   firstPage = '#',
   previousPage = '#',
