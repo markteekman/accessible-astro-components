@@ -25,5 +25,9 @@
   "bugs": {
     "url": "https://github.com/markteekman/accessible-astro-components/issues"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "2.8.7",
+    "prettier-plugin-astro": "^0.8.0"
+  }
 }

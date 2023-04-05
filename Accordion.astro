@@ -9,12 +9,12 @@
   const accordionItems = [...document.querySelectorAll('.accordion__item')]
 
   // functions
-  const getPanelHeight = accordionItem => {
+  const getPanelHeight = (accordionItem) => {
     const accordionInner = accordionItem.querySelector('.panel__inner')
     return accordionInner.getBoundingClientRect().height
   }
 
-  const openAccordionItem = accordionItem => {
+  const openAccordionItem = (accordionItem) => {
     const accordionItemHeader = accordionItem.querySelector('.accordion__header')
     const accordionToggleIndicator = accordionItem.querySelector('.header__toggle-indicator')
     const accordionPanel = accordionItem.querySelector('.accordion__panel')
@@ -25,7 +25,7 @@
     accordionToggleIndicator.innerHTML = `<svg class="header__toggle-indicator" aria-hidden="true" data-prefix="fas" data-icon="minus" class="svg-inline--fa fa-minus fa-w-14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/></svg>`
   }
 
-  const closeAccordionItem = accordionItem => {
+  const closeAccordionItem = (accordionItem) => {
     const accordionItemHeader = accordionItem.querySelector('.accordion__header')
     const accordionToggleIndicator = accordionItem.querySelector('.header__toggle-indicator')
     const accordionPanel = accordionItem.querySelector('.accordion__panel')
@@ -37,23 +37,21 @@
     accordionToggleIndicator.innerHTML = `<svg class="header__toggle-indicator" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/></svg>`
   }
 
-  const isAccordionOpen = accordionItem => {
+  const isAccordionOpen = (accordionItem) => {
     return accordionItem.classList.contains('is-active')
   }
 
-  function toggleAccordionItem () {
+  function toggleAccordionItem() {
     const accordionItem = event.target.closest('.accordion__item')
     if (!accordionItem || event.target.closest('.accordion__panel')) return
 
-    isAccordionOpen(accordionItem)
-      ? closeAccordionItem(accordionItem)
-      : openAccordionItem(accordionItem)
+    isAccordionOpen(accordionItem) ? closeAccordionItem(accordionItem) : openAccordionItem(accordionItem)
   }
 
-  function recalculateHeight () {
-    const toggledAccordionItems = accordionItems.filter(element => element.classList.contains('is-active'))
+  function recalculateHeight() {
+    const toggledAccordionItems = accordionItems.filter((element) => element.classList.contains('is-active'))
 
-    toggledAccordionItems.forEach(toggledAccordionItem => {
+    toggledAccordionItems.forEach((toggledAccordionItem) => {
       const accordionPanel = toggledAccordionItem.querySelector('.accordion__panel')
       accordionPanel.style.height = `${getPanelHeight(toggledAccordionItem)}px`
     })
@@ -71,7 +69,7 @@
     accordionItemPanel.setAttribute('aria-labelledby', `accordion-item${index + 1}`)
   })
 
-  document.addEventListener('keydown', event => {
+  document.addEventListener('keydown', (event) => {
     const accordionItem = event.target.closest('.accordion__item')
 
     if (event.key !== 'Escape') return
@@ -82,13 +80,13 @@
     }
   })
 
-  document.addEventListener('keydown', event => {
+  document.addEventListener('keydown', (event) => {
     if (!event.target.closest('.accordion__header')) return
 
     const accordionWrapper = event.target.closest('.accordion__wrapper')
     const accordionItem = event.target.closest('.accordion__item')
     const accordionItems = [...accordionWrapper.querySelectorAll('.accordion__item')]
-    const index = accordionItems.findIndex(element => element === accordionItem)
+    const index = accordionItems.findIndex((element) => element === accordionItem)
 
     const { key } = event
 

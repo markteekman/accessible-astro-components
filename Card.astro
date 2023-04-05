@@ -1,15 +1,10 @@
 ---
-const { 
-  url = '#', 
-  img = 'https://fakeimg.pl/640x360', 
-  title = 'Default title', 
-  footer = 'Your name'
-} = Astro.props
+const { url = '#', img = 'https://fakeimg.pl/640x360', title = 'Default title', footer = 'Your name' } = Astro.props
 ---
 
 <div class="card">
   <div class="card__image">
-    <img src={img} alt="">
+    <img src={img} alt="" />
   </div>
   <div class="card__content">
     <h3>

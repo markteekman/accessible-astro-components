@@ -1,9 +1,5 @@
 ---
-const {
-  type = 'default',
-  role = 'none',
-  ariaLive = 'off'
-} = Astro.props
+const { type = 'default', role = 'none', ariaLive = 'off' } = Astro.props
 ---
 
 <div class={`notification type-${type}`} role={role} aria-live={ariaLive}>

@@ -1,17 +1,9 @@
 ---
-const {
-  href = '#',
-  label = 'Breadcrumb',
-  currentPage = false,
-} = Astro.props
+const { href = '#', label = 'Breadcrumb', currentPage = false } = Astro.props
 ---
 
 <li class="breadcrumbs__item">
-  {
-    currentPage
-      ? <span>{label}</span>
-      : <a href={href}>{label}</a>
-  }
+  {currentPage ? <span>{label}</span> : <a href={href}>{label}</a>}
 </li>
 
 <style is:global>

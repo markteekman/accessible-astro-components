@@ -7,7 +7,7 @@
   const skipLink = document.querySelector('.skip-links a')
 
   // execution
-  skipLink.addEventListener('keydown', event => {
+  skipLink.addEventListener('keydown', (event) => {
     if (!event.target.closest('a')) return
     const key = event.key
 
