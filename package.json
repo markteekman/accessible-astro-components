@@ -1,9 +1,9 @@
 {
   "name": "accessible-astro-components",
   "description": "A set of Accessible, easy to use, Front-end UI Components for Astro.",
-  "version": "1.6.6",
+  "version": "2.0.0",
   "author": "Mark Teekman",
-  "homepage": "https://accessible-astro.dev",
+  "homepage": "https://accessible-astro.netlify.app/accessible-components/",
   "type": "module",
   "exports": "./index.js",
   "main": "./index.js",
