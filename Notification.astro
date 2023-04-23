@@ -1,9 +1,13 @@
 ---
-const {
-  type = 'default',
-  role = 'none',
-  ariaLive = 'off'
-} = Astro.props
+interface Props {
+  // role="region" not supported as element takes no id
+  type?: 'info' | 'success' | 'warning' | 'error' | 'default'
+  role?: 'none' | 'alert' | 'log' | 'marquee' | 'status' | 'timer'
+  ariaLive?: 'off' | 'polite' | 'assertive'
+  children?: any
+}
+
+const { type = 'default', role = 'none', ariaLive = 'off' } = Astro.props
 ---
 
 <div class={`notification type-${type}`} role={role} aria-live={ariaLive}>

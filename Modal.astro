@@ -1,9 +1,12 @@
 ---
-const {
-  triggerId,
-  title,
-  closeText = 'Close'
-} = Astro.props
+interface Props {
+  triggerId: string
+  title: string
+  closeText?: string
+  children?: HTMLElement | HTMLElement[]
+}
+
+const { triggerId, title, closeText = 'Close' } = Astro.props
 ---
 
 <div class="modal" role="dialog" aria-labelledby={triggerId}>
@@ -27,21 +30,20 @@ const {
   const modalId = modal.getAttribute('aria-labelledby')
   const modalCloseButton = modal.querySelector('.modal__close button')
   const modalTrigger = document.querySelector(`#${modalId}`)
-  
+
   // functions
-  const teleportToRoot = element => {
+  const teleportToRoot = (element) => {
     element.remove()
     body.appendChild(element)
   }
 
-  const getKeyboardFocusableElements = element => {
-    return [...element.querySelectorAll(
-      'a, button, input, textarea, select, details,[tabindex]:not([tabindex="-1"])'
-    )]
-      .filter(el => !el.hasAttribute('disabled'))
+  const getKeyboardFocusableElements = (element) => {
+    return [
+      ...element.querySelectorAll('a, button, input, textarea, select, details,[tabindex]:not([tabindex="-1"])'),
+    ].filter((el) => !el.hasAttribute('disabled'))
   }
 
-  const trapFocus = event => {
+  const trapFocus = (event) => {
     const focusables = getKeyboardFocusableElements(modal)
     const firstFocusable = focusables[0]
     const lastFocusable = focusables[focusables.length - 1]
@@ -57,7 +59,7 @@ const {
     }
   }
 
-  const openModal = _ => {
+  const openModal = (_) => {
     const modalTitle = modal.querySelector('h3')
 
     modal.classList.add('show')
@@ -65,14 +67,14 @@ const {
     modalTitle.focus()
     document.addEventListener('keydown', trapFocus)
 
-    modal.addEventListener('keydown', event => {
+    modal.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
         closeModal()
       }
     })
   }
 
-  const closeModal = _ => {
+  const closeModal = (_) => {
     modal.classList.remove('show')
     body.classList.remove('modal-is-active')
     modalTrigger.focus({ preventScroll: true })
@@ -86,7 +88,7 @@ const {
 
   modalCloseButton.addEventListener('click', closeModal)
 
-  modal.addEventListener('click', event => { 
+  modal.addEventListener('click', (event) => {
     if (!event.target.closest('.modal__content')) {
       closeModal()
     }

@@ -1,3 +1,11 @@
+---
+import type { BreadcrumbsItem } from '.'
+
+interface Props {
+  children: BreadcrumbsItem | BreadcrumbsItem[]
+}
+---
+
 <nav class="breadcrumbs" aria-label="Breadcrumbs">
   <ol>
     <slot />
