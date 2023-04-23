@@ -1,5 +1,5 @@
 # Accessible Astro Components
-A set of Accessible, easy to use, Front-end UI Components for [Astro](https://astro.build/). Most of these components are used in the [Accessible Astro Starter](https://github.com/markteekman/accessible-astro-starter) and the [Accessible Astro Dashboard](https://github.com/markteekman/accessible-astro-dashboard) themes and they provide exemplary use cases for these components. As a bonus, these themes also have their own dedicated components (like keyboard accessible and responsive navigations) and many **Design System** utility classes, patterns and primatives (such as grids, buttons, lists, spacings, sizes and more).
+A set of Accessible, easy to use, Front-end UI Components for [Astro](https://astro.build/). Most of these components are used in the [Accessible Astro Starter](https://github.com/markteekman/accessible-astro-starter) and the [Accessible Astro Dashboard](https://github.com/markteekman/accessible-astro-dashboard) themes and they provide exemplary use cases for these components. As a bonus, these themes also have their own dedicated components (like keyboard accessible and responsive navigations) and many **Design System** utility classes, patterns and primitives (such as grids, buttons, lists, spacings, sizes and more).
 
 🚀 [Live preview](https://accessible-astro.netlify.app/accessible-components/)
 
@@ -23,7 +23,7 @@ import { Accordion, AccordionItem, Card, Modal, ... } from 'accessible-astro-com
 
 - [When (not) to use](https://www.nngroup.com/articles/accordions-complex-content/)
 
-Accordions are great from grouping big chunks of content into easer to scan headers which the user can expand when he or she wants to read what is associated with that header.
+Accordions are great from grouping big chunks of content into easier to scan headers which the user can expand when he or she wants to read what is associated with that header.
 
 **Some (accessibility) features of the Accordion**:
 - Navigation the AccordionItems using the <kbd>ArrowUp</kbd> and <kbd>ArrowDown</kbd> keys
@@ -125,7 +125,7 @@ You can apply your own styles by either setting the individual properties using 
 
 ### Card
 
-Cards are usually used in groups. By wrapping them in an unordered list we provide screen reader users with shortcuts to lists and list items. Screen readers also let the users know how many items there are in a list. In the example below you'll find the structure using an unordered list and `display: grid`, making sure we leave enough of a gap between Cards on touch devices for people who find they have low accuracy when targeting items, including those with Parkinson's disease and rheumatism. Leaving a bigger gap makes it easer to scroll without accidentally activating a Cards link.
+Cards are usually used in groups. By wrapping them in an unordered list we provide screen reader users with shortcuts to lists and list items. Screen readers also let the users know how many items there are in a list. In the example below you'll find the structure using an unordered list and `display: grid`, making sure we leave enough of a gap between Cards on touch devices for people who find they have low accuracy when targeting items, including those with Parkinson's disease and rheumatism. Leaving a bigger gap makes it easier to scroll without accidentally activating a Cards link.
 
 **Some (accessibility) features of the Card**:
 - The whole Card is made clickable using the `<a>` `::after` pseudo element
@@ -198,12 +198,12 @@ You can apply your own styles by either setting the individual properties using 
 
 ### DarkMode
 
-DarkMode is a toggle button component to add and remove a class of `.darkmode` to the `<body>` based on the users preference for either a light or dark color scheme. The users preference is saved to the `localStorage` to preserve their choice for future visits.
+DarkMode is a toggle button component to add and remove a class of `.darkmode` to the `<body>` based on the user's preference for either a light or dark color scheme. The user's preference is saved to the `localStorage` to preserve their choice for future visits.
 
 **Some (accessibility) features of the DarkMode**:
 - Utilizes `aria-pressed` to indicate to screen reader users whether the dark scheme is toggled or not
-- Gives feedback to screen reader users which state is toggled using `aria-label`'s
-- Uses `aria-hidden` to hide the icons for dark and light mode and uses the `aria-labels`'s instead
+- Gives feedback to screen reader users which state is toggled using `aria-label`s
+- Uses `aria-hidden` to hide the icons for dark and light mode and uses the `aria-labels`s instead
 
 #### Example
 
@@ -253,7 +253,7 @@ Modals are windows that appear on top of the parent screen, usually disabling th
 **Some (accessibility) features of the Modal**:
 - Closing Modal with the <kbd>Escape</kbd> key
 - Trapping focus inside Modal using <kbd>Tab</kbd> and <kbd>Shift + Tab</kbd>
-- Linking the trigger element and the Modal using `id` and `aria-labbeledby`
+- Linking the trigger element and the Modal using `id` and `aria-labeledby`
 - Setting focus back on the element that triggered the Modal after closing the Modal
 - Teleporting the Modal from where you call it to the root of the `<body>`
 - Exposing `closeModal()` function to use as a callback in your own JavaScript
@@ -318,7 +318,7 @@ You can apply your own styles by either setting the individual properties using 
 
 ### Notification
 
-Notifications are often used to keep the user updated about changing state on a website or application. They can also be used as a general way to display some highlighted information in an article for example. There are two rules of thumb when it comes to Notifications and those are to always add contextual information about the Notification (such as starting with "Tip:", "Info:", "Error:") and when adding a Notification to the DOM in response to a user action, you should always use`role="status"` and `aria-live="polite"` tot inform screen reader users. To add some extra visuals you can combine the Notification component with [Astro Icon](https://github.com/natemoo-re/astro-icon).
+Notifications are often used to keep the user updated about changing state on a website or application. They can also be used as a general way to display some highlighted information in an article for example. There are two rules of thumb when it comes to Notifications and those are to always add contextual information about the Notification (such as starting with "Tip:", "Info:", "Error:") and when adding a Notification to the DOM in response to a user action, you should always use `role="status"` and `aria-live="polite"` to inform screen reader users. To add some extra visuals you can combine the Notification component with [Astro Icon](https://github.com/natemoo-re/astro-icon).
 
 **Some (accessibility) features of the Notification**:
 - Use color to identify the type of Notification (info, success, warning, error)
@@ -398,7 +398,7 @@ You can apply your own styles by either setting the individual properties using 
 A fairly simple yet effective Pagination component which has a first, previous, next, and last page button. It also tells the user how many pages there are and what page they are currently on. The Pagination component is also fully accessible and keyboard navigable.
 
 **Some (accessibility) features of the Pagination**:
-- Uses `aria-label`'s to tell the user whether they will go to the previous or next page and which page number
+- Uses `aria-label`s to tell the user whether they will go to the previous or next page and which page number
 - Uses `aria-hidden` to hide the icons for the previous and next pages
 - Disables the first and previous page buttons when on the first page
 - Disables the last and next page buttons when on the last page
@@ -473,10 +473,10 @@ You can apply your own styles by either setting the individual properties using 
 
 ### SkipLinks
 
-SkipLinks provide a way for users using assistive technologies to skip repeated content on pages to go directly to the main content of a website or application. To use this component properly, make sure you give the main content of your project an `id` of `#main-content` so the SkipLink can target it. As a fallback the SkipLink will try to target the `h1` of the page. If neither are found a warning will be logged to the console.
+SkipLinks provide a way for users using assistive technologies to skip repeated content on pages to go directly to the main content of a website or application. To use this component properly, make sure you give the main content of your project an `id` of `#main-content` so that the SkipLink can target it. As a fallback the SkipLink will try to target the `h1` of the page. If neither are found a warning will be logged to the console.
 
 **Some (accessibility) features of the SkipLinks**:
-- Let's assistive technologies skip to the main navigation and main content of a website
+- Lets assistive technologies skip to the main navigation and main content of a website
 
 #### Example
 
