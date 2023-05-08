@@ -26,7 +26,7 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
 <script>
   // variables
   const body = document.querySelector('body')
-  const modals = new Set()
+  const modals = document.querySelectorAll('.modal')
 
   // abort controllers for global event listeners
   let trapFocusController
@@ -95,31 +95,23 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     body.classList.remove('modal-is-active')
   }
 
-  const setModels = () => {
-    const modalNodes = document.querySelectorAll('.modal')
-
-    modalNodes.forEach((node) => {
-      const modalId = node.getAttribute('aria-labelledby')
-      const modalCloseButton = node.querySelector('.modal__close button')
-      const modalTrigger = document.querySelector(`#${modalId}`)
-
-      modalTrigger.addEventListener('click', () => openModal(node))
-      modalCloseButton.addEventListener('click', closeModal)
-
-      node.addEventListener('click', (event) => {
-        if (!event.target.closest('.modal__content')) {
-          closeModal()
-        }
-      })
-
-      modals.add(node)
-    })
-  }
-
   // execution
-  setModels()
+  modals.forEach((modal) => {
+    const modalId = modal.getAttribute('aria-labelledby')
+    const modalCloseButton = modal.querySelector('.modal__close button')
+    const modalTrigger = document.querySelector(`#${modalId}`)
 
-  modals.forEach((modal) => teleportToRoot(modal))
+    modalTrigger.addEventListener('click', () => openModal(modal))
+    modalCloseButton.addEventListener('click', closeModal)
+
+    modal.addEventListener('click', (event) => {
+      if (!event.target.closest('.modal__content')) {
+        closeModal()
+      }
+    })
+
+    teleportToRoot(modal)
+  })
 
   window.closeModal = closeModal
 </script>
