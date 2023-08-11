@@ -23,13 +23,14 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
   </div>
 </div>
 
-<script type="module">
+<script>
   // variables
   const body = document.querySelector('body')
-  const modal = document.querySelector('.modal')
-  const modalId = modal.getAttribute('aria-labelledby')
-  const modalCloseButton = modal.querySelector('.modal__close button')
-  const modalTrigger = document.querySelector(`#${modalId}`)
+  const modals = document.querySelectorAll('.modal')
+
+  // abort controllers for global event listeners
+  let trapFocusController
+  let keydownController
 
   // functions
   const teleportToRoot = (element) => {
@@ -43,7 +44,7 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     ].filter((el) => !el.hasAttribute('disabled'))
   }
 
-  const trapFocus = (event) => {
+  const trapFocus = (event, modal) => {
     const focusables = getKeyboardFocusableElements(modal)
     const firstFocusable = focusables[0]
     const lastFocusable = focusables[focusables.length - 1]
@@ -59,39 +60,57 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     }
   }
 
-  const openModal = (_) => {
+  const openModal = (modal) => {
     const modalTitle = modal.querySelector('h3')
 
     modal.classList.add('show')
     body.classList.add('modal-is-active')
     modalTitle.focus()
-    document.addEventListener('keydown', trapFocus)
 
-    modal.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        closeModal()
-      }
-    })
+    trapFocusController = new AbortController()
+    keydownController = new AbortController()
+
+    document.addEventListener('keydown', (e) => trapFocus(e, modal), { signal: trapFocusController.signal })
+
+    modal.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.key === 'Escape') {
+          closeModal()
+        }
+      },
+      { signal: keydownController.signal }
+    )
   }
 
   const closeModal = (_) => {
-    modal.classList.remove('show')
+    modals.forEach((modal) => {
+      modal.classList.remove('show')
+      const modalId = modal.getAttribute('aria-labelledby')
+      const modalTrigger = document.querySelector(`#${modalId}`)
+      modalTrigger.focus({ preventScroll: true })
+      trapFocusController.abort()
+      keydownController.abort()
+    })
     body.classList.remove('modal-is-active')
-    modalTrigger.focus({ preventScroll: true })
-    document.removeEventListener('keydown', trapFocus)
   }
 
   // execution
-  teleportToRoot(modal)
+  modals.forEach((modal) => {
+    const modalId = modal.getAttribute('aria-labelledby')
+    const modalCloseButton = modal.querySelector('.modal__close button')
+    const modalTrigger = document.querySelector(`#${modalId}`)
 
-  modalTrigger.addEventListener('click', openModal)
+    modalTrigger.addEventListener('click', () => openModal(modal))
+    modalCloseButton.addEventListener('click', closeModal)
 
-  modalCloseButton.addEventListener('click', closeModal)
+    modal.addEventListener('click', (event) => {
+      if (!event.target.closest('.modal__content')) {
+        closeModal()
+      }
+    })
 
-  modal.addEventListener('click', (event) => {
-    if (!event.target.closest('.modal__content')) {
-      closeModal()
-    }
+    teleportToRoot(modal)
   })
 
   window.closeModal = closeModal
