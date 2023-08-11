@@ -22,7 +22,7 @@ import { Accordion, AccordionItem, Card, Modal, ... } from 'accessible-astro-com
 ---
 ```
 
-**Skip to**: [Accordion](#accordion), [Breadcrumbs](#breadcrumbs), [Card](#card), [DarkMode](#darkMode), [Media](#media), [Modal](#modal), [Notification](#notification), [Pagination](#pagination), [SkipLinks](#skipLinks)
+**Skip to**: [Accordion](#accordion), [Breadcrumbs](#breadcrumbs), [Card](#card), [DarkMode](#darkMode), [Media](#media), [Modal](#modal), [Notification](#notification), [Pagination](#pagination), [SkipLinks](#skiplinks)
 
 ### Accordion
 
