@@ -93,6 +93,15 @@ type Modal = typeof import('../index.js').Modal
 export const Modal: Modal
 
 /**
+ * Global closeModal function for Modal component
+ */
+declare global {
+  interface Window {
+    closeModal: () => void
+  }
+}
+
+/**
  * Notification component
  *
  * @param _props - Record<string, any>

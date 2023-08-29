@@ -9,7 +9,7 @@ interface Props {
 const { triggerId, title, closeText = 'Close' } = Astro.props
 ---
 
-<div class="modal" role="dialog" aria-labelledby={triggerId}>
+<dialog class="modal" role="dialog" aria-labelledby={triggerId}>
   <div class="modal__inner">
     <div class="modal__content">
       <h3 tabindex="-1">
@@ -21,33 +21,38 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
       <button>{closeText}</button>
     </div>
   </div>
-</div>
+</dialog>
 
 <script>
+  type FocusableElement =
+    | HTMLAnchorElement
+    | HTMLButtonElement
+    | HTMLInputElement
+    | HTMLTextAreaElement
+    | HTMLSelectElement
+    | HTMLDetailsElement
+
   // variables
-  const body = document.querySelector('body')
-  const modals = document.querySelectorAll('.modal')
+  const modals = document.querySelectorAll<HTMLDialogElement>('.modal')
 
   // abort controllers for global event listeners
-  let trapFocusController
-  let keydownController
+  let trapFocusController: AbortController | undefined
+  let keydownController: AbortController | undefined
 
-  // functions
-  const teleportToRoot = (element) => {
-    element.remove()
-    body.appendChild(element)
-  }
-
-  const getKeyboardFocusableElements = (element) => {
+  const getKeyboardFocusableElements = (element: HTMLElement) => {
     return [
-      ...element.querySelectorAll('a, button, input, textarea, select, details,[tabindex]:not([tabindex="-1"])'),
+      ...element.querySelectorAll<FocusableElement>(
+        'a, button, input, textarea, select, details,[tabindex]:not([tabindex="-1"])'
+      ),
     ].filter((el) => !el.hasAttribute('disabled'))
   }
 
-  const trapFocus = (event, modal) => {
+  const trapFocus = (event: KeyboardEvent, modal: HTMLDialogElement) => {
     const focusables = getKeyboardFocusableElements(modal)
-    const firstFocusable = focusables[0]
-    const lastFocusable = focusables[focusables.length - 1]
+
+    // These will not be undefined as a modal always has at least one <button>
+    const firstFocusable = focusables[0]!
+    const lastFocusable = focusables[focusables.length - 1]!
 
     if (document.activeElement === lastFocusable && event.key === 'Tab' && !event.shiftKey) {
       event.preventDefault()
@@ -60,12 +65,12 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     }
   }
 
-  const openModal = (modal) => {
+  const openModal = (modal: HTMLDialogElement) => {
     const modalTitle = modal.querySelector('h3')
+    const modalInner = modal.querySelector<HTMLDivElement>('.modal__inner')
 
-    modal.classList.add('show')
-    body.classList.add('modal-is-active')
-    modalTitle.focus()
+    modal.showModal()
+    modalTitle!.focus()
 
     trapFocusController = new AbortController()
     keydownController = new AbortController()
@@ -81,18 +86,33 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
       },
       { signal: keydownController.signal }
     )
+
+    modal.addEventListener(
+      'click',
+      () => {
+        closeModal()
+      },
+      { signal: keydownController.signal }
+    )
+
+    modalInner!.addEventListener(
+      'click',
+      (event) => {
+        event.stopPropagation()
+      },
+      { signal: keydownController.signal }
+    )
   }
 
-  const closeModal = (_) => {
+  const closeModal = () => {
     modals.forEach((modal) => {
-      modal.classList.remove('show')
       const modalId = modal.getAttribute('aria-labelledby')
-      const modalTrigger = document.querySelector(`#${modalId}`)
+      const modalTrigger = document.querySelector(`#${modalId}`) as HTMLButtonElement
       modalTrigger.focus({ preventScroll: true })
-      trapFocusController.abort()
-      keydownController.abort()
+      modal.close()
+      trapFocusController?.abort()
+      keydownController?.abort()
     })
-    body.classList.remove('modal-is-active')
   }
 
   // execution
@@ -101,44 +121,33 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     const modalCloseButton = modal.querySelector('.modal__close button')
     const modalTrigger = document.querySelector(`#${modalId}`)
 
+    if (!modalTrigger) {
+      throw new Error(`Trigger element not found. \n
+      Did you forget to add a trigger element with id: "${modalId}"?`)
+    }
+
     modalTrigger.addEventListener('click', () => openModal(modal))
-    modalCloseButton.addEventListener('click', closeModal)
-
-    modal.addEventListener('click', (event) => {
-      if (!event.target.closest('.modal__content')) {
-        closeModal()
-      }
-    })
-
-    teleportToRoot(modal)
+    modalCloseButton!.addEventListener('click', closeModal)
   })
 
   window.closeModal = closeModal
 </script>
 
 <style is:global>
-  body.modal-is-active > *:not(.modal) {
+  dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
     filter: blur(6px);
   }
 
   .modal {
-    height: 0;
-    position: fixed;
-    visibility: hidden;
-    z-index: -10;
+    color: black;
+    background-color: white;
+    border: 0.5rem solid black;
+    border-radius: 1rem;
+    padding: 0;
   }
 
-  .modal.show {
-    display: grid;
-    place-items: center;
-    visibility: visible;
-    height: auto;
-    background-color: rgba(0, 0, 0, 0.5);
-    inset: 0;
-    z-index: 10;
-  }
-
-  .modal.show .modal__inner {
+  .modal .modal__inner {
     opacity: 1;
   }
 
@@ -146,10 +155,14 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     width: clamp(30ch, 70%, 75ch);
     color: black;
     background-color: white;
-    border: 0.5rem solid black;
     border-radius: 1rem;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
+  }
+
+  .modal__inner {
+    width: 100%;
+    height: 100%;
   }
 
   .modal__content {
@@ -160,14 +173,20 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     padding: 2rem;
   }
 
-  .modal__close button {
+  .modal__close {
     width: 100%;
+  }
+
+  .modal__close button {
     border: none;
     background-color: lightgrey;
     border-bottom-left-radius: 0.4rem;
     border-bottom-right-radius: 0.4rem;
     text-align: right;
     transition: background-color 0.15s ease-in-out;
+    width: 100%;
+    margin: 0;
+    padding: 0.5rem;
   }
 
   .modal__close button:hover,
