@@ -5,7 +5,7 @@
  * @param _props.header - `<h3>` header text content
  * @param _props.children - Any HTML elements. Parent element: `<div>`
  */
-export type AccordionItem = typeof import('./AccordionItem.astro').default
+export type AccordionItem = typeof import('../index.js').AccordionItem
 export const AccordionItem: AccordionItem
 
 /**
@@ -16,7 +16,7 @@ export const AccordionItem: AccordionItem
  *  - Expects one or more AccordionItem components. Parent element: `<ul>`
  *  - WARNING: Astro cannot currently enforce the type of children in a `<slot>`
  */
-type Accordion = typeof import('./Accordion.astro').default
+type Accordion = typeof import('../index.js').Accordion
 export const Accordion: Accordion
 
 /**
@@ -27,7 +27,7 @@ export const Accordion: Accordion
  * @param _props.label - `<a>` text content for descriptive route name
  * @param _props.currentPage - Boolean: isCurrentPage?
  */
-export type BreadcrumbsItem = typeof import('./BreadcrumbsItem.astro').default
+export type BreadcrumbsItem = typeof import('../index.js').BreadcrumbsItem
 export const BreadcrumbsItem: BreadcrumbsItem
 
 /**
@@ -38,7 +38,7 @@ export const BreadcrumbsItem: BreadcrumbsItem
  *  - Expects one or more BreadcrumbsItem components. Parent element: `<ol>`
  *  - WARNING: Astro cannot currently enforce the type of children in a `<slot>`
  */
-type Breadcrumbs = typeof import('./Breadcrumbs.astro').default
+type Breadcrumbs = typeof import('../index.js').Breadcrumbs
 export const Breadcrumbs: Breadcrumbs
 
 /**
@@ -51,7 +51,7 @@ export const Breadcrumbs: Breadcrumbs
  * @param _props.footer - `<small>` text content
  * @param _props.children - textContent or any legal `<p>` tag innerHTML such as inline HTML elements. Parent element: `<p>`
  */
-type Card = typeof import('./Card.astro').default
+type Card = typeof import('../index.js').Card
 export const Card: Card
 
 /**
@@ -67,7 +67,7 @@ export const Card: Card
 </style>
 ```
  */
-type DarkMode = typeof import('./DarkMode.astro').default
+type DarkMode = typeof import('../index.js').DarkMode
 export const DarkMode: DarkMode
 
 /**
@@ -78,7 +78,7 @@ export const DarkMode: DarkMode
  * @param _props.src - `<img src={src}>` - default: placeholder
  * @param _props.alt - `<img alt={alt}>` required for non-decorative images
  */
-type Media = typeof import('./Media.astro').default
+export type Media = typeof import('../index.js').Media
 export const Media: Media
 
 /**
@@ -89,7 +89,7 @@ export const Media: Media
  * @param _props.closeText - `<button>` text content - default: "Close"
  * @param _props.children - Any HTML elements. Parent element: `<div>`
  */
-type Modal = typeof import('./Modal.astro').default
+type Modal = typeof import('../index.js').Modal
 export const Modal: Modal
 
 /**
@@ -97,14 +97,14 @@ export const Modal: Modal
  *
  * @param _props - Record<string, any>
  * @param _props.type - Specifies background color: info = blue, success = green, warning = yellow, error = red - default: browser default color
- * @param _props.role - Type of aria role: 'alert' | 'log' | 'marquee' | 'status' | 'timer' -  default: 'none'
+ * @param _props.role - Type of aria role: 'alert' | 'log' | 'marquee' | 'status' | 'timer' | 'region' -  default: 'none'
  * @param _props.ariaLive -
  * - Defines urgency of live announcements, when used prefer 'polite'
  * - Warning: Because an interruption may disorient users or cause them to not complete their current task,
  *   don't use the assertive value unless the interruption is imperative.
  * @param _props.children - any HTML elements. Parent element: `<div>`
  */
-type Notification = typeof import('./Notification.astro').default
+type Notification = typeof import('../index.js').Notification
 export const Notification: Notification
 
 /**
@@ -119,7 +119,7 @@ export const Notification: Notification
  * @param _props.currentPage - `<span>Page {currentPage} of {totalPages}</span>` - Default: '1'
  * @param _props.totalPages - `<span>Page {currentPage} of {totalPages}</span>` - Default: '12
  */
-type Pagination = typeof import('./Pagination.astro').default
+type Pagination = typeof import('../index.js').Pagination
 export const Pagination: Pagination
 
 /**
@@ -129,5 +129,5 @@ export const Pagination: Pagination
  * @param _props - Record<string, never>
  *
  */
-type SkipLinks = typeof import('./SkipLinks.astro').default
+type SkipLinks = typeof import('../index.js').SkipLinks
 export const SkipLinks: SkipLinks
