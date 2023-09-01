@@ -9,7 +9,7 @@ interface Props {
 const { triggerId, title, closeText = 'Close' } = Astro.props
 ---
 
-<dialog class="modal" role="dialog" aria-labelledby={triggerId}>
+<dialog class="modal" aria-labelledby={triggerId}>
   <div class="modal__inner">
     <div class="modal__content">
       <h3 tabindex="-1">
