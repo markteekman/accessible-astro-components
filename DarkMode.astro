@@ -2,7 +2,7 @@
 type Props = Record<string, never>
 ---
 
-<button class="darkmode-toggle" aria-pressed="false" aria-label="Enable dark mode">
+<button class="darkmode-toggle" aria-pressed="false" aria-label="Enable dark mode" transition:persist>
   <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="32" height="32" viewBox="0 0 24 24"
     ><path
       fill="currentColor"
@@ -50,5 +50,17 @@ darkModeToggle.addEventListener('click', () => {
   darkMode = document.body.classList.contains('darkmode')
 
   !darkMode ? enableDarkMode() : disableDarkMode()
+})
+
+// Listen for view transitions
+document.addEventListener('astro:after-swap', () => {
+  // Setup
+  darkMode = localStorage.getItem('darkMode')
+  console.log({ darkModeToggle })
+
+  // Execution
+  if (darkMode === 'enabled') enableDarkMode()
+  if (darkMode === 'disabled') disableDarkMode()
+  if (!darkMode) checkPreference()
 })
 </script>
