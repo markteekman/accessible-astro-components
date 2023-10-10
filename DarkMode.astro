@@ -56,7 +56,6 @@ darkModeToggle.addEventListener('click', () => {
 document.addEventListener('astro:after-swap', () => {
   // Setup
   darkMode = localStorage.getItem('darkMode')
-  console.log({ darkModeToggle })
 
   // Execution
   if (darkMode === 'enabled') enableDarkMode()
