@@ -33,7 +33,7 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     | HTMLDetailsElement
 
   // variables
-  const modals = document.querySelectorAll<HTMLDialogElement>('.modal')
+  let modals = document.querySelectorAll<HTMLDialogElement>('.modal')
 
   // abort controllers for global event listeners
   let trapFocusController: AbortController | undefined
@@ -131,6 +131,27 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
   })
 
   window.closeModal = closeModal
+
+  // Listen for view transitions
+  document.addEventListener('astro:after-swap', () => {
+    // reset variables
+    modals = document.querySelectorAll<HTMLDialogElement>('.modal')
+
+    // execution
+    modals.forEach((modal) => {
+      const modalId = modal.getAttribute('aria-labelledby')
+      const modalCloseButton = modal.querySelector('.modal__close button')
+      const modalTrigger = document.querySelector(`#${modalId}`)
+
+      if (!modalTrigger) {
+        throw new Error(`Trigger element not found. \n
+      Did you forget to add a trigger element with id: "${modalId}"?`)
+      }
+
+      modalTrigger.addEventListener('click', () => openModal(modal))
+      modalCloseButton!.addEventListener('click', closeModal)
+    })
+  })
 </script>
 
 <style is:global>
