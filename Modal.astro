@@ -139,7 +139,7 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     filter: blur(6px);
   }
 
-  .modal {
+  :where(.modal) {
     color: black;
     background-color: white;
     border: 0.5rem solid black;
@@ -149,14 +149,8 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
 
   .modal__inner {
     width: clamp(30ch, 70%, 75ch);
-    color: black;
-    background-color: white;
     border-radius: 1rem;
-  }
-
-  .modal__inner {
     width: 100%;
-    height: 100%;
   }
 
   .modal__content {
@@ -176,6 +170,7 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     background-color: lightgrey;
     border-bottom-left-radius: 0.4rem;
     border-bottom-right-radius: 0.4rem;
+    color: black;
     text-align: right;
     transition: background-color 0.15s ease-in-out;
     width: 100%;
