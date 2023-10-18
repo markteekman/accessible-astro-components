@@ -324,6 +324,7 @@ You can apply your own styles by either setting the individual properties using 
     }
 
     .modal__close button {
+      color: white;
       background-color: blue;
 
       &:hover,
