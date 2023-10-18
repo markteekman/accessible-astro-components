@@ -309,9 +309,12 @@ You can apply your own styles by either setting the individual properties using 
 ```scss
 <style lang="scss" is:global>
   body {
+    .modal {
+        color: purple;
+        background-color: gold;
+      }
+
     .modal__inner {
-      color: purple;
-      background-color: gold;
       border-color: orange;
     }
 
