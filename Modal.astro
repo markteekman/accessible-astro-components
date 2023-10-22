@@ -33,7 +33,7 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     | HTMLDetailsElement
 
   // variables
-  const modals = document.querySelectorAll<HTMLDialogElement>('.modal')
+  let modals = document.querySelectorAll<HTMLDialogElement>('.modal')
 
   // abort controllers for global event listeners
   let trapFocusController: AbortController | undefined
@@ -131,6 +131,27 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
   })
 
   window.closeModal = closeModal
+
+  // Listen for view transitions
+  document.addEventListener('astro:after-swap', () => {
+    // reset variables
+    modals = document.querySelectorAll<HTMLDialogElement>('.modal')
+
+    // execution
+    modals.forEach((modal) => {
+      const modalId = modal.getAttribute('aria-labelledby')
+      const modalCloseButton = modal.querySelector('.modal__close button')
+      const modalTrigger = document.querySelector(`#${modalId}`)
+
+      if (!modalTrigger) {
+        throw new Error(`Trigger element not found. \n
+      Did you forget to add a trigger element with id: "${modalId}"?`)
+      }
+
+      modalTrigger.addEventListener('click', () => openModal(modal))
+      modalCloseButton!.addEventListener('click', closeModal)
+    })
+  })
 </script>
 
 <style is:global>
@@ -139,7 +160,7 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     filter: blur(6px);
   }
 
-  .modal {
+  :where(.modal) {
     color: black;
     background-color: white;
     border: 0.5rem solid black;
@@ -147,22 +168,10 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     padding: 0;
   }
 
-  .modal .modal__inner {
-    opacity: 1;
-  }
-
   .modal__inner {
     width: clamp(30ch, 70%, 75ch);
-    color: black;
-    background-color: white;
     border-radius: 1rem;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-  }
-
-  .modal__inner {
     width: 100%;
-    height: 100%;
   }
 
   .modal__content {
@@ -182,6 +191,7 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     background-color: lightgrey;
     border-bottom-left-radius: 0.4rem;
     border-bottom-right-radius: 0.4rem;
+    color: black;
     text-align: right;
     transition: background-color 0.15s ease-in-out;
     width: 100%;
@@ -193,5 +203,20 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
   .modal__close button:focus {
     background-color: grey;
     text-decoration: underline;
+  }
+
+  /* Animation */
+  dialog[open],
+  dialog[open]::backdrop {
+    animation: fadein 0.3s ease-in-out;
+  }
+
+  @keyframes fadein {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 </style>
