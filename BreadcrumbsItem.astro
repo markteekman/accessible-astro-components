@@ -9,7 +9,7 @@ const { href = '#', label = 'Breadcrumb', currentPage = false } = Astro.props
 ---
 
 <li class="breadcrumbs__item">
-  {currentPage ? <a href="" aria-current="page">{label}</a> : <a href={href}>{label}</a>}
+  {currentPage ? <span aria-current="page">{label}</span> : <a href={href}>{label}</a>}
 </li>
 
 <style is:global>
@@ -24,14 +24,5 @@ const { href = '#', label = 'Breadcrumb', currentPage = false } = Astro.props
 
   .breadcrumbs__item:last-child::after {
     content: '';
-  }
-
-  .breadcrumbs__item a[aria-current]:not([aria-current="false"]) {
-	color: var(--font-color);
-	text-decoration: none;
-  }
-
-  .breadcrumbs__item a[aria-current]:not([aria-current="false"]):hover {
-	color: var(--action-color-state);
   }
 </style>
