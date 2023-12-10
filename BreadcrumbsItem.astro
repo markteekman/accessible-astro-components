@@ -9,7 +9,7 @@ const { href = '#', label = 'Breadcrumb', currentPage = false } = Astro.props
 ---
 
 <li class="breadcrumbs__item">
-  {currentPage ? <span>{label}</span> : <a href={href}>{label}</a>}
+  {currentPage ? <span aria-current="page">{label}</span> : <a href={href}>{label}</a>}
 </li>
 
 <style is:global>
