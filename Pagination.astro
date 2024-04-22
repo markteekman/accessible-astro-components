@@ -10,7 +10,7 @@ interface Props {
   lastPage?: RouteString
   currentPage?: string | number
   totalPages?: NumericalString | number
-  renderProgress?: ({ currentPage, totalPages }: { currentPage: string; totalPages: string }) => string
+  renderProgress?: ({ currentPage, totalPages }: { currentPage: string | number; totalPages: string | number }) => string
 }
 
 const {
