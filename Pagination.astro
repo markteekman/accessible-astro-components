@@ -10,6 +10,7 @@ interface Props {
   lastPage?: RouteString
   currentPage?: string | number
   totalPages?: NumericalString | number
+  renderProgress?: ({ currentPage, totalPages }: { currentPage: string | number; totalPages: string | number }) => string
 }
 
 const {
@@ -19,7 +20,10 @@ const {
   lastPage = '#',
   currentPage = '1',
   totalPages = '12',
+  renderProgress = ({ currentPage, totalPages }) => `Page ${currentPage} of ${totalPages}`
 } = Astro.props
+
+const progress = renderProgress({ currentPage, totalPages });
 ---
 
 <nav class="pagination" aria-label="Pagination">
@@ -113,7 +117,7 @@ const {
       }
     </li>
     <li>
-      <span>Page {currentPage} of {totalPages}</span>
+      <span>{progress}</span>
     </li>
     <li>
       {

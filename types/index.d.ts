@@ -126,7 +126,8 @@ export const Notification: Notification
  * @param _props.nextPage - Falsy value = disabled link icon | `<a href={nextPage}>` route string such "/blog/2" - default: "#"
  * @param _props.lastPage - Falsy value = disabled link icon | `<a href={lastPage}>` route string such "/blog/20" - default: "#"
  * @param _props.currentPage - `<span>Page {currentPage} of {totalPages}</span>` - Default: '1'
- * @param _props.totalPages - `<span>Page {currentPage} of {totalPages}</span>` - Default: '12
+ * @param _props.totalPages - `<span>Page {currentPage} of {totalPages}</span>` - Default: '12'
+ * @param _props.renderProgress - `Function rendering the progress. Defaults to the string "Page {currentPage} of {totalPages}"`
  */
 type Pagination = typeof import('../index.js').Pagination
 export const Pagination: Pagination
