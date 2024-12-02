@@ -57,15 +57,23 @@ export const Card: Card
 /**
  * DarkMode toggle component
  * - Toggles class `darkmode` on `document.body`
-*
-* @param _props - Record<string, never>
-* ```
-* <style>
- body.darkmode {
-   // define your dark color scheme here
- }
-</style>
-```
+ *
+ * @param _props - Props object
+ * @param _props.initialMode - Optional: Sets initial theme mode ('light' | 'dark' | 'auto') - default: 'auto'
+ * ```
+ * <style>
+ * body.darkmode {
+ *   // define your dark color scheme here
+ * }
+ * </style>
+ * ```
+ *
+ * @example
+ * ```astro
+ * <DarkMode /> // Auto mode based on system preference
+ * <DarkMode initialMode="dark" /> // Force dark mode initially
+ * <DarkMode initialMode="light" /> // Force light mode initially
+ * ```
  */
 type DarkMode = typeof import('../index.js').DarkMode
 export const DarkMode: DarkMode

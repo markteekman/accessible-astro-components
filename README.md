@@ -218,13 +218,27 @@ DarkMode is a toggle button component to add and remove a class of `.darkmode` t
 - Gives feedback to screen reader users which state is toggled using `aria-label`s
 - Uses `aria-hidden` to hide the icons for dark and light mode and uses the `aria-labels`s instead
 
+#### Props
+
+- `initialMode` (optional): Sets the initial color scheme. Accepts `'light'`, `'dark'`, or `'auto'` (default: `'auto'`)
+  - `'light'`: Forces light mode on first visit
+  - `'dark'`: Forces dark mode on first visit
+  - `'auto'`: Uses system preferences on first visit
+
 #### Example
 
 ```jsx
 ---
 import { DarkMode } from 'accessible-astro-components'
 ---
+<!-- Uses system preferences by default -->
 <DarkMode />
+
+<!-- Forces dark mode on first visit -->
+<DarkMode initialMode="dark" />
+
+<!-- Forces light mode on first visit -->
+<DarkMode initialMode="light" />
 ```
 
 ```scss
@@ -234,6 +248,8 @@ import { DarkMode } from 'accessible-astro-components'
   }
 </style>
 ```
+
+Note: After the first visit, the user's chosen preference will be saved to localStorage and will take precedence over the `initialMode` setting.
 
 ### Media
 
