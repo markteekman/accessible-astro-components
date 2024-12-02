@@ -1,8 +1,18 @@
 ---
-type Props = Record<string, never>
+interface Props {
+  initialMode?: 'light' | 'dark' | 'auto'
+}
+
+const { initialMode = 'auto' } = Astro.props
 ---
 
-<button class="darkmode-toggle" aria-pressed="false" aria-label="Toggle Dark Mode" transition:persist>
+<button
+  class="darkmode-toggle"
+  aria-pressed="false"
+  aria-label="Toggle Dark Mode"
+  data-initial-mode={initialMode}
+  transition:persist
+>
   <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="32" height="32" viewBox="0 0 24 24"
     ><path
       fill="currentColor"
@@ -11,53 +21,67 @@ type Props = Record<string, never>
   >
 </button>
 
-<script is:inline>
-// variables
-let darkMode = localStorage.getItem('darkMode')
-const darkModeToggle = document.querySelector('.darkmode-toggle')
+<script is:inline define:vars={{ initialMode }}>
+  // variables
+  let darkMode = localStorage.getItem('darkMode')
+  const darkModeToggle = document.querySelector('.darkmode-toggle')
 
-// functions
-const enableDarkMode = (store = true) => {
-  document.body.classList.add('darkmode')
-  darkModeToggle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="32" height="32" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M13 3a1 1 0 1 0-2 0v1a1 1 0 1 0 2 0V3zM5.707 4.293a1 1 0 0 0-1.414 1.414l1 1a1 1 0 0 0 1.414-1.414l-1-1zm14 0a1 1 0 0 0-1.414 0l-1 1a1 1 0 0 0 1.414 1.414l1-1a1 1 0 0 0 0-1.414zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm-9 4a1 1 0 1 0 0 2h1a1 1 0 1 0 0-2H3zm17 0a1 1 0 1 0 0 2h1a1 1 0 1 0 0-2h-1zM6.707 18.707a1 1 0 1 0-1.414-1.414l-1 1a1 1 0 1 0 1.414 1.414l1-1zm12-1.414a1 1 0 0 0-1.414 1.414l1 1a1 1 0 0 0 1.414-1.414l-1-1zM13 20a1 1 0 1 0-2 0v1a1 1 0 1 0 2 0v-1z" fill="currentColor"/></svg>`
-  darkModeToggle.setAttribute('aria-pressed', 'true')
-  if (store) localStorage.setItem('darkMode', 'enabled')
-}
-
-const disableDarkMode = (store = true) => {
-  document.body.classList.remove('darkmode')
-  darkModeToggle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M9.353 3C5.849 4.408 3 7.463 3 11.47A9.53 9.53 0 0 0 12.53 21c4.007 0 7.062-2.849 8.47-6.353C8.17 17.065 8.14 8.14 9.353 3z"/></svg>`
-  darkModeToggle.setAttribute('aria-pressed', 'false')
-  if (store) localStorage.setItem('darkMode', 'disabled')
-}
-
-const checkPreference = () => {
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    enableDarkMode(false) // don't set localStorage from preferences to respect future changes in client prefs
-  } else {
-    disableDarkMode(false)
+  // functions
+  const enableDarkMode = (store = true) => {
+    document.body.classList.add('darkmode')
+    darkModeToggle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="32" height="32" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M13 3a1 1 0 1 0-2 0v1a1 1 0 1 0 2 0V3zM5.707 4.293a1 1 0 0 0-1.414 1.414l1 1a1 1 0 0 0 1.414-1.414l-1-1zm14 0a1 1 0 0 0-1.414 0l-1 1a1 1 0 0 0 1.414 1.414l1-1a1 1 0 0 0 0-1.414zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm-9 4a1 1 0 1 0 0 2h1a1 1 0 1 0 0-2H3zm17 0a1 1 0 1 0 0 2h1a1 1 0 1 0 0-2h-1zM6.707 18.707a1 1 0 1 0-1.414-1.414l-1 1a1 1 0 1 0 1.414 1.414l1-1zm12-1.414a1 1 0 0 0-1.414 1.414l1 1a1 1 0 0 0 1.414-1.414l-1-1zM13 20a1 1 0 1 0-2 0v1a1 1 0 1 0 2 0v-1z" fill="currentColor"/></svg>`
+    darkModeToggle.setAttribute('aria-pressed', 'true')
+    if (store) localStorage.setItem('darkMode', 'enabled')
   }
-}
 
-// execution
-if (darkMode === 'enabled') enableDarkMode()
-if (darkMode === 'disabled') disableDarkMode()
-if (!darkMode) checkPreference()
+  const disableDarkMode = (store = true) => {
+    document.body.classList.remove('darkmode')
+    darkModeToggle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M9.353 3C5.849 4.408 3 7.463 3 11.47A9.53 9.53 0 0 0 12.53 21c4.007 0 7.062-2.849 8.47-6.353C8.17 17.065 8.14 8.14 9.353 3z"/></svg>`
+    darkModeToggle.setAttribute('aria-pressed', 'false')
+    if (store) localStorage.setItem('darkMode', 'disabled')
+  }
 
-darkModeToggle.addEventListener('click', () => {
-  darkMode = document.body.classList.contains('darkmode')
+  const checkPreference = () => {
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      enableDarkMode(false)
+    } else {
+      disableDarkMode(false)
+    }
+  }
 
-  !darkMode ? enableDarkMode() : disableDarkMode()
-})
+  // Initial setup based on props
+  const initializeDarkMode = () => {
+    if (darkMode) {
+      // If user has a preference, respect that first
+      darkMode === 'enabled' ? enableDarkMode() : disableDarkMode()
+      return
+    }
 
-// Listen for view transitions
-document.addEventListener('astro:after-swap', () => {
-  // Setup
-  darkMode = localStorage.getItem('darkMode')
+    // Handle initial mode
+    switch (initialMode) {
+      case 'dark':
+        enableDarkMode()
+        break
+      case 'light':
+        disableDarkMode()
+        break
+      default: // 'auto'
+        checkPreference()
+    }
+  }
 
-  // Execution
-  if (darkMode === 'enabled') enableDarkMode()
-  if (darkMode === 'disabled') disableDarkMode()
-  if (!darkMode) checkPreference()
-})
+  // execution
+  initializeDarkMode()
+
+  darkModeToggle.addEventListener('click', () => {
+    darkMode = document.body.classList.contains('darkmode')
+
+    !darkMode ? enableDarkMode() : disableDarkMode()
+  })
+
+  // Listen for view transitions
+  document.addEventListener('astro:after-swap', () => {
+    darkMode = localStorage.getItem('darkMode')
+    initializeDarkMode()
+  })
 </script>
