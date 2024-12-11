@@ -1,93 +1,118 @@
 ---
 interface Props {
-  header: string
+  // Note: name attribute is valid HTML for <details> but not yet recognized by TypeScript
+  name?: string
+  title: string
   children: any
 }
 
-const { header } = Astro.props
+const { name, title } = Astro.props
 ---
 
 <li class="accordion__item">
-  <h3>
-    <button
-      id="accordion-header-1"
-      class="accordion__header"
-      aria-expanded="false"
-      aria-controls="accordion-panel-1"
-      onclick="toggleAccordionItem()"
-    >
-      {header}
-      <svg class="header__toggle-indicator" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-        <path
-          fill="currentColor"
-          d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"
-        ></path>
-      </svg>
-    </button>
-  </h3>
-  <div id="accordion-panel-1" role="region" class="accordion__panel" aria-labelledby="accordion-header-1">
-    <div class="panel__inner">
+  <details class="accordion__wrapper" name={name}>
+    <summary class="accordion__title">
+      <h3>
+        <span class="accordion__title-icon">
+          <svg width="20" height="2" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill="currentColor" d="M20 .5v1H0v-1z"></path>
+          </svg>
+          <svg width="2" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill="currentColor" d="M1.5 20h-1V0h1z"></path>
+          </svg>
+        </span>
+        {title}
+      </h3>
+    </summary>
+    <div class="accordion__contentt">
       <slot />
     </div>
-  </div>
+  </details>
 </li>
 
 <style is:global>
-  .accordion__item,
-  .accordion__header {
-    width: 100%;
+  .accordion__wrapper {
+    padding-block: 0.75rem;
+    border-top: 2px solid light-dark(#202020, #dddddd);
+    interpolate-size: allow-keywords;
+
+    &::details-content {
+      opacity: 0;
+      block-size: 0;
+      overflow-y: clip;
+
+      @media (prefers-reduced-motion: no-preference) {
+        transition: content-visibility 0.2s allow-discrete, opacity 0.2s ease-in-out, block-size 0.2s ease-in-out;
+      }
+    }
+
+    &[open] {
+      &::details-content {
+        opacity: 1;
+        block-size: auto;
+      }
+
+      svg:last-of-type {
+        inset-block-start: 0;
+        transform: rotate(90deg);
+      }
+    }
   }
 
-  .accordion__header {
+  .accordion__title {
     display: flex;
-    justify-content: space-between;
-    border: 2px solid #202020;
-    padding: 1rem;
+    cursor: pointer;
+
+    &:where(:hover, :focus-visible) {
+      h3 {
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+    }
+
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.25rem;
+      font-weight: normal;
+    }
   }
 
-  .accordion__item .accordion__header {
-    border-bottom: 0;
+  .accordion__title-icon {
+    position: relative;
+    display: inline-block;
+    block-size: 20px;
+    aspect-ratio: 1;
+
+    svg {
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-start: 50%;
+      transform: translate(-50%, -50%);
+
+      &:first-of-type {
+        inset-inline-start: 0;
+        transform: translateY(-50%);
+      }
+
+      &:last-of-type {
+        transform: translateY(-50%);
+
+        @media (prefers-reduced-motion: no-preference) {
+          transition: transform 0.2s ease-in-out, inset-block-start 0.2s ease-in-out;
+        }
+      }
+    }
   }
 
-  .accordion__item .accordion__header:focus {
-    outline-offset: -6px;
-    box-shadow: inset 0 0 0 2px white;
-  }
+  .accordion__contentt {
+    a {
+      display: inline-block;
+    }
 
-  .accordion__item:only-of-type .accordion__header,
-  .accordion__item:last-of-type .accordion__header {
-    border: 2px solid #202020;
-  }
-
-  .accordion__item:only-of-type .accordion__panel,
-  .accordion__item:last-of-type .accordion__panel {
-    border-bottom: 2px solid #202020;
-  }
-
-  .header__toggle-indicator {
-    width: 20px;
-  }
-
-  .accordion__panel {
-    visibility: hidden;
-    overflow: hidden;
-    height: 0;
-    border-left: 2px solid #202020;
-    border-right: 2px solid #202020;
-    transition: height 0.3s ease-in-out, visibility 0s 0.3s;
-  }
-
-  .panel__inner {
-    padding: 2rem 1rem;
-  }
-
-  .is-active .accordion__header {
-    border: 2px solid #202020;
-  }
-
-  .is-active .accordion__panel {
-    visibility: visible;
-    height: auto;
-    transition: height 0.3s ease-in-out, visibility 0s 0s;
+    & > *:not(:first-child) {
+      margin-block-start: 0.75rem;
+    }
   }
 </style>
