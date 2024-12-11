@@ -2,7 +2,8 @@
  * Accordion item child component
  *
  * @param _props - Record<string, any>
- * @param _props.header - `<h3>` header text content
+ * @param _props.title - Title text content for the summary element
+ * @param _props.name - Optional group name for exclusive accordion behavior
  * @param _props.children - Any HTML elements. Parent element: `<div>`
  */
 export type AccordionItem = typeof import('../index.js').AccordionItem

@@ -1,9 +1,8 @@
 {
-  "extends": "astro/tsconfigs/strictest",
+  "extends": "astro/tsconfigs/base",
   "compilerOptions": {
     "moduleResolution": "node",
     "allowJs": true,
     "rootDir": "."
-    // "skipLibCheck": true
   }
 }

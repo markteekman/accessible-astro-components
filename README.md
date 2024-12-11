@@ -26,16 +26,19 @@ import { Accordion, AccordionItem, Card, Modal, ... } from 'accessible-astro-com
 
 ### Accordion
 
+
 - [When (not) to use](https://www.nngroup.com/articles/accordions-complex-content/)
 
-Accordions are great from grouping big chunks of content into easier to scan headers which the user can expand when he or she wants to read what is associated with that header.
+Accordions are great for grouping big chunks of content into easier to scan headers which the user can expand when they want to read what is associated with that header. This component uses the native HTML `<details>` and `<summary>` elements for built-in accessibility and functionality.
 
 **Some (accessibility) features of the Accordion**:
 
-- Navigation the AccordionItems using the <kbd>ArrowUp</kbd> and <kbd>ArrowDown</kbd> keys
-- Closing an opened AccordionItem using the <kbd>Escape</kbd> key
-- Helps identify content to screen reader users with `aria-controls`, `aria-labelledby`, `aria-expanded`
-- Using an unordered list structure to tell screen readers users how many items there are and which they are currently on
+- Uses native HTML elements for built-in accessibility
+- Optional exclusive behavior using the `name` prop
+- Built-in keyboard support from the browser
+- No JavaScript required!
+- Using an unordered list structure to tell screen readers users how many items there are and 
+which they are currently on
 
 #### Example
 
@@ -45,21 +48,34 @@ import { Accordion, AccordionItem } from 'accessible-astro-components'
 ---
 <Accordion>
   <AccordionItem
-    header="First Item"
+    title="First Item"
   >
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto quasi nobis optio? Qui in quo accusantium debitis sapiente obcaecati magnam incidunt sit. Molestiae exercitationem quibusdam quod veritatis laboriosam est tenetur. </p>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
     <a href="#">Tab to me!</a>
   </AccordionItem>
+  
+  <!-- Items in the same group will close others when opened -->
   <AccordionItem
-    header="Second Item"
+    name="group1"
+    title="Second Item"
   >
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto quasi nobis optio? Qui in quo accusantium debitis sapiente obcaecati magnam incidunt sit. Molestiae exercitationem quibusdam quod veritatis laboriosam est tenetur. </p>
+    <p>Content for second item</p>
   </AccordionItem>
-
-  <!-- ... -->
-
+  <AccordionItem
+    name="group1"
+    title="Third Item"
+  >
+    <p>Content for third item</p>
+  </AccordionItem>
 </Accordion>
 ```
+
+#### Props
+
+**AccordionItem**
+- `title` (required): The text shown in the accordion header
+- `name` (optional): Group name for exclusive behavior - items with the same name will close others when opened
+- `children`: The content shown when the accordion is expanded
 
 #### Overwriting styles
 
@@ -67,17 +83,10 @@ You can apply your own styles by either setting the individual properties using 
 
 ```scss
 <style lang="scss" is:global>
-  body .accordion__item {
-    button {
-      background-color: purple;
+  body .accordion__wrapper {
+    background-color: purple;
 
-      &:hover
-      &:focus {
-        background-color: peru;
-      }
-    }
-
-    &.is-active button {
+    &[open] {
       background-color: peru;
     }
   }
