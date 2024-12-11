@@ -16,7 +16,7 @@ npm install accessible-astro-components --save-dev
 
 You can import the different components from the package using the following import statement:
 
-```jsx
+```astro
 ---
 import { Accordion, AccordionItem, Card, Modal, ... } from 'accessible-astro-components'
 ---
@@ -39,7 +39,7 @@ Accordions are great from grouping big chunks of content into easier to scan hea
 
 #### Example
 
-```jsx
+```astro
 ---
 import { Accordion, AccordionItem } from 'accessible-astro-components'
 ---
@@ -98,7 +98,7 @@ Breadcrumbs are a great way to help users navigate back to a previous page or se
 
 #### Example
 
-```jsx
+```astro
 ---
 import { Breadcrumbs, BreadcrumbsItem } from 'accessible-astro-components'
 ---
@@ -145,7 +145,7 @@ Cards are usually used in groups. By wrapping them in an unordered list we provi
 
 #### Example
 
-```jsx
+```astro
 ---
 import { Card } from 'accessible-astro-components'
 ---
@@ -217,6 +217,7 @@ DarkMode is a toggle button component to add and remove a class of `.darkmode` t
 - Utilizes `aria-pressed` to indicate to screen reader users whether the dark scheme is toggled or not
 - Gives feedback to screen reader users which state is toggled using `aria-label`s
 - Uses `aria-hidden` to hide the icons for dark and light mode and uses the `aria-labels`s instead
+- Sets the `color-scheme` to `light` or `dark` based on the user's preference so you can use the `light-dark()` function in your CSS
 
 #### Props
 
@@ -227,10 +228,11 @@ DarkMode is a toggle button component to add and remove a class of `.darkmode` t
 
 #### Example
 
-```jsx
+```astro
 ---
 import { DarkMode } from 'accessible-astro-components'
 ---
+
 <!-- Uses system preferences by default -->
 <DarkMode />
 
@@ -263,7 +265,7 @@ Media is a very simple component used for `<img>` tags. It has a default empty `
 
 #### Example
 
-```jsx
+```astro
 ---
 import { Media } from 'accessible-astro-components'
 ---
@@ -291,7 +293,7 @@ Modals are windows that appear on top of the parent screen, usually disabling th
 
 #### Example
 
-```jsx
+```astro
 ---
 import { Modal } from 'accessible-astro-components'
 ---
@@ -364,7 +366,7 @@ Notifications are often used to keep the user updated about changing state on a 
 
 #### Example
 
-```jsx
+```astro
 ---
 import { Notification } from 'accessible-astro-components'
 ---
@@ -444,7 +446,7 @@ A fairly simple yet effective Pagination component which has a first, previous, 
 
 #### Example
 
-```jsx
+```astro
 ---
 import { Pagination } from 'accessible-astro-components'
 ---
@@ -460,7 +462,7 @@ import { Pagination } from 'accessible-astro-components'
 
 #### Example using Astro's [Dynamic Pages](https://docs.astro.build/core-concepts/astro-pages#dynamic-pages)
 
-```jsx
+```astro
 ---
 import { Pagination } from 'accessible-astro-components'
 
@@ -521,7 +523,7 @@ SkipLinks provide a way for users using assistive technologies to skip repeated 
 
 #### Example
 
-```jsx
+```astro
 ---
 import { SkipLinks } from 'accessible-astro-components'
 ---
@@ -542,6 +544,78 @@ You can apply your own styles by either setting the individual properties using 
     &:focus {
       background-color: indigo;
     }
+  }
+</style>
+```
+
+### Tabs
+
+A fully accessible tabs component that follows WAI-ARIA guidelines. Tabs are a great way to organize content into different sections, allowing users to switch between them easily.
+
+**Some (accessibility) features of the Tabs**:
+
+- Keyboard accessible using <kbd>ArrowLeft</kbd> and <kbd>ArrowRight</kbd>
+- Tabbing through the tabs using <kbd>Tab</kbd> and <kbd>Shift + Tab</kbd>
+- Linking the trigger element and the tabs using `id`, `aria-controls` and `aria-labelledby`
+- Using proper roles to inform screen reader users about the tabs and panels
+- Responsive design with mobile-first approach
+- Smooth transitions (respecting reduced-motion preferences)
+
+#### Example
+
+```astro
+---
+import { Tabs, TabsList, TabsPanel, TabsTab } from 'accessible-astro-components'
+---
+<Tabs>
+  <TabsList>
+    <TabsTab id="tab1" controls="panel1" selected>Tab 1</TabsTab>
+    <TabsTab id="tab2" controls="panel2">Tab 2</TabsTab>
+    <TabsTab id="tab3" controls="panel3">Tab 3</TabsTab>
+  </TabsList>
+  <TabsPanel id="panel1" labelledby="tab1" selected>
+    <h2>Panel 1</h2>
+    <p>Content for first panel</p>
+  </TabsPanel>
+  <TabsPanel id="panel2" labelledby="tab2">
+    <h2>Panel 2</h2>
+    <p>Content for second panel</p>
+  </TabsPanel>
+  <TabsPanel id="panel3" labelledby="tab3">
+    <h2>Panel 3</h2>
+    <p>Content for third panel</p>
+  </TabsPanel>
+</Tabs>
+```
+
+#### Props
+
+**Tabs**
+- `class` - Optional string for additional CSS classes
+
+**TabsList**
+- `class` - Optional string for additional CSS classes
+
+**TabsTab**
+- `id` - Required string for unique tab identification
+- `controls` - Required string matching the panel ID this tab controls
+- `selected` - Optional boolean to set initial selected state
+- `class` - Optional string for additional CSS classes
+
+**TabsPanel**
+- `id` - Required string for unique panel identification
+- `labelledby` - Required string matching the tab ID that labels this panel
+- `selected` - Optional boolean to set initial selected state
+- `class` - Optional string for additional CSS classes
+
+#### Overwriting styles
+
+You can apply your own styles by either setting the individual properties using `:global(body .tabs)` for example, or set up a global style tag and define your styles in there:
+
+```scss
+<style lang="scss" is:global>
+  body .tabs-list {
+    background-color: purple;
   }
 </style>
 ```

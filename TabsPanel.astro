@@ -1,0 +1,37 @@
+---
+interface Props {
+  id: string
+  labelledby: string
+  selected?: boolean
+  class?: string
+}
+
+const { id, labelledby, selected = false, class: className } = Astro.props
+---
+
+<div class:list={['tab-panel', className]} role="tabpanel" id={id} aria-labelledby={labelledby} aria-hidden={!selected}>
+  <slot />
+</div>
+
+<style is:global>
+  .tab-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    color: inherit;
+    border: 2px solid light-dark(#202020, #fff);
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    min-block-size: 10em;
+    padding: 2rem;
+  }
+
+  .tab-panel[aria-hidden='true'] {
+    display: none;
+  }
+
+  .tab-panel > *:not(:first-child) {
+    margin-block-start: 0.5rem;
+  }
+</style>

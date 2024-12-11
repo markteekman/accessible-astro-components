@@ -1,0 +1,27 @@
+---
+interface Props {
+  class?: string
+}
+
+const { class: className } = Astro.props
+---
+
+<div class:list={['tabs-list', className]} role="tablist">
+  <slot />
+</div>
+
+<style is:global>
+  .tabs-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 0.5rem;
+    margin-block-end: 0.5rem;
+  }
+
+  @media (min-width: 500px) {
+    .tabs-list {
+      margin-block-end: 0px;
+    }
+  }
+</style>
