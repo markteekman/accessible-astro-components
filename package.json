@@ -1,7 +1,7 @@
 {
   "name": "accessible-astro-components",
   "description": "A set of Accessible, easy to use, Front-end UI Components for Astro.",
-  "version": "2.5.0",
+  "version": "3.0.0",
   "author": "Mark Teekman",
   "homepage": "https://accessible-astro.netlify.app/accessible-components/",
   "type": "module",
@@ -36,6 +36,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "astro": "^5.0.5",
     "prettier": "2.8.7",
     "prettier-plugin-astro": "^0.8.0"
   }
