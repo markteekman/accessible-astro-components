@@ -1,0 +1,96 @@
+---
+interface Props {
+  class?: string
+}
+
+const { class: className } = Astro.props
+---
+
+<div class:list={['tabs', className]}>
+  <slot />
+</div>
+
+<script>
+  /**
+   * Accessible Tabs Component
+   *
+   * @description A fully accessible tabs component that follows WAI-ARIA guidelines
+   *
+   * Accessibility features:
+   * 1. Uses aria-controls on tabs and corresponding ids on panels for screen reader relationships
+   * 2. Arrow key navigation between tabs while tabbing moves to the panel content
+   * 3. aria-selected indicates the active tab to screen readers
+   * 4. aria-hidden manages panel visibility for screen readers
+   *
+   * @example
+   * <Tabs>
+   *   <TabsList>
+   *     <TabsTab id="tab-1" controls="panel-1" selected>Tab 1</TabsTab>
+   *   </TabsList>
+   *   <TabsPanel id="panel-1" labelledby="tab-1" selected>Content 1</TabsPanel>
+   * </Tabs>
+   */
+
+  interface TabElement extends HTMLElement {
+    setAttribute(name: string, value: string): void
+    getAttribute(name: string): string | null
+    focus(): void
+  }
+
+  document.querySelectorAll<HTMLElement>('.tabs').forEach((component) => {
+    const tabList = component.querySelector<HTMLElement>('[role="tablist"]')
+    const tabs = [...component.querySelectorAll<TabElement>('[role="tab"]')]
+    const tabPanels = [...component.querySelectorAll<HTMLElement>('[role="tabpanel"]')]
+
+    let tabsIndex = 0
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        changeTabs(tab)
+      })
+    })
+
+    tabList?.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') {
+        return
+      }
+
+      tabs[tabsIndex].setAttribute('tabIndex', '-1')
+
+      if (event.key === 'ArrowRight') {
+        tabsIndex++
+        if (tabsIndex >= tabs.length) {
+          tabsIndex = 0
+        }
+      }
+
+      if (event.key === 'ArrowLeft') {
+        tabsIndex--
+        if (tabsIndex < 0) {
+          tabsIndex = tabs.length - 1
+        }
+      }
+
+      tabs[tabsIndex].setAttribute('tabIndex', '0')
+      tabs[tabsIndex].focus()
+      changeTabs(tabs[tabsIndex])
+    })
+
+    /**
+     * Switch active tab and show corresponding panel
+     * @param nextTab - The tab element to activate
+     */
+    function changeTabs(nextTab: TabElement): void {
+      tabs.forEach((tab) => {
+        tab.setAttribute('aria-selected', String(tab === nextTab))
+      })
+
+      tabPanels.forEach((panel) => {
+        panel.setAttribute('aria-hidden', 'true')
+      })
+
+      const targetPanel = component.querySelector<HTMLElement>(`#${nextTab.getAttribute('aria-controls')}`)
+      targetPanel?.setAttribute('aria-hidden', 'false')
+    }
+  })
+</script>

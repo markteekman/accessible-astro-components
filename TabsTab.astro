@@ -1,0 +1,54 @@
+---
+interface Props {
+  id: string
+  controls: string
+  selected?: boolean
+  class?: string
+}
+
+const { id, controls, selected = false, class: className } = Astro.props
+---
+
+<button
+  id={id}
+  role="tab"
+  class:list={['tab', className]}
+  aria-controls={controls}
+  aria-selected={selected}
+  tabindex={selected ? 0 : -1}
+>
+  <slot />
+</button>
+
+<style is:global>
+  .tab {
+    flex-grow: 1;
+    border: 2px solid light-dark(#202020, #f0f0f0);
+    border-radius: 6px;
+    font-size: 1.125rem;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+
+  .tab[aria-selected='true'],
+  .tab:where(:hover, :focus-visible) {
+    color: light-dark(#f0f0f0, #202020);
+    background-color: light-dark(#202020, #dddddd);
+    border-color: light-dark(#202020, #f0f0f0);
+  }
+
+  @media (min-width: 500px) {
+    .tab {
+      padding: 1rem;
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+      border-bottom: none;
+    }
+  }
+</style>

@@ -2,7 +2,8 @@
  * Accordion item child component
  *
  * @param _props - Record<string, any>
- * @param _props.header - `<h3>` header text content
+ * @param _props.title - Title text content for the summary element
+ * @param _props.name - Optional group name for exclusive accordion behavior
  * @param _props.children - Any HTML elements. Parent element: `<div>`
  */
 export type AccordionItem = typeof import('../index.js').AccordionItem
@@ -149,3 +150,49 @@ export const Pagination: Pagination
  */
 type SkipLinks = typeof import('../index.js').SkipLinks
 export const SkipLinks: SkipLinks
+
+/**
+ * Tabs parent component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.children -
+ *  - Expects TabsList and TabsPanel components. Parent element: `<div>`
+ *  - WARNING: Astro cannot currently enforce the type of children in a `<slot>`
+ */
+type Tabs = typeof import('../index.js').Tabs
+export const Tabs: Tabs
+
+/**
+ * TabsList component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.children -
+ *  - Expects TabsTab components. Parent element: `<div role="tablist">`
+ *  - WARNING: Astro cannot currently enforce the type of children in a `<slot>`
+ */
+type TabsList = typeof import('../index.js').TabsList
+export const TabsList: TabsList
+
+/**
+ * TabsTab component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.id - Unique identifier for the tab
+ * @param _props.controls - ID of the panel this tab controls
+ * @param _props.selected - Boolean indicating if this tab is selected
+ * @param _props.children - Tab label content
+ */
+type TabsTab = typeof import('../index.js').TabsTab
+export const TabsTab: TabsTab
+
+/**
+ * TabsPanel component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.id - Unique identifier for the panel
+ * @param _props.labelledby - ID of the tab that labels this panel
+ * @param _props.selected - Boolean indicating if this panel is selected
+ * @param _props.children - Panel content
+ */
+type TabsPanel = typeof import('../index.js').TabsPanel
+export const TabsPanel: TabsPanel

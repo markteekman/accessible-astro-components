@@ -16,7 +16,7 @@ npm install accessible-astro-components --save-dev
 
 You can import the different components from the package using the following import statement:
 
-```jsx
+```astro
 ---
 import { Accordion, AccordionItem, Card, Modal, ... } from 'accessible-astro-components'
 ---
@@ -26,40 +26,57 @@ import { Accordion, AccordionItem, Card, Modal, ... } from 'accessible-astro-com
 
 ### Accordion
 
+
 - [When (not) to use](https://www.nngroup.com/articles/accordions-complex-content/)
 
-Accordions are great from grouping big chunks of content into easier to scan headers which the user can expand when he or she wants to read what is associated with that header.
+Accordions are great for grouping big chunks of content into easier to scan headers which the user can expand when they want to read what is associated with that header. This component uses the native HTML `<details>` and `<summary>` elements for built-in accessibility and functionality.
 
 **Some (accessibility) features of the Accordion**:
 
-- Navigation the AccordionItems using the <kbd>ArrowUp</kbd> and <kbd>ArrowDown</kbd> keys
-- Closing an opened AccordionItem using the <kbd>Escape</kbd> key
-- Helps identify content to screen reader users with `aria-controls`, `aria-labelledby`, `aria-expanded`
-- Using an unordered list structure to tell screen readers users how many items there are and which they are currently on
+- Uses native HTML elements for built-in accessibility
+- Optional exclusive behavior using the `name` prop
+- Built-in keyboard support from the browser
+- No JavaScript required!
+- Progressively enhanced transition between open and closed states using `allow-discrete` and `allow-keywords` on the `::details-content` pseudo element
+- Using an unordered list structure to tell screen readers users how many items there are and 
+which they are currently on
 
 #### Example
 
-```jsx
+```astro
 ---
 import { Accordion, AccordionItem } from 'accessible-astro-components'
 ---
 <Accordion>
   <AccordionItem
-    header="First Item"
+    title="First Item"
   >
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto quasi nobis optio? Qui in quo accusantium debitis sapiente obcaecati magnam incidunt sit. Molestiae exercitationem quibusdam quod veritatis laboriosam est tenetur. </p>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
     <a href="#">Tab to me!</a>
   </AccordionItem>
+  
+  <!-- Items in the same group will close others when opened -->
   <AccordionItem
-    header="Second Item"
+    name="group1"
+    title="Second Item"
   >
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto quasi nobis optio? Qui in quo accusantium debitis sapiente obcaecati magnam incidunt sit. Molestiae exercitationem quibusdam quod veritatis laboriosam est tenetur. </p>
+    <p>Content for second item</p>
   </AccordionItem>
-
-  <!-- ... -->
-
+  <AccordionItem
+    name="group1"
+    title="Third Item"
+  >
+    <p>Content for third item</p>
+  </AccordionItem>
 </Accordion>
 ```
+
+#### Props
+
+**AccordionItem**
+- `title` (required): The text shown in the accordion header
+- `name` (optional): Group name for exclusive behavior - items with the same name will close others when opened
+- `children`: The content shown when the accordion is expanded
 
 #### Overwriting styles
 
@@ -67,17 +84,10 @@ You can apply your own styles by either setting the individual properties using 
 
 ```scss
 <style lang="scss" is:global>
-  body .accordion__item {
-    button {
-      background-color: purple;
+  body .accordion__wrapper {
+    background-color: purple;
 
-      &:hover
-      &:focus {
-        background-color: peru;
-      }
-    }
-
-    &.is-active button {
+    &[open] {
       background-color: peru;
     }
   }
@@ -98,7 +108,7 @@ Breadcrumbs are a great way to help users navigate back to a previous page or se
 
 #### Example
 
-```jsx
+```astro
 ---
 import { Breadcrumbs, BreadcrumbsItem } from 'accessible-astro-components'
 ---
@@ -145,7 +155,7 @@ Cards are usually used in groups. By wrapping them in an unordered list we provi
 
 #### Example
 
-```jsx
+```astro
 ---
 import { Card } from 'accessible-astro-components'
 ---
@@ -217,6 +227,7 @@ DarkMode is a toggle button component to add and remove a class of `.darkmode` t
 - Utilizes `aria-pressed` to indicate to screen reader users whether the dark scheme is toggled or not
 - Gives feedback to screen reader users which state is toggled using `aria-label`s
 - Uses `aria-hidden` to hide the icons for dark and light mode and uses the `aria-labels`s instead
+- Sets the `color-scheme` to `light` or `dark` based on the user's preference so you can use the `light-dark()` function in your CSS
 
 #### Props
 
@@ -227,10 +238,11 @@ DarkMode is a toggle button component to add and remove a class of `.darkmode` t
 
 #### Example
 
-```jsx
+```astro
 ---
 import { DarkMode } from 'accessible-astro-components'
 ---
+
 <!-- Uses system preferences by default -->
 <DarkMode />
 
@@ -263,7 +275,7 @@ Media is a very simple component used for `<img>` tags. It has a default empty `
 
 #### Example
 
-```jsx
+```astro
 ---
 import { Media } from 'accessible-astro-components'
 ---
@@ -278,20 +290,21 @@ import { Media } from 'accessible-astro-components'
 
 - [When (not) to use](https://www.nngroup.com/articles/modal-nonmodal-dialog/)
 
-Modals are windows that appear on top of the parent screen, usually disabling the use of the parent screen and demanding immediate action from the user. They are pretty intrusive, so use them wisely. Though, they can be handy to confirm (destructive) actions from the user before proceeding. If you only want to communicate a notification, don't use a Modal but use the Notification component (**coming soon**) instead. Always combine the Modal with some kind of user action, for example, confirming the deletion of an item in an application. Modals are usually triggered by a `<button>`. By providing the button with an `id` you can link the button to the Modal, providing necessary functionality for opening the targeted Modal. You can also customize the text of the close Modal action using the `closeText` prop on the Modal.
+Modals are windows that appear on top of the parent screen, usually disabling the use of the parent screen and demanding immediate action from the user. This component uses the native HTML `<dialog>` element for built-in accessibility and functionality, enhanced with smooth transitions.
 
 **Some (accessibility) features of the Modal**:
 
+- Uses native HTML `<dialog>` element for built-in accessibility
 - Closing Modal with the <kbd>Escape</kbd> key
 - Trapping focus inside Modal using <kbd>Tab</kbd> and <kbd>Shift + Tab</kbd>
 - Linking the trigger element and the Modal using `id` and `aria-labeledby`
-- Setting focus back on the element that triggered the Modal after closing the Modal
-- Teleporting the Modal from where you call it to the root of the `<body>`
-- Exposing `closeModal()` function to use as a callback in your own JavaScript
+- Setting focus back on the element that triggered the Modal after closing
+- Smooth transitions using `@starting-style` and `allow-discrete`
+- Respects user's reduced-motion preferences
 
 #### Example
 
-```jsx
+```astro
 ---
 import { Modal } from 'accessible-astro-components'
 ---
@@ -311,7 +324,7 @@ import { Modal } from 'accessible-astro-components'
 >
   <p>Ah yes, and I be the <strong>second</strong> Modal.</p>
   <!--
-    calls the closeModal function, you can also use this
+    calls the closeModal() function, you can also use this
     as a callback in your own function
   -->
   <button onclick="closeModal()">Confirm action</button>
@@ -364,7 +377,7 @@ Notifications are often used to keep the user updated about changing state on a 
 
 #### Example
 
-```jsx
+```astro
 ---
 import { Notification } from 'accessible-astro-components'
 ---
@@ -444,7 +457,7 @@ A fairly simple yet effective Pagination component which has a first, previous, 
 
 #### Example
 
-```jsx
+```astro
 ---
 import { Pagination } from 'accessible-astro-components'
 ---
@@ -460,7 +473,7 @@ import { Pagination } from 'accessible-astro-components'
 
 #### Example using Astro's [Dynamic Pages](https://docs.astro.build/core-concepts/astro-pages#dynamic-pages)
 
-```jsx
+```astro
 ---
 import { Pagination } from 'accessible-astro-components'
 
@@ -521,7 +534,7 @@ SkipLinks provide a way for users using assistive technologies to skip repeated 
 
 #### Example
 
-```jsx
+```astro
 ---
 import { SkipLinks } from 'accessible-astro-components'
 ---
@@ -542,6 +555,78 @@ You can apply your own styles by either setting the individual properties using 
     &:focus {
       background-color: indigo;
     }
+  }
+</style>
+```
+
+### Tabs
+
+A fully accessible tabs component that follows WAI-ARIA guidelines. Tabs are a great way to organize content into different sections, allowing users to switch between them easily.
+
+**Some (accessibility) features of the Tabs**:
+
+- Keyboard accessible using <kbd>ArrowLeft</kbd> and <kbd>ArrowRight</kbd>
+- Tabbing through the tabs using <kbd>Tab</kbd> and <kbd>Shift + Tab</kbd>
+- Linking the trigger element and the tabs using `id`, `aria-controls` and `aria-labelledby`
+- Using proper roles to inform screen reader users about the tabs and panels
+- Responsive design with mobile-first approach
+- Smooth transitions (respecting reduced-motion preferences)
+
+#### Example
+
+```astro
+---
+import { Tabs, TabsList, TabsPanel, TabsTab } from 'accessible-astro-components'
+---
+<Tabs>
+  <TabsList>
+    <TabsTab id="tab1" controls="panel1" selected>Tab 1</TabsTab>
+    <TabsTab id="tab2" controls="panel2">Tab 2</TabsTab>
+    <TabsTab id="tab3" controls="panel3">Tab 3</TabsTab>
+  </TabsList>
+  <TabsPanel id="panel1" labelledby="tab1" selected>
+    <h2>Panel 1</h2>
+    <p>Content for first panel</p>
+  </TabsPanel>
+  <TabsPanel id="panel2" labelledby="tab2">
+    <h2>Panel 2</h2>
+    <p>Content for second panel</p>
+  </TabsPanel>
+  <TabsPanel id="panel3" labelledby="tab3">
+    <h2>Panel 3</h2>
+    <p>Content for third panel</p>
+  </TabsPanel>
+</Tabs>
+```
+
+#### Props
+
+**Tabs**
+- `class` - Optional string for additional CSS classes
+
+**TabsList**
+- `class` - Optional string for additional CSS classes
+
+**TabsTab**
+- `id` - Required string for unique tab identification
+- `controls` - Required string matching the panel ID this tab controls
+- `selected` - Optional boolean to set initial selected state
+- `class` - Optional string for additional CSS classes
+
+**TabsPanel**
+- `id` - Required string for unique panel identification
+- `labelledby` - Required string matching the tab ID that labels this panel
+- `selected` - Optional boolean to set initial selected state
+- `class` - Optional string for additional CSS classes
+
+#### Overwriting styles
+
+You can apply your own styles by either setting the individual properties using `:global(body .tabs)` for example, or set up a global style tag and define your styles in there:
+
+```scss
+<style lang="scss" is:global>
+  body .tabs-list {
+    background-color: purple;
   }
 </style>
 ```
