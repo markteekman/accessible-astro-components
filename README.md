@@ -37,6 +37,7 @@ Accordions are great for grouping big chunks of content into easier to scan head
 - Optional exclusive behavior using the `name` prop
 - Built-in keyboard support from the browser
 - No JavaScript required!
+- Progressively enhanced transition between open and closed states using `allow-discrete` and `allow-keywords` on the `::details-content` pseudo element
 - Using an unordered list structure to tell screen readers users how many items there are and 
 which they are currently on
 
@@ -289,16 +290,17 @@ import { Media } from 'accessible-astro-components'
 
 - [When (not) to use](https://www.nngroup.com/articles/modal-nonmodal-dialog/)
 
-Modals are windows that appear on top of the parent screen, usually disabling the use of the parent screen and demanding immediate action from the user. They are pretty intrusive, so use them wisely. Though, they can be handy to confirm (destructive) actions from the user before proceeding. If you only want to communicate a notification, don't use a Modal but use the Notification component (**coming soon**) instead. Always combine the Modal with some kind of user action, for example, confirming the deletion of an item in an application. Modals are usually triggered by a `<button>`. By providing the button with an `id` you can link the button to the Modal, providing necessary functionality for opening the targeted Modal. You can also customize the text of the close Modal action using the `closeText` prop on the Modal.
+Modals are windows that appear on top of the parent screen, usually disabling the use of the parent screen and demanding immediate action from the user. This component uses the native HTML `<dialog>` element for built-in accessibility and functionality, enhanced with smooth transitions.
 
 **Some (accessibility) features of the Modal**:
 
+- Uses native HTML `<dialog>` element for built-in accessibility
 - Closing Modal with the <kbd>Escape</kbd> key
 - Trapping focus inside Modal using <kbd>Tab</kbd> and <kbd>Shift + Tab</kbd>
 - Linking the trigger element and the Modal using `id` and `aria-labeledby`
-- Setting focus back on the element that triggered the Modal after closing the Modal
-- Teleporting the Modal from where you call it to the root of the `<body>`
-- Exposing `closeModal()` function to use as a callback in your own JavaScript
+- Setting focus back on the element that triggered the Modal after closing
+- Smooth transitions using `@starting-style` and `allow-discrete`
+- Respects user's reduced-motion preferences
 
 #### Example
 
@@ -322,7 +324,7 @@ import { Modal } from 'accessible-astro-components'
 >
   <p>Ah yes, and I be the <strong>second</strong> Modal.</p>
   <!--
-    calls the closeModal function, you can also use this
+    calls the closeModal() function, you can also use this
     as a callback in your own function
   -->
   <button onclick="closeModal()">Confirm action</button>

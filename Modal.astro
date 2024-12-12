@@ -12,13 +12,23 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
 <dialog class="modal" aria-labelledby={triggerId}>
   <div class="modal__inner">
     <div class="modal__content">
-      <h3 tabindex="-1">
+      <h3 tabindex="-1" autofocus>
         {title}
       </h3>
       <slot>Modal description.</slot>
     </div>
     <div class="modal__close">
-      <button>{closeText}</button>
+      <button>
+        <span class="modal__close-icon">
+          <svg width="20" height="2" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill="currentColor" d="M20 .5v1H0v-1z"></path>
+          </svg>
+          <svg width="20" height="2" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill="currentColor" d="M20 .5v1H0v-1z"></path>
+          </svg>
+        </span>
+        <span class="sr-only">{closeText}</span>
+      </button>
     </div>
   </div>
 </dialog>
@@ -66,26 +76,14 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
   }
 
   const openModal = (modal: HTMLDialogElement) => {
-    const modalTitle = modal.querySelector('h3')
     const modalInner = modal.querySelector<HTMLDivElement>('.modal__inner')
 
     modal.showModal()
-    modalTitle!.focus()
 
     trapFocusController = new AbortController()
     keydownController = new AbortController()
 
     document.addEventListener('keydown', (e) => trapFocus(e, modal), { signal: trapFocusController.signal })
-
-    modal.addEventListener(
-      'keydown',
-      (event) => {
-        if (event.key === 'Escape') {
-          closeModal()
-        }
-      },
-      { signal: keydownController.signal }
-    )
 
     modal.addEventListener(
       'click',
@@ -130,7 +128,7 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
     modalCloseButton!.addEventListener('click', closeModal)
   })
 
-  window.close = closeModal
+  window.closeModal = closeModal
 
   // Listen for view transitions
   document.addEventListener('astro:after-swap', () => {
@@ -155,68 +153,120 @@ const { triggerId, title, closeText = 'Close' } = Astro.props
 </script>
 
 <style is:global>
-  dialog::backdrop {
-    background-color: rgba(0, 0, 0, 0.5);
-    filter: blur(6px);
+  .modal {
+    --translate-offset-y: 7.5vh;
+
+    position: fixed;
+    inset-block: 0;
+    inset-inline: 0;
+    margin: auto;
+    inline-size: min(80%, 450px);
+    border: 2px solid light-dark(#202020, #f0f0f0);
+    border-radius: 0.5rem;
+    opacity: 0;
+    overscroll-behavior-y: contain;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition-property: display, opacity, translate, overlay;
+      transition-duration: 0.3s;
+      transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+      transition-behavior: allow-discrete;
+      translate: 0 var(--translate-offset-y);
+    }
   }
 
-  :where(.modal) {
-    color: black;
-    background-color: white;
-    border: 0.5rem solid black;
-    border-radius: 1rem;
-    padding: 0;
+  .modal[open] {
+    display: block;
+    opacity: 1;
+    translate: 0 0;
   }
 
-  .modal__inner {
-    width: clamp(30ch, 70%, 75ch);
-    border-radius: 1rem;
-    width: 100%;
+  @starting-style {
+    .modal[open] {
+      opacity: 0;
+      translate: 0 calc(var(--translate-offset-y) * -1);
+    }
+
+    .modal[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  .modal[open]::backdrop {
+    opacity: 1;
+  }
+
+  .modal::backdrop {
+    opacity: 0;
+    background-color: rgba(0 0 0 / 0.5);
+    backdrop-filter: blur(5px);
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition-property: display, opacity, overlay;
+      transition-duration: 0.3s;
+      transition-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+      transition-behavior: allow-discrete;
+    }
   }
 
   .modal__content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
     padding: 2rem;
+    background-color: light-dark(#f0f0f0, #202020);
+  }
+  .modal__content > *:not(:first-child) {
+    margin-block-start: 0.75rem;
   }
 
   .modal__close {
-    width: 100%;
+    position: absolute;
+    inset-inline-end: 1.5rem;
+    inset-block-start: 1.5rem;
+    align-self: flex-end;
   }
 
   .modal__close button {
     border: none;
-    background-color: lightgrey;
-    border-bottom-left-radius: 0.4rem;
-    border-bottom-right-radius: 0.4rem;
-    color: black;
-    text-align: right;
-    transition: background-color 0.15s ease-in-out;
-    width: 100%;
-    margin: 0;
     padding: 0.5rem;
   }
 
-  .modal__close button:hover,
-  .modal__close button:focus {
-    background-color: grey;
-    text-decoration: underline;
+  .modal__close-icon {
+    position: relative;
+    display: inline-block;
+    block-size: 20px;
+    aspect-ratio: 1;
+
+    svg {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+
+      &:first-of-type {
+        transform: rotate(45deg);
+      }
+
+      &:last-of-type {
+        transform: rotate(-45deg);
+
+        @media (prefers-reduced-motion: no-preference) {
+          transition: transform 0.2s ease-in-out;
+        }
+      }
+    }
   }
 
-  /* Animation */
-  dialog[open],
-  dialog[open]::backdrop {
-    animation: fadein 0.3s ease-in-out;
+  .modal__close button:where(:hover, :focus-visible) {
+    .modal__close-icon {
+      svg:first-of-type {
+        transform: rotate(0deg);
+      }
+
+      svg:last-of-type {
+        transform: rotate(180deg);
+      }
+    }
   }
 
-  @keyframes fadein {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+  body:has(dialog[open]) {
+    overflow-y: clip;
   }
 </style>
