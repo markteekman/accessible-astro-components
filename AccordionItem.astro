@@ -32,7 +32,6 @@ const { name, title } = Astro.props
 
 <style is:global>
   .accordion__wrapper {
-    padding-block: 0.75rem;
     border-top: 2px solid light-dark(#202020, #dddddd);
     interpolate-size: allow-keywords;
 
@@ -61,7 +60,15 @@ const { name, title } = Astro.props
 
   .accordion__title {
     display: flex;
+    padding-block: 0.75rem;
     cursor: pointer;
+    list-style: none;
+
+    &::marker,
+    &::-webkit-details-marker {
+      display: none;
+      content: '';
+    }
 
     &:where(:hover, :focus-visible) {
       h3 {
@@ -97,7 +104,8 @@ const { name, title } = Astro.props
       }
 
       &:last-of-type {
-        transform: translateY(-50%);
+        --rotation: 0deg;
+        transform: translateY(-50%) rotate(var(--rotation));
 
         @media (prefers-reduced-motion: no-preference) {
           transition: transform 0.2s ease-in-out, inset-block-start 0.2s ease-in-out;
@@ -107,12 +115,20 @@ const { name, title } = Astro.props
   }
 
   .accordion__content {
+    padding: 0 0 1.5rem 2.2rem;
+
     a {
       display: inline-block;
     }
 
     & > *:not(:first-child) {
       margin-block-start: 0.75rem;
+    }
+  }
+
+  .accordion__wrapper[open] {
+    .accordion__title-icon svg:last-of-type {
+      --rotation: 90deg;
     }
   }
 </style>

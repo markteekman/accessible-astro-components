@@ -37,7 +37,9 @@ const { class: className } = Astro.props
     focus(): void
   }
 
-  document.querySelectorAll<HTMLElement>('.tabs').forEach((component) => {
+  document.querySelectorAll<HTMLElement>('.tabs').forEach(initializeTabComponent)
+
+  function initializeTabComponent(component: HTMLElement) {
     const tabList = component.querySelector<HTMLElement>('[role="tablist"]')
     const tabs = [...component.querySelectorAll<TabElement>('[role="tab"]')]
     const tabPanels = [...component.querySelectorAll<HTMLElement>('[role="tabpanel"]')]
@@ -92,5 +94,9 @@ const { class: className } = Astro.props
       const targetPanel = component.querySelector<HTMLElement>(`#${nextTab.getAttribute('aria-controls')}`)
       targetPanel?.setAttribute('aria-hidden', 'false')
     }
+  }
+
+  document.addEventListener('astro:after-swap', () => {
+    document.querySelectorAll<HTMLElement>('.tabs').forEach(initializeTabComponent)
   })
 </script>
