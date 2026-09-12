@@ -1,0 +1,453 @@
+---
+/**
+ * Popover Component
+ *
+ * @description Accessible contextual help revealed on click, using the Popover API and
+ * CSS Anchor Positioning. Unlike Tooltip, whose content is a short description that must
+ * stay non-interactive, a Popover is a region that can hold links, lists and formatted
+ * content, and that the reader dismisses.
+ */
+
+interface Props {
+  /**
+   * Unique ID for the popover content (used for popovertarget and ARIA wiring)
+   */
+  id: string
+  /**
+   * Preferred popover position
+   * @default "bottom"
+   */
+  position?: 'top' | 'bottom' | 'left' | 'right'
+  /**
+   * Offset distance from the anchor element
+   * @default "var(--space-2xs)"
+   */
+  offset?: string
+  /**
+   * Screen reader label for icon-only triggers
+   */
+  triggerLabel?: string
+  /**
+   * Whether to show the default info icon
+   * @default true
+   */
+  showIcon?: boolean
+  /**
+   * How the popover content is associated with the trigger.
+   * "details" uses aria-details and is correct when the popover holds links, lists or
+   * other interactive content. "description" uses aria-describedby and should only be
+   * used for a short, plain text popover.
+   * @default "details"
+   */
+  association?: 'details' | 'description'
+  /**
+   * Whether to show the close button inside the popover
+   * @default true
+   */
+  showClose?: boolean
+  /**
+   * Screen reader label for the close button
+   * @default "Close"
+   */
+  closeText?: string
+  /**
+   * Additional classes for the trigger
+   */
+  class?: string
+  /**
+   * Additional inline styles for the trigger, merged with the anchor custom properties
+   */
+  style?: string
+  /**
+   * HTML attributes to spread on the trigger
+   */
+  [key: string]: unknown
+}
+
+const {
+  id,
+  position = 'bottom',
+  offset = 'var(--space-2xs)',
+  triggerLabel,
+  showIcon = true,
+  association = 'details',
+  showClose = true,
+  closeText = 'Close',
+  class: className,
+  style: styleProp,
+  ...rest
+} = Astro.props
+
+if (!id) {
+  throw new Error('Popover component requires a unique "id" prop.')
+}
+
+const hasTriggerSlot = Astro.slots.has('default')
+
+if (!hasTriggerSlot && !triggerLabel) {
+  throw new Error(
+    'Popover component requires trigger content or a "triggerLabel" prop for an accessible name.'
+  )
+}
+
+const triggerId = `${id}-trigger`
+// anchor-name only accepts a dashed-ident, so strip anything an author's id may contain
+const anchorName = `--popover-${id.replace(/[^a-zA-Z0-9_-]/g, '-')}`
+const anchorStyle = `--popover-anchor: ${anchorName}; --popover-offset: ${offset};`
+// a caller's style has to be merged in; a duplicate style attribute would be dropped and
+// would take the anchor custom properties with it
+const triggerStyle = [anchorStyle, styleProp].filter(Boolean).join(' ')
+---
+
+<button
+  id={triggerId}
+  class:list={['popover-trigger', className]}
+  style={triggerStyle}
+  type="button"
+  popovertarget={id}
+  aria-controls={id}
+  aria-expanded="false"
+  aria-details={association === 'details' ? id : undefined}
+  aria-describedby={association === 'description' ? id : undefined}
+  {...rest}
+>
+  <slot />
+  {
+    showIcon && (
+      <svg
+        class="popover-icon"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 16v-4m0-4h.01" />
+        </g>
+      </svg>
+    )
+  }
+  {triggerLabel && <span class="sr-only">{triggerLabel}</span>}
+</button>
+<div
+  id={id}
+  class:list={['popover', `position-${position}`]}
+  style={anchorStyle}
+  popover
+  data-popover-trigger={triggerId}
+>
+  {
+    /* the layout lives on an inner element so no author `display` can override the
+      user agent rule that hides a closed popover */
+  }
+  <div class="popover-inner">
+    <div class="popover-content">
+      <slot name="popover">Popover content.</slot>
+    </div>
+    {
+      showClose && (
+        <button class="popover-close" type="button" popovertarget={id} popovertargetaction="hide">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-width="2"
+              d="M6 6l12 12M18 6 6 18"
+            />
+          </svg>
+          <span class="sr-only">{closeText}</span>
+        </button>
+      )
+    }
+  </div>
+</div>
+
+<script>
+  const POPOVER_SELECTOR = '[data-popover-trigger]'
+
+  const initializePopover = (popover: HTMLElement) => {
+    if (popover.dataset.popoverBound === 'true') return
+
+    const triggerId = popover.dataset.popoverTrigger
+    if (!triggerId) return
+
+    const trigger = document.getElementById(triggerId)
+    if (!(trigger instanceof HTMLButtonElement)) return
+
+    // tracked on beforetoggle because by the time toggle fires the focused element
+    // inside the popover has already been hidden and focus may have fallen to the body
+    let focusWasInsidePopover = false
+
+    const syncExpandedState = () => {
+      trigger.setAttribute('aria-expanded', popover.matches(':popover-open') ? 'true' : 'false')
+    }
+
+    popover.addEventListener('beforetoggle', (event) => {
+      const { newState } = event as ToggleEvent
+
+      // beforetoggle runs synchronously while toggle is queued, so setting the state here
+      // keeps aria-expanded correct within the same tick as the click or key press. The
+      // toggle handler below still re-syncs, which covers a cancelled beforetoggle.
+      trigger.setAttribute('aria-expanded', newState === 'open' ? 'true' : 'false')
+
+      if (newState === 'closed') {
+        focusWasInsidePopover = popover.contains(document.activeElement)
+      }
+    })
+
+    popover.addEventListener('toggle', (event) => {
+      syncExpandedState()
+
+      if ((event as ToggleEvent).newState !== 'closed') return
+
+      // browsers return focus to the invoker themselves; this only catches the case
+      // where focus was orphaned to the body because that did not happen
+      const orphaned = document.activeElement === null || document.activeElement === document.body
+      if (focusWasInsidePopover && orphaned) trigger.focus()
+
+      focusWasInsidePopover = false
+    })
+
+    syncExpandedState()
+    popover.dataset.popoverBound = 'true'
+  }
+
+  const initializePopovers = () => {
+    document.querySelectorAll<HTMLElement>(POPOVER_SELECTOR).forEach((popover) => {
+      initializePopover(popover)
+    })
+  }
+
+  // execution
+  initializePopovers()
+
+  // Listen for view transitions
+  document.addEventListener('astro:after-swap', () => {
+    initializePopovers()
+  })
+</script>
+
+<style>
+  :where(.popover-trigger) {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-3xs);
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    /* WCAG 2.5.8 target size, in a unit that still grows with the user's font size */
+    min-inline-size: max(24px, 1.5rem);
+    min-block-size: max(24px, 1.5rem);
+    color: inherit;
+    font: inherit;
+  }
+
+  :where(.popover-trigger:hover),
+  :where(.popover-trigger:focus-visible) {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  :where(.popover-trigger:focus-visible) {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  /* sized in em so the icon keeps its proportion when the user scales text (WCAG 1.4.4) */
+  :where(.popover-trigger) .popover-icon {
+    flex: none;
+    inline-size: 1em;
+    block-size: 1em;
+  }
+
+  :where(.popover-close) svg {
+    inline-size: 0.875em;
+    block-size: 0.875em;
+  }
+
+  :where(.popover) {
+    --transition-duration: 0.2s;
+    --transition-easing: cubic-bezier(0.165, 0.84, 0.44, 1);
+    --translate-offset: 0.5rem;
+    --popover-max-inline-size: min(20rem, calc(100vw - var(--space-m) * 2));
+    --popover-max-block-size: min(20rem, calc(100vh - var(--space-m) * 2));
+    --popover-viewport-inset: var(--space-2xs);
+    opacity: 0;
+    z-index: var(--z-index-6);
+    transition-behavior: allow-discrete;
+    transition-duration: var(--transition-duration);
+    transition-property: opacity, translate, overlay, display;
+    transition-timing-function: var(--transition-easing);
+    box-shadow: var(--elevation-2);
+    border: 1px solid var(--color-default-border);
+    border-radius: var(--radius-m);
+    background-color: var(--color-default-bg);
+    padding: var(--space-2xs) var(--space-xs);
+
+    /* a popover should stay short; this only stops pathological content running off screen */
+    max-inline-size: var(--popover-max-inline-size);
+    max-block-size: var(--popover-max-block-size);
+    overflow: auto;
+    overscroll-behavior: contain;
+    color: var(--color-default-text);
+    line-height: 1.5;
+  }
+
+  /* the layout lives on an inner element so no author `display` here can override the
+     user agent rule that hides a closed popover */
+  :where(.popover-inner) {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2xs);
+  }
+
+  :where(.popover-content) {
+    flex: 1;
+    min-inline-size: 0;
+  }
+
+  /* slotted content carries the consumer's scope, so it has to be matched globally */
+  :where(.popover-content) > :global(:first-child) {
+    margin-block-start: 0;
+  }
+
+  :where(.popover-content) > :global(:last-child) {
+    margin-block-end: 0;
+  }
+
+  :where(.popover-close) {
+    display: inline-flex;
+    flex: none;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: none;
+    border-radius: var(--radius-s);
+    background: none;
+    padding: 0;
+    /* WCAG 2.5.8 target size */
+    min-inline-size: max(24px, 1.5rem);
+    min-block-size: max(24px, 1.5rem);
+    color: inherit;
+  }
+
+  :where(.popover-close:focus-visible) {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  /*
+   * Anchor positioning. Everything that depends on it is gated so browsers without
+   * support keep the user agent's centred top layer placement instead of a broken one.
+   */
+  @supports (anchor-name: --popover) {
+    :where(.popover-trigger) {
+      anchor-name: var(--popover-anchor);
+    }
+
+    :where(.popover) {
+      position: absolute;
+      position-anchor: var(--popover-anchor);
+      /* keeps the popover from being pushed off screen or under a sticky header (WCAG 2.4.11) */
+      position-try-fallbacks: flip-block, flip-inline;
+      margin: 0;
+    }
+
+    /*
+     * The margin on the anchor's own axis is the gap to the trigger. It is physical
+     * because `position-area` is physical here, so a logical margin would put the gap on
+     * the wrong side of a `left`/`right` popover in a right-to-left document. The margin on
+     * the other axis keeps the popover off the viewport edge once it is clamped there,
+     * without shifting it off centre, because the two sides stay symmetrical.
+     */
+    :where(.popover.position-top) {
+      position-area: top;
+      translate: 0 var(--translate-offset);
+      margin-inline: var(--popover-viewport-inset);
+      margin-bottom: var(--popover-offset);
+    }
+
+    :where(.popover.position-bottom) {
+      position-area: bottom;
+      translate: 0 calc(var(--translate-offset) * -1);
+      margin-inline: var(--popover-viewport-inset);
+      margin-top: var(--popover-offset);
+    }
+
+    :where(.popover.position-left) {
+      position-area: left;
+      translate: var(--translate-offset) 0;
+      margin-right: var(--popover-offset);
+      margin-block: var(--popover-viewport-inset);
+    }
+
+    :where(.popover.position-right) {
+      position-area: right;
+      translate: calc(var(--translate-offset) * -1) 0;
+      margin-left: var(--popover-offset);
+      margin-block: var(--popover-viewport-inset);
+    }
+  }
+
+  /* must stay after the per position resting offsets above so it wins when open */
+  :where(.popover:popover-open) {
+    translate: 0 0;
+    opacity: 1;
+  }
+
+  @starting-style {
+    :where(.popover.position-top:popover-open) {
+      translate: 0 var(--translate-offset);
+      opacity: 0;
+    }
+
+    :where(.popover.position-bottom:popover-open) {
+      translate: 0 calc(var(--translate-offset) * -1);
+      opacity: 0;
+    }
+
+    :where(.popover.position-left:popover-open) {
+      translate: var(--translate-offset) 0;
+      opacity: 0;
+    }
+
+    :where(.popover.position-right:popover-open) {
+      translate: calc(var(--translate-offset) * -1) 0;
+      opacity: 0;
+    }
+  }
+
+  /*
+   * Fallback: without anchor positioning the user agent centres the popover in the top
+   * layer. A backdrop makes that placement read as deliberate rather than misplaced.
+   */
+  @supports not (anchor-name: --popover) {
+    :where(.popover)::backdrop {
+      background-color: light-dark(rgb(0 0 0 / 0.25), rgb(0 0 0 / 0.5));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(.popover) {
+      translate: none;
+      transition: none;
+    }
+  }
+</style>

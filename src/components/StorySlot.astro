@@ -16,6 +16,8 @@ interface Props {
   children?: SlotChild[]
   tooltipSlot?: string
   tooltipSlotIsHtml?: boolean
+  popoverSlot?: string
+  popoverSlotIsHtml?: boolean
   footerSlot?: string
   footerSlotIsHtml?: boolean
   before?: string
@@ -32,6 +34,8 @@ const {
   children = [],
   tooltipSlot,
   tooltipSlotIsHtml = false,
+  popoverSlot,
+  popoverSlotIsHtml = false,
   footerSlot,
   footerSlotIsHtml = false,
   before,
@@ -58,6 +62,13 @@ const {
       <span slot="tooltip">
         {tooltipSlotIsHtml ? <Fragment set:html={tooltipSlot ?? ''} /> : tooltipSlot}
       </span>
+    )
+  }
+  {
+    popoverSlot !== undefined && (
+      <Fragment slot="popover">
+        {popoverSlotIsHtml ? <Fragment set:html={popoverSlot ?? ''} /> : popoverSlot}
+      </Fragment>
     )
   }
   {

@@ -60,7 +60,8 @@ Check `index.js` for the current, complete list. Major component categories incl
 - **Link**: Link component for internal/external navigation
 - **Modal**: Accessible dialog with focus trap
 - **Drawer**: Slide-in dialog panel from any screen edge with focus trap
-- **Tooltip**: Contextual help using the Popover API and CSS Anchor Positioning
+- **Tooltip**: Short description using the Popover API and CSS Anchor Positioning. Content must stay non-interactive
+- **Popover**: Contextual help opened by an explicit click, dismissible and able to hold links or formatted content
 
 ### Preference Toggles
 
