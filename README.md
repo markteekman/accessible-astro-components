@@ -43,6 +43,7 @@ The Accessible Astro Components library provides a collection of pre-built, acce
 - **Button**: Versatile button with variants and delightful animations
 - **Card**: Content container with flexible layout options
 - **DarkMode**: Theme toggle with system preference support and global API
+- **DataTable**: Composable tables with sorting, search, result announcements, and optional client pagination
 - **Drawer**: Slide-in dialog panel from any screen edge with focus management
 - **HighContrast**: High contrast mode toggle for enhanced visual clarity
 - **ReducedMotion**: Reduced motion toggle respecting system preferences

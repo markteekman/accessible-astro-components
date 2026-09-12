@@ -1,0 +1,106 @@
+---
+/**
+ * DataTableColumn Component
+ *
+ * @description Sortable column header for DataTable
+ */
+
+interface Props {
+  /**
+   * Additional classes to apply to the column header
+   */
+  class?: string
+  /**
+   * Whether the column is sortable
+   * @default false
+   */
+  sortable?: boolean
+  /**
+   * Initial sort direction for the column
+   */
+  sorted?: 'ascending' | 'descending'
+  /**
+   * Whether the column contains numeric values
+   * @default false
+   */
+  numeric?: boolean
+  /**
+   * Optional sort key for custom sort values
+   */
+  sortKey?: string
+  /** Column width as a CSS length or percentage. Unspecified columns share remaining space. */
+  width?: string
+  /**
+   * HTML attributes to spread on the column header
+   */
+  [key: string]: string | number | boolean | undefined
+}
+
+const {
+  class: className,
+  sortable = false,
+  sorted,
+  numeric = false,
+  sortKey,
+  width,
+  style,
+  ...rest
+} = Astro.props
+const columnStyle = width ? `--data-table-column-width: ${width}; ${style ?? ''}` : style
+---
+
+{
+  sortable ? (
+    <th
+      class:list={[
+        'data-table__column',
+        numeric && 'data-table__column--numeric',
+        sortable && 'data-table__column--sortable',
+        className,
+      ]}
+      scope="col"
+      style={columnStyle}
+      data-sortable="true"
+      data-sort-type={numeric ? 'number' : 'text'}
+      data-sort-key={sortKey}
+      aria-sort={sorted}
+      {...rest}
+    >
+      <button type="button" class="data-table__sort">
+        <span class="data-table__sort-label">
+          <slot />
+        </span>
+        <svg
+          class="data-table__sort-icon"
+          aria-hidden="true"
+          focusable="false"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            class="data-table__sort-icon-unsorted"
+            d="m21 16-4 4-4-4m4 4V4M3 8l4-4 4 4M7 4v16"
+          />
+          <path class="data-table__sort-icon-up" d="m5 12 7-7 7 7M12 19V5" />
+          <path class="data-table__sort-icon-down" d="M12 5v14m7-7-7 7-7-7" />
+        </svg>
+      </button>
+    </th>
+  ) : (
+    <th
+      class:list={['data-table__column', numeric && 'data-table__column--numeric', className]}
+      scope="col"
+      style={columnStyle}
+      {...rest}
+    >
+      <slot />
+    </th>
+  )
+}

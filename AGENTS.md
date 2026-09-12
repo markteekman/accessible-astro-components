@@ -70,23 +70,24 @@ Check `index.js` for the current, complete list. Major component categories incl
 
 ### Forms (Complete Suite)
 
+- **Checkbox**: Accessible checkbox with proper labeling
+- **Fieldset**: Form field grouping with legend
 - **Form**: Form wrapper with validation
 - **Input**: Text inputs with validation states
-- **Textarea**: Multi-line text input
-- **Checkbox**: Accessible checkbox with proper labeling
 - **Radio**: Radio buttons with proper grouping
 - **Switch**: Toggle switch built on a native checkbox with `role="switch"`
-- **Fieldset**: Form field grouping with legend
+- **Textarea**: Multi-line text input
 
 ### Content Display
 
-- **Card**: Flexible content container
 - **Avatar** / **AvatarGroup**: User avatars with images, initials, or icons
 - **Badge**: Labels and status indicators with animations
-- **Notification**: Info and alert messages
-- **Media**: Responsive image component
-- **Video**: YouTube embed component
+- **Card**: Flexible content container
+- **DataTable** suite: Native tables with sorting, debounced search, result announcements, and optional client pagination; render all rows for client operations
 - **Heading**: Semantic heading with proper hierarchy
+- **Media**: Responsive image component
+- **Notification**: Info and alert messages
+- **Video**: YouTube embed component
 
 ## Dev Environment Setup
 

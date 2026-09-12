@@ -1,0 +1,76 @@
+---
+/**
+ * DataTableSearch Component
+ *
+ * @description Search input for filtering DataTable rows
+ */
+
+interface Props {
+  /**
+   * Additional classes to apply to the search wrapper
+   */
+  class?: string
+  /**
+   * Input ID for the search field
+   */
+  id?: string
+  /**
+   * Label text for the search input
+   * @default "Search"
+   */
+  label?: string
+  /**
+   * Placeholder text for the search input
+   * @default "Search entries..."
+   */
+  placeholder?: string
+  /**
+   * Whether to show the label visually
+   * @default true
+   */
+  showLabel?: boolean
+  /** Accessible name for the clear button. @default "Clear search" */
+  clearLabel?: string
+  /**
+   * HTML attributes to spread on the search input
+   */
+  [key: string]: string | number | boolean | undefined
+}
+
+const {
+  class: className,
+  id,
+  label = 'Search',
+  placeholder = 'Search entries...',
+  showLabel = true,
+  clearLabel = 'Clear search',
+  ...rest
+} = Astro.props
+
+const createId = () => `data-table-search-${Date.now()}-${Math.random().toString(16).slice(2)}`
+const inputId = id ?? createId()
+---
+
+<div class:list={['data-table__search', className]}>
+  <label for={inputId} class:list={[!showLabel && 'sr-only']}>{label}</label>
+  <div class="data-table__search-field">
+    <input id={inputId} type="search" placeholder={placeholder} data-table-search {...rest} />
+    <button type="button" class="data-table__clear" data-table-clear aria-label={clearLabel} hidden>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M18 6 6 18M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+</div>

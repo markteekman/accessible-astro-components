@@ -1,0 +1,284 @@
+---
+/**
+ * DataTablePagination Component
+ *
+ * @description Page reload links or opt-in client pagination buttons for DataTable
+ */
+
+import Pagination from '../pagination/Pagination.astro'
+
+type RouteString = string | null | undefined
+
+interface Props {
+  /** Use buttons with DataTable's pageSize instead of page-reload links. @default false */
+  client?: boolean
+  /** Client pagination progress template. @default "Page {page} of {pages}" */
+  pageTemplate?: string
+  /**
+   * Additional classes to apply to the pagination wrapper
+   */
+  class?: string
+  /**
+   * Current page number
+   */
+  currentPage?: string | number
+  /**
+   * Total number of pages
+   */
+  totalPages?: string | number
+  /**
+   * Base URL used to generate pagination links
+   */
+  baseUrl?: string
+  /**
+   * Optional route for the first page
+   */
+  firstPage?: RouteString
+  /**
+   * Optional route for the previous page
+   */
+  previousPage?: RouteString
+  /**
+   * Optional route for the next page
+   */
+  nextPage?: RouteString
+  /**
+   * Optional route for the last page
+   */
+  lastPage?: RouteString
+  /**
+   * Accessible label for the navigation
+   */
+  ariaLabel?: string
+  /**
+   * Accessible label for the first page button
+   */
+  firstPageLabel?: string
+  /**
+   * Accessible label for the previous page button
+   */
+  previousPageLabel?: string
+  /**
+   * Accessible label for the next page button
+   */
+  nextPageLabel?: string
+  /**
+   * Accessible label for the last page button
+   */
+  lastPageLabel?: string
+  /**
+   * Function to render link-mode progress text. Use pageTemplate in client mode.
+   */
+  renderProgress?: ({
+    currentPage,
+    totalPages,
+  }: {
+    currentPage: string | number
+    totalPages: string | number
+  }) => string
+  /**
+   * Function to generate link-mode labels. Use individual labels in client mode.
+   */
+  renderPageLabel?: ({
+    type,
+    page,
+  }: {
+    type: 'first' | 'previous' | 'next' | 'last'
+    page: string | number
+  }) => string
+  /**
+   * HTML attributes to spread on the pagination component
+   */
+  [key: string]: string | number | boolean | undefined | Function
+}
+
+const {
+  class: className,
+  client = false,
+  pageTemplate = 'Page {page} of {pages}',
+  currentPage = 1,
+  totalPages = 1,
+  baseUrl,
+  firstPage,
+  previousPage,
+  nextPage,
+  lastPage,
+  ariaLabel = 'Table pagination',
+  firstPageLabel = 'Go to the first page',
+  previousPageLabel = 'Go to the previous page',
+  nextPageLabel = 'Go to the next page',
+  lastPageLabel = 'Go to the last page',
+  renderProgress,
+  renderPageLabel,
+  ...rest
+} = Astro.props
+const pageLabels = {
+  first: firstPageLabel,
+  previous: previousPageLabel,
+  next: nextPageLabel,
+  last: lastPageLabel,
+}
+
+const currentPageNumber = Number(currentPage)
+const totalPagesNumber = Number(totalPages)
+const resolvedBaseUrl = baseUrl ? baseUrl.replace(/\/$/, '') || '/' : undefined
+
+const createPageUrl = (page: number) => {
+  if (!resolvedBaseUrl) return null
+  return page === 1 ? resolvedBaseUrl : `${resolvedBaseUrl === '/' ? '' : resolvedBaseUrl}/${page}`
+}
+
+const resolvedFirstPage =
+  firstPage ?? (resolvedBaseUrl && currentPageNumber > 1 ? createPageUrl(1) : null)
+const resolvedPreviousPage =
+  previousPage ??
+  (resolvedBaseUrl && currentPageNumber > 1 ? createPageUrl(currentPageNumber - 1) : null)
+const resolvedNextPage =
+  nextPage ??
+  (resolvedBaseUrl && currentPageNumber < totalPagesNumber
+    ? createPageUrl(currentPageNumber + 1)
+    : null)
+const resolvedLastPage =
+  lastPage ??
+  (resolvedBaseUrl && currentPageNumber < totalPagesNumber ? createPageUrl(totalPagesNumber) : null)
+---
+
+{
+  client ? (
+    <nav
+      class:list={['data-table__pagination', className]}
+      aria-label={ariaLabel}
+      {...rest}
+      data-table-pagination
+      data-page-template={pageTemplate}
+      hidden
+    >
+      <ul class="data-table__pages">
+        {(['first', 'previous', 'next', 'last'] as const).map((direction, index) => (
+          <>
+            {index === 2 && (
+              <li>
+                <span data-page-progress tabindex="-1">
+                  {pageTemplate
+                    .replace('{page}', String(currentPage))
+                    .replace('{pages}', String(totalPages))}
+                </span>
+              </li>
+            )}
+            <li>
+              <button type="button" data-page={direction} aria-label={pageLabels[direction]}>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path
+                    d={
+                      direction === 'first'
+                        ? 'm11 17-5-5 5-5m7 10-5-5 5-5'
+                        : direction === 'previous'
+                        ? 'm15 18-6-6 6-6'
+                        : direction === 'next'
+                        ? 'm9 18 6-6-6-6'
+                        : 'm6 17 5-5-5-5m7 10 5-5-5-5'
+                    }
+                  />
+                </svg>
+              </button>
+            </li>
+          </>
+        ))}
+      </ul>
+    </nav>
+  ) : (
+    <Pagination
+      class:list={['data-table__pagination', className]}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      firstPage={resolvedFirstPage}
+      previousPage={resolvedPreviousPage}
+      nextPage={resolvedNextPage}
+      lastPage={resolvedLastPage}
+      ariaLabel={ariaLabel}
+      firstPageLabel={firstPageLabel}
+      previousPageLabel={previousPageLabel}
+      nextPageLabel={nextPageLabel}
+      lastPageLabel={lastPageLabel}
+      renderProgress={renderProgress}
+      renderPageLabel={renderPageLabel}
+      {...rest}
+    />
+  )
+}
+
+<style>
+  :where(.data-table__pagination[hidden]) {
+    display: none;
+  }
+  :where(.data-table__pages) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  :where(.data-table__pages li) {
+    margin: 0;
+    padding: 0;
+  }
+
+  :where(.data-table__pages [data-page-progress]) {
+    white-space: nowrap;
+  }
+
+  @media (max-width: 40rem) {
+    :where(.data-table__pages) {
+      display: grid;
+      grid-template-columns: repeat(4, 2.75rem);
+      gap: 0.5rem;
+    }
+
+    :where(.data-table__pages li:has([data-page-progress])) {
+      grid-area: 1 / 1 / auto / -1;
+      text-align: center;
+    }
+  }
+  :where(.data-table__pages button) {
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    border: 2px solid var(--color-default-border);
+    border-radius: var(--radius-s);
+    background: transparent;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    color: inherit;
+  }
+  :where(.data-table__pages button:disabled) {
+    opacity: 0.5;
+    cursor: default;
+  }
+  :where(.data-table__pages button:focus-visible),
+  :where(.data-table__pages [data-page-progress]:focus) {
+    outline: 3px solid var(--data-table-focus);
+    outline-offset: 2px;
+  }
+  @media (forced-colors: active) {
+    :where(.data-table__pages button) {
+      border-color: ButtonText;
+    }
+    :where(.data-table__pages button:disabled) {
+      opacity: 1;
+      border-color: GrayText;
+      color: GrayText;
+    }
+  }
+</style>
