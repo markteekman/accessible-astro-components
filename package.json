@@ -1,7 +1,7 @@
 {
   "name": "accessible-astro-components",
   "description": "A comprehensive set of accessible, easy-to-use UI components for Astro websites, built with WCAG compliance and inclusive design principles.",
-  "version": "5.7.1",
+  "version": "5.8.0",
   "author": "Incluud",
   "license": "MIT",
   "homepage": "https://accessible-astro.incluud.dev/components/overview/",
