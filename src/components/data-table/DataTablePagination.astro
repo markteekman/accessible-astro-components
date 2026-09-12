@@ -121,11 +121,11 @@ const pageLabels = {
 
 const currentPageNumber = Number(currentPage)
 const totalPagesNumber = Number(totalPages)
-const resolvedBaseUrl = baseUrl ? baseUrl.replace(/\/$/, '') : undefined
+const resolvedBaseUrl = baseUrl ? baseUrl.replace(/\/$/, '') || '/' : undefined
 
 const createPageUrl = (page: number) => {
   if (!resolvedBaseUrl) return null
-  return page === 1 ? resolvedBaseUrl : `${resolvedBaseUrl}/${page}`
+  return page === 1 ? resolvedBaseUrl : `${resolvedBaseUrl === '/' ? '' : resolvedBaseUrl}/${page}`
 }
 
 const resolvedFirstPage =
