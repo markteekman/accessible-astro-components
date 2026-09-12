@@ -1,8 +1,10 @@
 import StorySlot from '../StorySlot.astro'
 import Form from './Form.astro'
 import Input from './Input.astro'
+import Select from './Select.astro'
 import Textarea from './Textarea.astro'
 import Fieldset from './Fieldset.astro'
+import Button from '../button/Button.astro'
 import Checkbox from './Checkbox.astro'
 import Radio from './Radio.astro'
 
@@ -47,6 +49,34 @@ export const Basic = {
           rows: 4,
           placeholder: 'Tell us a little about your project...',
           'data-validation': 'Please add a short message',
+        },
+      },
+      {
+        Component: Select,
+        props: {
+          name: 'country',
+          label: 'Country',
+          required: true,
+          autocomplete: 'country-name',
+          placeholder: 'Select a country',
+          'data-validation': 'Please select a country',
+          options: [
+            {
+              label: 'Europe',
+              options: [
+                { value: 'nl', label: 'Netherlands' },
+                { value: 'be', label: 'Belgium' },
+                { value: 'de', label: 'Germany' },
+              ],
+            },
+            {
+              label: 'North America',
+              options: [
+                { value: 'ca', label: 'Canada' },
+                { value: 'us', label: 'United States' },
+              ],
+            },
+          ],
         },
       },
       {
@@ -104,9 +134,12 @@ export const Basic = {
           },
         ],
       },
+      {
+        Component: Button,
+        props: { htmlType: 'submit' },
+        slot: 'Send message',
+      },
     ],
-    afterIsHtml: true,
-    after: '<button type="submit">Send message</button>',
   },
 }
 
@@ -153,6 +186,23 @@ export const LocalizedGerman = {
         },
       },
       {
+        Component: Select,
+        props: {
+          name: 'country',
+          label: 'Land',
+          required: true,
+          requiredText: '(Pflichtfeld)',
+          autocomplete: 'country-name',
+          placeholder: 'Land auswaehlen',
+          requiredValidationMessage: 'Bitte waehlen Sie ein Land aus',
+          options: [
+            { value: 'de', label: 'Deutschland' },
+            { value: 'at', label: 'Oesterreich' },
+            { value: 'ch', label: 'Schweiz' },
+          ],
+        },
+      },
+      {
         Component: Fieldset,
         props: {
           name: 'updates',
@@ -180,8 +230,11 @@ export const LocalizedGerman = {
           },
         ],
       },
+      {
+        Component: Button,
+        props: { htmlType: 'submit' },
+        slot: 'Nachricht senden',
+      },
     ],
-    afterIsHtml: true,
-    after: '<button type="submit">Nachricht senden</button>',
   },
 }

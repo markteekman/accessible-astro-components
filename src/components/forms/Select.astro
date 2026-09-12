@@ -1,0 +1,399 @@
+---
+/**
+ * Select Component
+ *
+ * @description A native select field with built-in validation and accessibility
+ */
+
+type SelectOption = {
+  /**
+   * Value submitted with the form when this option is selected
+   */
+  value: string
+  /**
+   * Visible option text
+   * @default the option's value
+   */
+  label?: string
+  /**
+   * Whether the option can be selected
+   * @default false
+   */
+  disabled?: boolean
+  /**
+   * Whether the option is selected on load (overrides the `value` prop)
+   */
+  selected?: boolean
+}
+
+type SelectOptionGroup = {
+  /**
+   * Visible group label rendered as an `<optgroup>` label
+   */
+  label: string
+  /**
+   * Whether every option in the group is disabled
+   * @default false
+   */
+  disabled?: boolean
+  /**
+   * Options belonging to this group
+   */
+  options: (string | SelectOption)[]
+}
+
+interface Props {
+  /**
+   * Additional classes to apply to the select field container
+   */
+  class?: string
+  /**
+   * Unique identifier for the select field
+   */
+  id?: string
+  /**
+   * Name attribute for the select field (required for form submission)
+   */
+  name: string
+  /**
+   * Label text for the select field
+   */
+  label: string
+  /**
+   * Options to render. Accepts plain strings, option objects and option groups.
+   * Options passed through the default slot are rendered after these.
+   */
+  options?: (string | SelectOption | SelectOptionGroup)[]
+  /**
+   * Value (or values, when `multiple`) selected on load
+   */
+  value?: string | string[]
+  /**
+   * Prompt shown as the first option when nothing is selected. This is never a
+   * replacement for the label, which is always rendered.
+   */
+  placeholder?: string
+  /**
+   * Error message to display when validation fails
+   */
+  'data-validation'?: string
+  /**
+   * Default validation message for required select fields
+   * @default "Please select an option"
+   */
+  requiredValidationMessage?: string
+  /**
+   * Custom validation pattern (regex)
+   */
+  'data-validation-pattern'?: string
+  /**
+   * Custom validation function name (must be available on window)
+   */
+  'data-validation-fn'?: string
+  /**
+   * Whether the field is required
+   * @default false
+   */
+  required?: boolean
+  /**
+   * Text displayed next to required field labels
+   * @default "(required)"
+   */
+  requiredText?: string
+  /**
+   * Whether the field is disabled
+   * @default false
+   */
+  disabled?: boolean
+  /**
+   * Whether more than one option can be selected
+   * @default false
+   */
+  multiple?: boolean
+  /**
+   * Number of options shown at once. Renders a list box instead of a dropdown
+   * when larger than 1.
+   */
+  size?: number
+  /**
+   * Autocomplete attribute value (WCAG 1.3.5), for example "country-name"
+   * @default "on"
+   */
+  autocomplete?: string
+  /**
+   * HTML attributes
+   */
+  [key: string]: any
+}
+
+const {
+  class: className,
+  id,
+  name,
+  label,
+  options = [],
+  value,
+  placeholder,
+  'data-validation': dataValidation,
+  requiredValidationMessage = 'Please select an option',
+  'data-validation-pattern': dataValidationPattern,
+  'data-validation-fn': dataValidationFn,
+  'aria-describedby': ariaDescribedby,
+  required = false,
+  requiredText = '(required)',
+  disabled = false,
+  multiple = false,
+  size,
+  autocomplete = 'on',
+  ...rest
+} = Astro.props
+
+// `multiple` is not one of the boolean attributes Astro strips when false, so
+// passing it through verbatim would render multiple="false" — which HTML reads
+// as a multi-select. Omitting the attribute is the only way to say "no".
+const isMultiple = multiple || undefined
+
+const selectId = id || `select-${name}`
+const validationId = `${selectId}-validation`
+
+// Keep any consumer-supplied description, the validation message is appended to it
+const describedBy = [ariaDescribedby, validationId].filter(Boolean).join(' ')
+
+// Use provided validation message or default
+const validationMessage = dataValidation || (required ? requiredValidationMessage : '')
+
+// Values marked as selected through the `value` prop
+const selectedValues =
+  value === undefined ? [] : (Array.isArray(value) ? value : [value]).map(String)
+
+const isGroup = (option: string | SelectOption | SelectOptionGroup): option is SelectOptionGroup =>
+  typeof option === 'object' &&
+  option !== null &&
+  Array.isArray((option as SelectOptionGroup).options)
+
+const normalizeOption = (option: string | SelectOption) => {
+  const {
+    value: optionValue,
+    label: optionLabel,
+    disabled: optionDisabled,
+    selected,
+  } = typeof option === 'string'
+    ? { value: option, label: option, disabled: false, selected: undefined }
+    : option
+
+  return {
+    value: optionValue,
+    label: optionLabel ?? optionValue,
+    disabled: optionDisabled ?? false,
+    selected: selected ?? selectedValues.includes(String(optionValue)),
+  }
+}
+
+const entries = options.map((option) =>
+  isGroup(option)
+    ? {
+        type: 'group' as const,
+        label: option.label,
+        disabled: option.disabled ?? false,
+        options: option.options.map(normalizeOption),
+      }
+    : { type: 'option' as const, ...normalizeOption(option) }
+)
+
+// The placeholder only holds the selection while nothing else claims it
+const hasSelection = entries.some((entry) =>
+  entry.type === 'group' ? entry.options.some((option) => option.selected) : entry.selected
+)
+---
+
+<div class:list={['select-group', className]}>
+  <label for={selectId} data-validation={validationMessage}>
+    <span>{label}</span>
+    {required && requiredText && <span>{requiredText}</span>}
+  </label>
+
+  <div class="select-control">
+    <select
+      id={selectId}
+      name={name}
+      required={required}
+      disabled={disabled}
+      multiple={isMultiple}
+      size={size}
+      autocomplete={autocomplete}
+      aria-describedby={describedBy}
+      data-validation={validationMessage}
+      data-validation-pattern={dataValidationPattern}
+      data-validation-fn={dataValidationFn}
+      {...rest}
+    >
+      {
+        placeholder && (
+          <option value="" disabled={required} selected={!hasSelection}>
+            {placeholder}
+          </option>
+        )
+      }
+      {
+        entries.map((entry) =>
+          entry.type === 'group' ? (
+            <optgroup label={entry.label} disabled={entry.disabled}>
+              {entry.options.map((option) => (
+                <option value={option.value} disabled={option.disabled} selected={option.selected}>
+                  {option.label}
+                </option>
+              ))}
+            </optgroup>
+          ) : (
+            <option value={entry.value} disabled={entry.disabled} selected={entry.selected}>
+              {entry.label}
+            </option>
+          )
+        )
+      }
+      <slot />
+    </select>
+
+    {
+      !multiple && !size && (
+        <svg
+          class="select-arrow"
+          width="1em"
+          height="1em"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="m6 9l6 6l6-6"
+          />
+        </svg>
+      )
+    }
+  </div>
+
+  <small id={validationId}>
+    <span class="icon">
+      <svg width="1em" height="1em" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="m15 9l-6 6m0-6l6 6"></path>
+        </g>
+      </svg>
+    </span>
+    <span class="message">{validationMessage}</span>
+  </small>
+</div>
+
+<style>
+  :where(.select-group) {
+    --text-color: var(--color-default-text);
+
+    display: grid;
+    gap: var(--space-4xs);
+  }
+
+  :where(.select-group label) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3xs);
+  }
+
+  :where(.select-control) {
+    display: grid;
+    position: relative;
+  }
+
+  :where(.select-group select) {
+    /* System colors keep the field readable in light, dark and forced-colors modes */
+    appearance: none;
+    border: 2px solid var(--color-default-border);
+    border-radius: var(--radius-s);
+    background-color: Field;
+    padding: var(--space-2xs);
+    /* Room for the arrow so long option text never runs underneath it */
+    padding-inline-end: calc(var(--space-2xs) * 2 + 1em);
+    inline-size: 100%;
+    /* 44px floor keeps the pointer target at the AAA size (WCAG 2.5.5) */
+    min-block-size: 2.75rem;
+    color: FieldText;
+  }
+
+  /* List boxes have no dropdown arrow to replace, so keep the native rendering */
+  :where(.select-group select[multiple]),
+  :where(.select-group select[size]) {
+    appearance: auto;
+    padding-inline-end: var(--space-2xs);
+  }
+
+  :where(.select-arrow) {
+    position: absolute;
+    translate: 0 -50%;
+    inset-block-start: 50%;
+    inset-inline-end: var(--space-2xs);
+    /* The arrow is decorative, clicks belong to the select underneath it */
+    pointer-events: none;
+    color: FieldText;
+  }
+
+  :where(.select-group select:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  :where(.select-group select:disabled) ~ .select-arrow {
+    opacity: 0.5;
+  }
+
+  /*
+   * Forced-colors mode strips the custom arrow's colors and cannot repaint a
+   * field the browser no longer recognises as a select, so hand the native
+   * control and its own arrow back to the user agent.
+   */
+  @media (forced-colors: active) {
+    :where(.select-group select) {
+      appearance: auto;
+      padding-inline-end: var(--space-2xs);
+    }
+
+    :where(.select-arrow) {
+      display: none;
+    }
+  }
+
+  :where(.select-group small) {
+    display: none;
+    align-items: center;
+    gap: var(--space-4xs);
+    margin-block-start: var(--space-2xs);
+    color: var(--text-color);
+  }
+
+  .select-group:has([aria-invalid='true']) {
+    --text-color: light-dark(hsl(355, 78%, 39%), hsl(339, 88%, 69%));
+  }
+
+  .select-group:has([aria-invalid='true']) label {
+    color: var(--text-color);
+  }
+
+  .select-group:has([aria-invalid='true']) select {
+    border-color: var(--color-error-border);
+  }
+
+  .select-group:has([aria-invalid='true']) small {
+    display: flex;
+  }
+</style>

@@ -104,6 +104,8 @@ const {
       const requiredFieldsets = form.querySelectorAll('fieldset[data-required="true"]')
       const errorNotification = form.querySelector('.notification') as HTMLElement | null
       const errorNotificationContent = errorNotification?.querySelector('p') as HTMLElement | null
+      // Wrappers that pair a control with its label and inline validation message
+      const fieldGroupSelector = '.input-group, .checkbox-group, .textarea-group, .select-group'
       const defaultMessages = {
         errorSummary:
           form.dataset.errorSummaryMessage ||
@@ -303,9 +305,7 @@ const {
                     )
                     return `<li><a href="#${elementId}">${legendText}: ${validation}</a></li>`
                   } else {
-                    const label = element
-                      .closest('.input-group, .checkbox-group, .textarea-group')
-                      ?.querySelector('label')
+                    const label = element.closest(fieldGroupSelector)?.querySelector('label')
                     const labelText = escapeHTML(label?.textContent || element.name)
                     const validation = escapeHTML(
                       label?.dataset.validation || defaultMessages.field
@@ -324,11 +324,12 @@ const {
 
       const setInlineMessages = (fields) => {
         fields.forEach((field) => {
-          const label = field
-            .closest('.input-group, .checkbox-group, .textarea-group')
-            ?.querySelector('label')
+          const group = field.closest(fieldGroupSelector)
+          const label = group?.querySelector('label')
           const validation = label?.dataset.validation || defaultMessages.field
-          const messageElement = field.nextElementSibling?.querySelector('.message') as HTMLElement
+          // Scoped to the group rather than the next sibling, so controls that sit
+          // inside a wrapper (the Select's arrow container) still find their message
+          const messageElement = group?.querySelector('.message') as HTMLElement
 
           if (messageElement) {
             messageElement.textContent = validation

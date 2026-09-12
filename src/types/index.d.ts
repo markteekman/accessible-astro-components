@@ -37,6 +37,7 @@
  * - Pagination
  * - Radio
  * - ReducedMotion
+ * - Select
  * - SkipLink
  * - Switch
  * - Tabs
@@ -767,6 +768,34 @@ export const Radio: Radio
  */
 type ReducedMotion = typeof import('../../index.js').ReducedMotion
 export const ReducedMotion: ReducedMotion
+
+/**
+ * Select component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.class - Optional CSS class names
+ * @param _props.id - Unique identifier for the select field
+ * @param _props.name - Name attribute for the select field (required for form submission)
+ * @param _props.label - Label text for the select field (required)
+ * @param _props.options - Options to render: plain strings, `{ value, label, disabled, selected }` objects, or `{ label, options }` groups
+ * @param _props.value - Value (or array of values, when multiple) selected on load
+ * @param _props.placeholder - Prompt shown as the first option when nothing is selected
+ * @param _props.required - Whether the field is required - default: false
+ * @param _props.requiredText - Text displayed next to required field labels - default: "(required)"
+ * @param _props.requiredValidationMessage - Validation message for required select fields - default: "Please select an option"
+ * @param _props.disabled - Whether the field is disabled - default: false
+ * @param _props.multiple - Whether more than one option can be selected - default: false
+ * @param _props.size - Number of options shown at once (renders a list box when larger than 1)
+ * @param _props.autocomplete - Autocomplete attribute value, for example "country-name" - default: "on"
+ * @param _props.children - Optional: `<option>` and `<optgroup>` elements, rendered after the `options` prop
+ * @note Additional HTML attributes can be passed and will be spread to the root element
+ * @note Built on a native `<select>`, so mobile pickers, type-ahead and keyboard support come for free
+ * @note Works with the Form component's validation through `data-validation`, `data-validation-pattern` and `data-validation-fn`
+ * @note The visible label is always rendered; `placeholder` is a prompt option, never a label replacement
+ * @note Restores the native control in forced-colors mode instead of relying on `appearance: none`
+ */
+type Select = typeof import('../../index.js').Select
+export const Select: Select
 
 /**
  * Skip link component
