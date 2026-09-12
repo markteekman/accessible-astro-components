@@ -80,6 +80,7 @@ Check `index.js` for the current, complete list. Major component categories incl
 
 ### Content Display
 
+- **DataTable** suite: Native tables with sorting, debounced search, result announcements, and optional client pagination; render all rows for client operations
 - **Card**: Flexible content container
 - **Avatar** / **AvatarGroup**: User avatars with images, initials, or icons
 - **Badge**: Labels and status indicators with animations
