@@ -36,6 +36,7 @@
  * - Notification
  * - Pagination
  * - Radio
+ * - RangeSlider
  * - ReducedMotion
  * - SkipLink
  * - Switch
@@ -749,6 +750,41 @@ export const Pagination: Pagination
  */
 type Radio = typeof import('../../index.js').Radio
 export const Radio: Radio
+
+/**
+ * RangeSlider component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.class - Optional CSS class names
+ * @param _props.id - Unique identifier, used as the base for every generated id
+ * @param _props.name - Name attribute for form submission - required
+ * @param _props.label - Visible label for the single-thumb slider (required unless multiThumb)
+ * @param _props.legend - Visible group label for the multi-thumb slider (required when multiThumb)
+ * @param _props.multiThumb - Render two coupled thumbs for a minimum/maximum pair - default: false
+ * @param _props.min - Lowest selectable value - default: 0
+ * @param _props.max - Highest selectable value - default: 100
+ * @param _props.step - Granularity of the value - default: 1
+ * @param _props.value - Initial value in single-thumb mode - default: min
+ * @param _props.valueMin - Initial lower value in multi-thumb mode - default: min
+ * @param _props.valueMax - Initial upper value in multi-thumb mode - default: max
+ * @param _props.nameMin - Name of the lower input in multi-thumb mode - default: `${name}-min`
+ * @param _props.nameMax - Name of the upper input in multi-thumb mode - default: `${name}-max`
+ * @param _props.labelMin - Label for the lower value in multi-thumb mode - default: "From"
+ * @param _props.labelMax - Label for the upper value in multi-thumb mode - default: "To"
+ * @param _props.minGap - Smallest allowed distance between the two thumbs - default: 0
+ * @param _props.showNumberInput - Render number inputs for precise typed entry - default: true
+ * @param _props.valueFormat - "number" | "currency" | "percent" - default: "number"
+ * @param _props.currency - ISO 4217 currency code used when valueFormat is "currency" - default: "EUR"
+ * @param _props.locale - BCP 47 locale used for formatting - default: "en-US"
+ * @param _props.disabled - Whether the control is disabled - default: false
+ * @param _props.children - Not applicable for range slider components
+ * @note Additional HTML attributes can be passed and will be spread to the root element
+ * @note Built on native input[type="range"], so arrows, Home/End and Page Up/Down work without JavaScript
+ * @note Number inputs are rendered by default so a precise value can be typed rather than dragged
+ * @note Formatted values are announced through aria-valuetext rather than a live region
+ */
+type RangeSlider = typeof import('../../index.js').RangeSlider
+export const RangeSlider: RangeSlider
 
 /**
  * ReducedMotion toggle component

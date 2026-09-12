@@ -1,0 +1,762 @@
+---
+/**
+ * RangeSlider Component
+ *
+ * @description An accessible control for bounded numeric input, built on native
+ * `<input type="range">` elements so keyboard support (arrows, Home/End, Page Up/Down)
+ * and screen reader semantics come from the platform rather than from ARIA.
+ *
+ * Set `multiThumb` for a coupled minimum/maximum pair, which is the common price-filter
+ * case. Number inputs are rendered alongside the slider by default so values can also be
+ * typed exactly, because dragging alone is not an accessible way to reach a precise value.
+ *
+ * Note: `required` is intentionally not a prop. A range input always has a value, so the
+ * attribute can never fail constraint validation and would be misleading.
+ *
+ * Without JavaScript the sliders still work and still submit: the range inputs carry the
+ * `name`, and the fill is rendered from the server with the initial values. The number
+ * inputs are a progressive enhancement and are not submitted, so edits made to them
+ * before the script runs are not applied.
+ */
+
+interface Props {
+  /**
+   * Additional classes to apply to the range slider container
+   */
+  class?: string
+  /**
+   * Unique identifier, used as the base for every generated id
+   */
+  id?: string
+  /**
+   * Name attribute for form submission. In `multiThumb` mode this is the base for
+   * `nameMin` and `nameMax`
+   */
+  name: string
+  /**
+   * Visible label for the single-thumb slider. Required unless `multiThumb` is set
+   */
+  label?: string
+  /**
+   * Visible group label for the multi-thumb slider. Required when `multiThumb` is set
+   */
+  legend?: string
+  /**
+   * Render two coupled thumbs for a minimum/maximum pair
+   * @default false
+   */
+  multiThumb?: boolean
+  /**
+   * Lowest selectable value
+   * @default 0
+   */
+  min?: number
+  /**
+   * Highest selectable value
+   * @default 100
+   */
+  max?: number
+  /**
+   * Granularity of the value
+   * @default 1
+   */
+  step?: number
+  /**
+   * Initial value in single-thumb mode
+   * @default min
+   */
+  value?: number
+  /**
+   * Initial lower value in multi-thumb mode
+   * @default min
+   */
+  valueMin?: number
+  /**
+   * Initial upper value in multi-thumb mode
+   * @default max
+   */
+  valueMax?: number
+  /**
+   * Name of the lower input in multi-thumb mode
+   * @default `${name}-min`
+   */
+  nameMin?: string
+  /**
+   * Name of the upper input in multi-thumb mode
+   * @default `${name}-max`
+   */
+  nameMax?: string
+  /**
+   * Label for the lower value in multi-thumb mode
+   * @default "From"
+   */
+  labelMin?: string
+  /**
+   * Label for the upper value in multi-thumb mode
+   * @default "To"
+   */
+  labelMax?: string
+  /**
+   * Smallest allowed distance between the two thumbs in multi-thumb mode.
+   * Zero lets both thumbs meet on the same value
+   * @default 0
+   */
+  minGap?: number
+  /**
+   * Render number inputs for precise typed entry alongside the slider
+   * @default true
+   */
+  showNumberInput?: boolean
+  /**
+   * How the value is presented to sighted users and announced through `aria-valuetext`
+   * @default "number"
+   */
+  valueFormat?: 'number' | 'currency' | 'percent'
+  /**
+   * ISO 4217 currency code used when `valueFormat` is "currency"
+   * @default "EUR"
+   */
+  currency?: string
+  /**
+   * BCP 47 locale used for formatting. Pinned by default so the server and the
+   * browser format the value identically
+   * @default "en-US"
+   */
+  locale?: string
+  /**
+   * Whether the control is disabled
+   * @default false
+   */
+  disabled?: boolean
+  /**
+   * HTML attributes
+   */
+  [key: string]: any
+}
+
+const {
+  class: className,
+  id,
+  name,
+  label,
+  legend,
+  multiThumb = false,
+  min = 0,
+  max = 100,
+  step = 1,
+  value,
+  valueMin,
+  valueMax,
+  nameMin,
+  nameMax,
+  labelMin = 'From',
+  labelMax = 'To',
+  minGap = 0,
+  showNumberInput = true,
+  valueFormat = 'number',
+  currency = 'EUR',
+  locale = 'en-US',
+  disabled = false,
+  ...rest
+} = Astro.props
+
+const baseId = id || `range-slider-${name}`
+const span = max - min || 1
+const clamp = (input: number) => Math.min(Math.max(input, min), max)
+
+const lowValue = clamp(multiThumb ? valueMin ?? min : value ?? min)
+const highValue = Math.max(clamp(valueMax ?? max), lowValue + minGap)
+
+// Currency defaults to two fraction digits, so an integer step needs both bounds pinned
+// to zero or Intl throws a RangeError
+const fractionDigits = Number.isInteger(step) ? 0 : 2
+
+const formatter =
+  valueFormat === 'currency'
+    ? new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency,
+        minimumFractionDigits: fractionDigits,
+        maximumFractionDigits: fractionDigits,
+      })
+    : valueFormat === 'percent'
+    ? new Intl.NumberFormat(locale, { style: 'percent' })
+    : null
+
+const format = (input: number) =>
+  formatter ? formatter.format(valueFormat === 'percent' ? input / 100 : input) : String(input)
+
+// The unit sits in the visible label so it is announced once, by the label, rather than
+// duplicated into an aria-label on the number input
+const unit =
+  formatter
+    ?.formatToParts(0)
+    .find((part) => part.type === 'currency' || part.type === 'percentSign')?.value ?? ''
+
+// Unitless so the stylesheet can multiply it by the thumb's travel distance
+const fraction = (input: number) => String((input - min) / span)
+
+const Wrapper = multiThumb ? 'fieldset' : 'div'
+
+const lowId = multiThumb ? `${baseId}-min` : baseId
+const highId = `${baseId}-max`
+const lowName = multiThumb ? nameMin ?? `${name}-min` : name
+const highName = nameMax ?? `${name}-max`
+const lowLabel = multiThumb ? labelMin : label ?? name
+const highLabel = labelMax
+
+const outputId = `${baseId}-output`
+const outputText = multiThumb ? `${format(lowValue)} – ${format(highValue)}` : format(lowValue)
+---
+
+<Wrapper
+  class:list={['range-slider', className]}
+  data-multi-thumb={multiThumb ? '' : undefined}
+  data-min-gap={String(minGap)}
+  data-value-format={valueFormat}
+  data-currency={currency}
+  data-locale={locale}
+  data-fraction-digits={String(fractionDigits)}
+  {...rest}
+>
+  {multiThumb && <legend class="range-slider-legend">{legend}</legend>}
+
+  <div class="range-slider-values">
+    {
+      showNumberInput ? (
+        <>
+          <div class="range-slider-field">
+            <label for={`${lowId}-number`}>
+              {lowLabel}
+              {unit && <span class="range-slider-unit">{` ${unit}`}</span>}
+            </label>
+            <input
+              class="range-slider-number"
+              type="number"
+              id={`${lowId}-number`}
+              min={min}
+              max={max}
+              step={step}
+              value={lowValue}
+              disabled={disabled}
+            />
+          </div>
+
+          {multiThumb && (
+            <div class="range-slider-field">
+              <label for={`${highId}-number`}>
+                {highLabel}
+                {unit && <span class="range-slider-unit">{` ${unit}`}</span>}
+              </label>
+              <input
+                class="range-slider-number"
+                type="number"
+                id={`${highId}-number`}
+                min={min}
+                max={max}
+                step={step}
+                value={highValue}
+                disabled={disabled}
+              />
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          {!multiThumb && <label for={lowId}>{lowLabel}</label>}
+          {/*
+            aria-live is off on purpose. The slider already announces its own value
+            through aria-valuetext while it is being changed, so a live region here
+            would read every value twice.
+          */}
+          <output
+            class="range-slider-output"
+            id={outputId}
+            for={multiThumb ? `${lowId} ${highId}` : lowId}
+            aria-live="off"
+          >
+            {outputText}
+          </output>
+        </>
+      )
+    }
+  </div>
+
+  <div
+    class="range-slider-track"
+    style={`--range-start: ${multiThumb ? fraction(lowValue) : '0'}; --range-end: ${fraction(
+      multiThumb ? highValue : lowValue
+    )};`}
+  >
+    <div class="range-slider-progress"></div>
+
+    {
+      showNumberInput && (
+        <label class="sr-only" for={lowId}>
+          {multiThumb ? `${lowLabel} ${legend ?? name}` : lowLabel}
+        </label>
+      )
+    }
+    <input
+      class="range-slider-input"
+      type="range"
+      id={lowId}
+      name={lowName}
+      min={min}
+      max={max}
+      step={step}
+      value={lowValue}
+      disabled={disabled}
+      aria-valuetext={formatter ? format(lowValue) : undefined}
+    />
+
+    {
+      multiThumb && (
+        <>
+          <label class="sr-only" for={highId}>
+            {`${highLabel} ${legend ?? name}`}
+          </label>
+          <input
+            class="range-slider-input"
+            type="range"
+            id={highId}
+            name={highName}
+            min={min}
+            max={max}
+            step={step}
+            value={highValue}
+            disabled={disabled}
+            aria-valuetext={formatter ? format(highValue) : undefined}
+          />
+        </>
+      )
+    }
+  </div>
+</Wrapper>
+
+<style>
+  :where(.range-slider) {
+    --range-slider-thumb-size: 1.5rem;
+    --range-slider-track-height: 0.5rem;
+    --range-slider-track-color: var(--color-default-border);
+    --range-slider-progress-color: var(--color-primary-border);
+    --range-slider-thumb-color: var(--color-primary-border);
+    --range-slider-thumb-ring-color: var(--color-default-bg);
+
+    display: grid;
+    gap: var(--space-4xs);
+    margin: 0;
+    border: none;
+    padding: 0;
+    min-inline-size: 0;
+  }
+
+  :where(.range-slider-legend) {
+    margin-block-end: var(--space-4xs);
+    padding: 0;
+  }
+
+  :where(.range-slider-values) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-2xs);
+  }
+
+  :where(.range-slider-field) {
+    display: grid;
+    flex: 1 1 6rem;
+    gap: var(--space-4xs);
+  }
+
+  /* Single thumb has one field, so the label and its input share a row */
+  :where(.range-slider:not([data-multi-thumb]) .range-slider-field) {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    flex-basis: 100%;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  :where(.range-slider:not([data-multi-thumb]) .range-slider-values) {
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  :where(.range-slider-field label) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* Renders as a leading space so the accessible name reads "From €", not "From€" */
+  :where(.range-slider-unit) {
+    white-space: pre;
+  }
+
+  :where(.range-slider-number) {
+    /* Border and background match the Input component */
+    border: 2px solid var(--color-default-border);
+    border-radius: var(--radius-s);
+    padding: var(--space-2xs);
+    inline-size: 100%;
+    min-inline-size: 5rem;
+  }
+
+  :where(.range-slider-output) {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :where(.range-slider-track) {
+    position: relative;
+    /* 44px tall: in single-thumb mode the whole strip is the pointer target */
+    block-size: 2.75rem;
+  }
+
+  /* The rail the thumbs travel along */
+  :where(.range-slider-track)::before {
+    position: absolute;
+    translate: 0 -50%;
+    inset-block-start: 50%;
+    inset-inline: 0;
+    border-radius: var(--radius-s);
+    background-color: var(--range-slider-track-color);
+    block-size: var(--range-slider-track-height);
+    content: '';
+  }
+
+  :where(.range-slider-progress) {
+    position: absolute;
+    translate: 0 -50%;
+    inset-block-start: 50%;
+    inset-inline-end: calc(
+      (1 - var(--range-end)) * (100% - var(--range-slider-thumb-size)) +
+        var(--range-slider-thumb-size) / 2
+    );
+    inset-inline-start: calc(
+      var(--range-slider-thumb-size) / 2 + var(--range-start) *
+        (100% - var(--range-slider-thumb-size))
+    );
+    border-radius: var(--radius-s);
+    background-color: var(--range-slider-progress-color);
+    block-size: var(--range-slider-track-height);
+  }
+
+  :where(.range-slider:not([data-multi-thumb]) .range-slider-progress) {
+    inset-inline-start: 0;
+  }
+
+  :where(.range-slider-input) {
+    position: absolute;
+    appearance: none;
+    cursor: pointer;
+    margin: 0;
+    inset-block: 0;
+    inset-inline: 0;
+    border: none;
+    background: none;
+    padding: 0;
+    inline-size: 100%;
+  }
+
+  /*
+    Two thumbs overlap, so the inputs must let pointer events fall through and only the
+    thumbs themselves stay grabbable. A single thumb needs no such trick, which is what
+    lets its full 44px strip act as the target.
+  */
+  :where(.range-slider[data-multi-thumb] .range-slider-input) {
+    pointer-events: none;
+  }
+
+  :where(.range-slider-input)::-webkit-slider-runnable-track {
+    border: none;
+    background-color: transparent;
+    block-size: var(--range-slider-thumb-size);
+  }
+
+  :where(.range-slider-input)::-moz-range-track {
+    border: none;
+    background-color: transparent;
+    block-size: var(--range-slider-thumb-size);
+  }
+
+  /* Thumb is 24px square, meeting the minimum target size of WCAG 2.5.8 */
+  :where(.range-slider-input)::-webkit-slider-thumb {
+    appearance: none;
+    cursor: pointer;
+    border: 2px solid var(--range-slider-thumb-ring-color);
+    border-radius: 50%;
+    background-color: var(--range-slider-thumb-color);
+    inline-size: var(--range-slider-thumb-size);
+    block-size: var(--range-slider-thumb-size);
+    pointer-events: auto;
+  }
+
+  :where(.range-slider-input)::-moz-range-thumb {
+    cursor: pointer;
+    box-sizing: border-box;
+    border: 2px solid var(--range-slider-thumb-ring-color);
+    border-radius: 50%;
+    background-color: var(--range-slider-thumb-color);
+    inline-size: var(--range-slider-thumb-size);
+    block-size: var(--range-slider-thumb-size);
+    pointer-events: auto;
+  }
+
+  /* The indicator is drawn on the thumb instead, where the focus actually is */
+  :where(.range-slider-input:focus-visible) {
+    outline: none;
+  }
+
+  .range-slider-input:focus-visible::-webkit-slider-thumb {
+    outline: 3px solid var(--color-default-text);
+    outline-offset: 3px;
+  }
+
+  .range-slider-input:focus-visible::-moz-range-thumb {
+    outline: 3px solid var(--color-default-text);
+    outline-offset: 3px;
+  }
+
+  :where(.range-slider-input:disabled),
+  :where(.range-slider-number:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  :where(.range-slider:has(.range-slider-input:disabled) .range-slider-field label) {
+    opacity: 0.5;
+  }
+
+  /*
+    Backgrounds are dropped in forced colors, which would flatten the rail, the fill and
+    both thumbs into one shape. System colors keep all three distinguishable.
+  */
+  @media (forced-colors: active) {
+    :where(.range-slider-track)::before {
+      border: 1px solid CanvasText;
+      background-color: Canvas;
+      forced-color-adjust: none;
+    }
+
+    :where(.range-slider-progress) {
+      background-color: Highlight;
+      forced-color-adjust: none;
+    }
+
+    :where(.range-slider-input)::-webkit-slider-thumb {
+      border-color: Canvas;
+      background-color: CanvasText;
+      forced-color-adjust: none;
+    }
+
+    :where(.range-slider-input)::-moz-range-thumb {
+      border-color: Canvas;
+      background-color: CanvasText;
+      forced-color-adjust: none;
+    }
+
+    .range-slider-input:focus-visible::-webkit-slider-thumb {
+      outline-color: CanvasText;
+    }
+
+    .range-slider-input:focus-visible::-moz-range-thumb {
+      outline-color: CanvasText;
+    }
+
+    :where(.range-slider-input:disabled)::-webkit-slider-thumb {
+      background-color: GrayText;
+    }
+
+    :where(.range-slider-input:disabled)::-moz-range-thumb {
+      background-color: GrayText;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :where(.range-slider-input)::-webkit-slider-thumb {
+      transition: background-color 0.2s var(--animation-timing);
+    }
+
+    :where(.range-slider-input)::-moz-range-thumb {
+      transition: background-color 0.2s var(--animation-timing);
+    }
+  }
+</style>
+
+<script>
+  const initialized = new WeakSet<HTMLElement>()
+
+  /**
+   * Wire one slider instance. Everything is scoped to `root` so any number of sliders
+   * can share a page, and the WeakSet guard keeps a second pass from binding twice.
+   */
+  function initializeRangeSlider(root: HTMLElement) {
+    if (initialized.has(root)) return
+
+    const track = root.querySelector<HTMLElement>('.range-slider-track')
+    const rangeInputs = [...root.querySelectorAll<HTMLInputElement>('.range-slider-input')]
+
+    if (!track || rangeInputs.length === 0) return
+
+    initialized.add(root)
+
+    const numberInputs = [...root.querySelectorAll<HTMLInputElement>('.range-slider-number')]
+    const output = root.querySelector<HTMLOutputElement>('.range-slider-output')
+
+    const lowInput = rangeInputs[0]
+    const highInput = rangeInputs[1] ?? null
+    const multiThumb = highInput !== null
+
+    const min = Number(lowInput.min)
+    const max = Number(lowInput.max)
+    const span = max - min || 1
+    const minGap = Number(root.dataset.minGap ?? 0)
+
+    const valueFormat = root.dataset.valueFormat ?? 'number'
+    const fractionDigits = Number(root.dataset.fractionDigits ?? 0)
+    const locale = root.dataset.locale
+
+    const numberFormat =
+      valueFormat === 'currency'
+        ? new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency: root.dataset.currency,
+            minimumFractionDigits: fractionDigits,
+            maximumFractionDigits: fractionDigits,
+          })
+        : valueFormat === 'percent'
+        ? new Intl.NumberFormat(locale, { style: 'percent' })
+        : null
+
+    const format = (value: number) =>
+      numberFormat
+        ? numberFormat.format(valueFormat === 'percent' ? value / 100 : value)
+        : String(value)
+
+    const clamp = (value: number) => Math.min(Math.max(value, min), max)
+
+    // Set while syncing so the events we dispatch cannot re-enter the handlers
+    let syncing = false
+
+    /**
+     * Keep the two thumbs at least `minGap` apart, giving way on the side that did not
+     * move. Both values are clamped back into range afterwards so a gap larger than the
+     * remaining room cannot push a thumb past its bound.
+     */
+    function enforceGap(moved: HTMLInputElement) {
+      if (!highInput) return
+
+      let low = Number(lowInput.value)
+      let high = Number(highInput.value)
+
+      if (high - low >= minGap) return
+
+      if (moved === lowInput) {
+        low = clamp(high - minGap)
+        high = clamp(low + minGap)
+      } else {
+        high = clamp(low + minGap)
+        low = clamp(high - minGap)
+      }
+
+      lowInput.value = String(low)
+      highInput.value = String(high)
+    }
+
+    /** Repaint the fill, the announced text and the mirrored number inputs. */
+    function render() {
+      const low = Number(lowInput.value)
+      const high = highInput ? Number(highInput.value) : low
+
+      track!.style.setProperty('--range-start', String(((multiThumb ? low : min) - min) / span))
+      track!.style.setProperty('--range-end', String((high - min) / span))
+
+      // Only override the native announcement when there is a formatted value to give.
+      // Left alone, the browser announces the raw number, which is already correct.
+      if (numberFormat) {
+        rangeInputs.forEach((input) =>
+          input.setAttribute('aria-valuetext', format(Number(input.value)))
+        )
+      }
+
+      if (output) {
+        output.textContent = multiThumb ? `${format(low)} – ${format(high)}` : format(low)
+      }
+
+      numberInputs.forEach((input, index) => {
+        const value = String(index === 0 ? low : high)
+        if (input.value !== value) input.value = value
+      })
+
+      /*
+        Both thumbs sit on top of each other at the same value. Handing the upper half of
+        the range to the lower thumb means there is always one thumb a drag can reach,
+        including when both have been pushed against the same bound.
+      */
+      if (highInput) {
+        lowInput.style.zIndex = Number(lowInput.value) > min + span / 2 ? '4' : '2'
+        highInput.style.zIndex = '3'
+      }
+    }
+
+    /** Mirror a typed number back onto its slider and let form listeners hear about it. */
+    function applyToRange(rangeInput: HTMLInputElement, value: number) {
+      if (rangeInput.value === String(value)) return
+
+      syncing = true
+      rangeInput.value = String(value)
+      enforceGap(rangeInput)
+      rangeInput.dispatchEvent(new Event('input', { bubbles: true }))
+      rangeInput.dispatchEvent(new Event('change', { bubbles: true }))
+      syncing = false
+
+      render()
+    }
+
+    rangeInputs.forEach((input) => {
+      input.addEventListener('input', () => {
+        if (syncing) return
+        enforceGap(input)
+        render()
+      })
+    })
+
+    numberInputs.forEach((numberInput, index) => {
+      const rangeInput = index === 0 ? lowInput : highInput!
+
+      // While typing, follow along only for values that are already valid. Clamping here
+      // would rewrite the field mid-keystroke and make longer numbers impossible to enter.
+      numberInput.addEventListener('input', () => {
+        const value = Number(numberInput.value)
+        if (numberInput.value === '' || !Number.isFinite(value)) return
+        if (value < min || value > max) return
+        applyToRange(rangeInput, value)
+      })
+
+      // Once the field is left, settle it on a value the slider can actually hold
+      numberInput.addEventListener('change', () => {
+        const value = Number(numberInput.value)
+
+        if (numberInput.value === '' || !Number.isFinite(value)) {
+          render()
+          return
+        }
+
+        applyToRange(rangeInput, clamp(value))
+        render()
+      })
+    })
+
+    render()
+  }
+
+  function initializeRangeSliders() {
+    document.querySelectorAll<HTMLElement>('.range-slider').forEach(initializeRangeSlider)
+  }
+
+  initializeRangeSliders()
+
+  // Handle Astro view transitions
+  document.addEventListener('astro:after-swap', initializeRangeSliders)
+</script>
