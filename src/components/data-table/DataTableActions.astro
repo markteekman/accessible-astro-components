@@ -1,0 +1,24 @@
+---
+/**
+ * DataTableActions Component
+ *
+ * @description Row actions container for DataTable
+ */
+
+interface Props {
+  /**
+   * Additional classes to apply to the actions cell
+   */
+  class?: string
+  /**
+   * HTML attributes to spread on the actions cell
+   */
+  [key: string]: string | number | boolean | undefined
+}
+
+const { class: className, ...rest } = Astro.props
+---
+
+<td class:list={['data-table__actions', className]} data-filter="false" {...rest}>
+  <slot />
+</td>

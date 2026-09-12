@@ -1,0 +1,73 @@
+---
+/**
+ * DataTableCell Component
+ *
+ * @description Table cell wrapper for DataTable rows
+ */
+
+interface Props {
+  /**
+   * Additional classes to apply to the cell
+   */
+  class?: string
+  /**
+   * Element to render
+   * @default "td"
+   */
+  as?: 'td' | 'th'
+  /**
+   * Scope attribute for header cells
+   */
+  scope?: 'row' | 'col' | 'rowgroup' | 'colgroup'
+  /**
+   * Whether the cell contains numeric values
+   * @default false
+   */
+  numeric?: boolean
+  /**
+   * Optional sort value to use instead of text content
+   */
+  sortValue?: string | number
+  /**
+   * Optional sort key for column matching
+   */
+  sortKey?: string
+  /**
+   * Whether the cell should be included in filtering
+   * @default true
+   */
+  filterable?: boolean
+  /**
+   * HTML attributes to spread on the cell
+   */
+  [key: string]: string | number | boolean | undefined
+}
+
+const {
+  class: className,
+  as = 'td',
+  scope,
+  numeric = false,
+  sortValue,
+  sortKey,
+  filterable = true,
+  ...rest
+} = Astro.props
+
+const Tag = as
+const resolvedScope = as === 'th' ? scope ?? 'row' : undefined
+const dataSortValue = sortValue !== undefined ? String(sortValue) : undefined
+const dataSortKey = sortKey
+const dataFilter = filterable ? undefined : 'false'
+---
+
+<Tag
+  class:list={['data-table__cell', numeric && 'data-table__cell--numeric', className]}
+  scope={resolvedScope}
+  data-sort-value={dataSortValue}
+  data-sort-key={dataSortKey}
+  data-filter={dataFilter}
+  {...rest}
+>
+  <slot />
+</Tag>

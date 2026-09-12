@@ -13,6 +13,16 @@
  * - Button
  * - Card
  * - Checkbox
+ * - DataTable
+ * - DataTableActions
+ * - DataTableBody
+ * - DataTableCell
+ * - DataTableColumn
+ * - DataTableHeader
+ * - DataTableInfo
+ * - DataTablePagination
+ * - DataTableRow
+ * - DataTableSearch
  * - DarkMode
  * - Drawer
  * - Fieldset
@@ -304,6 +314,168 @@ export const Card: Card
  */
 type Checkbox = typeof import('../../index.js').Checkbox
 export const Checkbox: Checkbox
+
+/**
+ * Data table parent component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.id - Optional ID for the table element
+ * @param _props.caption - Table caption text (required)
+ * @param _props.captionHidden - Whether to visually hide the caption while keeping it accessible - default: false
+ * @param _props.pageSize - Opt into client pagination; render all rows
+ * @param _props.initialPage - Initial client page - default: 1
+ * @param _props.labels.results - Default result summary when DataTableInfo is omitted
+ * @param _props.labels.filteredResults - Filtered summary when DataTableInfo is omitted
+ * @param _props.labels.emptyResults - Empty summary when DataTableInfo is omitted
+ * @param _props.labels - Optional labels for sorting announcements and hints
+ * @param _props.labels.sortAscending - Label for ascending sort announcements - default: "ascending"
+ * @param _props.labels.sortDescending - Label for descending sort announcements - default: "descending"
+ * @param _props.labels.sortAnnouncement - Announcement template for sorting updates - default: "Sorted by {column} {direction}"
+ * @param _props.labels.sortableHint - Screen reader hint for sortable columns - default: "Column headers with buttons are sortable."
+ * @param _props.class - Optional CSS class names
+ * @param _props.children - Expects DataTableHeader and DataTableBody components. Parent element: `<table>`
+ * @note Supports named slots: "search" for DataTableSearch and "info" for DataTableInfo and "footer" for DataTablePagination
+ * @note Additional HTML attributes can be passed and will be spread to the root element
+ */
+type DataTable = typeof import('../../index.js').DataTable
+export const DataTable: DataTable
+
+/**
+ * Data table row actions component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.class - Optional CSS class names
+ * @param _props.children - Row action controls. Parent element: `<td>`
+ * @note The cell is excluded from DataTable filtering
+ * @note Additional HTML attributes can be passed and will be spread to the root element
+ */
+type DataTableActions = typeof import('../../index.js').DataTableActions
+export const DataTableActions: DataTableActions
+
+/**
+ * Data table body component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.class - Optional CSS class names
+ * @param _props.children - Expects one or more DataTableRow components. Parent element: `<tbody>`
+ * @note Additional HTML attributes can be passed and will be spread to the root element
+ */
+type DataTableBody = typeof import('../../index.js').DataTableBody
+export const DataTableBody: DataTableBody
+
+/**
+ * Data table cell component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.class - Optional CSS class names
+ * @param _props.as - Element to render ('td' | 'th') - default: 'td'
+ * @param _props.scope - Scope for header cells ('row' | 'col' | 'rowgroup' | 'colgroup') - default: 'row' when as is 'th'
+ * @param _props.numeric - Whether the cell contains numeric values - default: false
+ * @param _props.sortValue - Optional value to use instead of the cell's text content when sorting
+ * @param _props.sortKey - Optional key used to match a custom sort value to a column
+ * @param _props.filterable - Whether the cell is included in filtering - default: true
+ * @param _props.children - Cell contents. Parent element: `<td>` or `<th>`
+ * @note Additional HTML attributes can be passed and will be spread to the root element
+ */
+type DataTableCell = typeof import('../../index.js').DataTableCell
+export const DataTableCell: DataTableCell
+
+/**
+ * Data table column header component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.class - Optional CSS class names
+ * @param _props.sortable - Whether the column is sortable - default: false
+ * @param _props.sorted - Initial sort direction ('ascending' | 'descending')
+ * @param _props.numeric - Whether the column contains numeric values - default: false
+ * @param _props.sortKey - Optional key for matching custom cell sort values
+ * @param _props.width - CSS column width (length or percentage); unspecified columns share remaining space
+ * @param _props.children - Column heading contents. Parent element: `<th>`
+ * @note Sortable columns render their contents inside a button
+ * @note Additional HTML attributes can be passed and will be spread to the root element
+ */
+type DataTableColumn = typeof import('../../index.js').DataTableColumn
+export const DataTableColumn: DataTableColumn
+
+/**
+ * Data table header component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.class - Optional CSS class names
+ * @param _props.children - Expects one or more DataTableColumn components. Parent element: `<tr>` inside `<thead>`
+ * @note Additional HTML attributes can be passed and will be spread to the root element
+ */
+type DataTableHeader = typeof import('../../index.js').DataTableHeader
+export const DataTableHeader: DataTableHeader
+
+/**
+ * Data table result information component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.start - Start index for the current page (required)
+ * @param _props.end - End index for the current page (required)
+ * @param _props.total - Total number of entries (required)
+ * @param _props.template - Template for the default information text - default: "Showing {start} to {end} of {total} entries"
+ * @param _props.filteredTemplate - Template for filtered information text - default: 'Showing {start} to {end} of {filtered} entries matching "{query}"'
+ * @param _props.emptyLabel - Empty-result template; supports {query} - default: 'No entries matching "{query}"'
+ * @param _props.class - Optional CSS class names
+ * @note Additional HTML attributes can be passed and will be spread to the root element
+ */
+type DataTableInfo = typeof import('../../index.js').DataTableInfo
+export const DataTableInfo: DataTableInfo
+
+/**
+ * Data table pagination component
+ *
+ * @param _props.client - Use client pagination buttons with DataTable pageSize - default: false
+ * @param _props.pageTemplate - Client progress template - default: "Page {page} of {pages}"
+ *
+ * @param _props - Record<string, any>
+ * @param _props.currentPage - Current page number - default: 1
+ * @param _props.totalPages - Total number of pages - default: 1
+ * @param _props.baseUrl - Optional base URL used to generate pagination links
+ * @param _props.firstPage - Optional route for the first page
+ * @param _props.previousPage - Optional route for the previous page
+ * @param _props.nextPage - Optional route for the next page
+ * @param _props.lastPage - Optional route for the last page
+ * @param _props.ariaLabel - Accessible label for the pagination navigation
+ * @param _props.firstPageLabel - Accessible label for the first-page button
+ * @param _props.previousPageLabel - Accessible label for the previous-page button
+ * @param _props.nextPageLabel - Accessible label for the next-page button
+ * @param _props.lastPageLabel - Accessible label for the last-page button
+ * @param _props.renderProgress - Optional link-mode progress renderer; use pageTemplate for client mode
+ * @param _props.renderPageLabel - Optional link-mode accessible-label renderer; use individual labels for client mode
+ * @param _props.class - Optional CSS class names
+ * @note Uses the Pagination component and supports its additional HTML attributes
+ */
+type DataTablePagination = typeof import('../../index.js').DataTablePagination
+export const DataTablePagination: DataTablePagination
+
+/**
+ * Data table row component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.class - Optional CSS class names
+ * @param _props.children - Expects DataTableCell or DataTableActions components. Parent element: `<tr>`
+ * @note Additional HTML attributes can be passed and will be spread to the root element
+ */
+type DataTableRow = typeof import('../../index.js').DataTableRow
+export const DataTableRow: DataTableRow
+
+/**
+ * Data table search component
+ *
+ * @param _props - Record<string, any>
+ * @param _props.id - Optional ID for the search input
+ * @param _props.label - Label text for the search input - default: "Search"
+ * @param _props.placeholder - Placeholder text for the search input - default: "Search entries..."
+ * @param _props.clearLabel - Clear button accessible name - default: "Clear search"
+ * @param _props.showLabel - Whether to show the label visually - default: true
+ * @param _props.class - Optional CSS class names for the search wrapper
+ * @note Additional HTML attributes can be passed and will be spread to the search input
+ */
+type DataTableSearch = typeof import('../../index.js').DataTableSearch
+export const DataTableSearch: DataTableSearch
 
 /**
  * DarkMode toggle component

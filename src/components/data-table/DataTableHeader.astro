@@ -1,0 +1,26 @@
+---
+/**
+ * DataTableHeader Component
+ *
+ * @description Table header wrapper for DataTable columns
+ */
+
+interface Props {
+  /**
+   * Additional classes to apply to the table header
+   */
+  class?: string
+  /**
+   * HTML attributes to spread on the table header
+   */
+  [key: string]: string | number | boolean | undefined
+}
+
+const { class: className, ...rest } = Astro.props
+---
+
+<thead class:list={['data-table__head', className]} {...rest}>
+  <tr>
+    <slot />
+  </tr>
+</thead>

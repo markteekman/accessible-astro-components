@@ -1,0 +1,849 @@
+---
+/**
+ * DataTable Component
+ *
+ * @description A modular, accessible data table with sorting, filtering, and pagination support
+ */
+
+interface DataTableLabels {
+  /**
+   * Label for ascending sort announcements
+   * @default "ascending"
+   */
+  sortAscending?: string
+  /**
+   * Label for descending sort announcements
+   * @default "descending"
+   */
+  sortDescending?: string
+  /**
+   * Announcement template for sorting updates
+   * @default "Sorted by {column} {direction}"
+   */
+  sortAnnouncement?: string
+  /**
+   * Screen reader hint for sortable columns
+   * @default "Column headers with buttons are sortable."
+   */
+  sortableHint?: string
+  /** Result summary when DataTableInfo is omitted. */
+  results?: string
+  /** Filtered summary when DataTableInfo is omitted. */
+  filteredResults?: string
+  /** Empty summary when DataTableInfo is omitted. */
+  emptyResults?: string
+}
+
+interface Props {
+  /**
+   * Optional ID for the table element
+   */
+  id?: string
+  /**
+   * Table caption text
+   */
+  caption: string
+  /**
+   * Visually hide the caption while keeping it accessible
+   * @default false
+   */
+  captionHidden?: boolean
+  /** Opt into client pagination. Render the complete dataset as rows. */
+  pageSize?: number
+  /** Initial page for client pagination. @default 1 */
+  initialPage?: number
+  /**
+   * Labels for sorting announcements and hints
+   */
+  labels?: DataTableLabels
+  /**
+   * Additional classes to apply to the DataTable container
+   */
+  class?: string
+  /**
+   * HTML attributes to spread on the DataTable container
+   */
+  [key: string]: string | number | boolean | DataTableLabels | undefined
+}
+
+const {
+  class: className,
+  id,
+  caption,
+  captionHidden = false,
+  pageSize,
+  initialPage = 1,
+  labels = {},
+  ...rest
+} = Astro.props
+
+const createId = () => `data-table-${Date.now()}-${Math.random().toString(16).slice(2)}`
+const tableId = id ?? createId()
+const captionId = `${tableId}-caption`
+
+const mergedLabels = {
+  sortAscending: 'ascending',
+  sortDescending: 'descending',
+  sortAnnouncement: 'Sorted by {column} {direction}',
+  sortableHint: 'Column headers with buttons are sortable.',
+  results: 'Showing {start} to {end} of {total} entries',
+  filteredResults: 'Showing {start} to {end} of {filtered} entries matching "{query}"',
+  emptyResults: 'No entries matching "{query}"',
+  ...labels,
+}
+---
+
+<div
+  class:list={['data-table', className]}
+  data-table
+  data-page-size={pageSize}
+  data-initial-page={initialPage}
+  data-sort-ascending-label={mergedLabels.sortAscending}
+  data-sort-descending-label={mergedLabels.sortDescending}
+  data-sort-announcement={mergedLabels.sortAnnouncement}
+  data-sortable-hint={mergedLabels.sortableHint}
+  data-results-label={mergedLabels.results}
+  data-filtered-results-label={mergedLabels.filteredResults}
+  data-empty-results-label={mergedLabels.emptyResults}
+  {...rest}
+>
+  {
+    Astro.slots.has('search') && (
+      <div class="data-table__header">
+        <slot name="search" />
+      </div>
+    )
+  }
+
+  <slot name="info" />
+
+  <div
+    class="data-table__scroll"
+    data-table-scroll
+    tabindex="-1"
+    role="group"
+    aria-labelledby={captionId}
+  >
+    <table id={tableId} class="data-table__table" data-table-table>
+      <caption id={captionId} class:list={['data-table__caption', captionHidden && 'sr-only']}>
+        {caption}
+        <span class="sr-only" data-table-sort-hint>{mergedLabels.sortableHint}</span>
+      </caption>
+      <slot />
+    </table>
+  </div>
+
+  {
+    Astro.slots.has('footer') && (
+      <div class="data-table__footer">
+        <slot name="footer" />
+      </div>
+    )
+  }
+
+  <div class="sr-only" aria-live="polite" aria-atomic="true" data-table-live></div>
+</div>
+
+<script>
+  interface SortableColumn {
+    header: HTMLTableCellElement
+    button: HTMLButtonElement
+  }
+
+  interface RowEntry {
+    row: HTMLTableRowElement
+    index: number
+  }
+
+  const DATA_TABLE_SELECTOR = '[data-table]'
+  const SORTABLE_HEADER_SELECTOR = 'th[data-sortable]'
+  const instances = new Map<HTMLElement, () => void>()
+
+  const replaceTokens = (template: string, values: Record<string, string | number>) =>
+    template.replace(/\{(\w+)\}/g, (_, token) => String(values[token] ?? ''))
+
+  const initializeDataTable = (component: HTMLElement) => {
+    if (instances.has(component)) return
+
+    const table = component.querySelector<HTMLTableElement>('[data-table-table]')
+    const tbody = table?.querySelector('tbody')
+    if (!table || !tbody) return
+    const controller = new AbortController()
+    const { signal } = controller
+    let debounceId: number | undefined
+
+    const rows = Array.from(tbody.rows)
+    const rowEntries: RowEntry[] = rows.map((row, index) => ({ row, index }))
+    let orderedRows = rowEntries.slice()
+    const requestedPageSize = Number(component.dataset.pageSize)
+    const pageSize =
+      Number.isInteger(requestedPageSize) && requestedPageSize > 0 ? requestedPageSize : 0
+    let currentPage = Math.max(1, Math.floor(Number(component.dataset.initialPage) || 1))
+
+    const sortableColumns: SortableColumn[] = Array.from(
+      table.querySelectorAll<HTMLTableCellElement>(SORTABLE_HEADER_SELECTOR)
+    )
+      .map((header) => {
+        const button = header.querySelector<HTMLButtonElement>('button')
+        return button ? { header, button } : null
+      })
+      .filter((entry): entry is SortableColumn => Boolean(entry))
+
+    const liveRegion = component.querySelector<HTMLElement>('[data-table-live]')
+    const infoElement = component.querySelector<HTMLElement>('[data-table-info]')
+    const searchInput = component.querySelector<HTMLInputElement>('[data-table-search]')
+    const clearButton = component.querySelector<HTMLButtonElement>('[data-table-clear]')
+    const scrollWrapper = component.querySelector<HTMLElement>('[data-table-scroll]')
+    const pagination = component.querySelector<HTMLElement>('[data-table-pagination]')
+    const pageButtons = pagination?.querySelectorAll<HTMLButtonElement>('[data-page]')
+    const progress = pagination?.querySelector<HTMLElement>('[data-page-progress]')
+
+    const sortAscendingLabel = component.dataset.sortAscendingLabel ?? 'ascending'
+    const sortDescendingLabel = component.dataset.sortDescendingLabel ?? 'descending'
+    const sortAnnouncementTemplate =
+      component.dataset.sortAnnouncement ?? 'Sorted by {column} {direction}'
+
+    const baseStart = Number(infoElement?.dataset.start ?? (rows.length ? 1 : 0))
+    const baseEnd = Number(infoElement?.dataset.end ?? rows.length)
+    const totalEntries = pageSize ? rows.length : Number(infoElement?.dataset.total ?? rows.length)
+    const baseTemplate =
+      infoElement?.dataset.template ??
+      component.dataset.resultsLabel ??
+      'Showing {start} to {end} of {total} entries'
+    const filteredTemplate =
+      infoElement?.dataset.filteredTemplate ??
+      component.dataset.filteredResultsLabel ??
+      'Showing {start} to {end} of {filtered} entries matching "{query}"'
+    const emptyLabel =
+      infoElement?.dataset.emptyLabel ??
+      component.dataset.emptyResultsLabel ??
+      'No entries matching "{query}"'
+
+    const updateInfo = ({
+      isFiltered,
+      filteredCount,
+      query,
+    }: {
+      isFiltered: boolean
+      filteredCount: number
+      query: string
+    }) => {
+      const start =
+        filteredCount === 0
+          ? 0
+          : pageSize
+          ? (currentPage - 1) * pageSize + 1
+          : isFiltered
+          ? 1
+          : baseStart
+      const end = pageSize
+        ? Math.min(currentPage * pageSize, filteredCount)
+        : isFiltered
+        ? filteredCount
+        : baseEnd
+      const template = isFiltered
+        ? filteredCount === 0
+          ? emptyLabel
+          : filteredTemplate
+        : baseTemplate
+      const message = replaceTokens(template, {
+        start,
+        end,
+        total: totalEntries,
+        filtered: filteredCount,
+        query,
+      })
+      if (infoElement) infoElement.textContent = message
+      return message
+    }
+
+    const announce = (message: string) => {
+      if (!liveRegion || !message) return
+      liveRegion.textContent = message
+    }
+
+    const applyFilter = (query: string, shouldAnnounce = true) => {
+      const normalizedQuery = query.trim().toLowerCase()
+      const matchingRows = orderedRows.filter(({ row }) => {
+        const cells = Array.from(row.cells).filter((cell) => cell.dataset.filter !== 'false')
+        const rowText = cells
+          .map((cell) => cell.textContent ?? '')
+          .join(' ')
+          .toLowerCase()
+        const isVisible = normalizedQuery.length === 0 || rowText.includes(normalizedQuery)
+        return isVisible
+      })
+      const visibleCount = matchingRows.length
+      const totalPages = pageSize ? Math.max(1, Math.ceil(visibleCount / pageSize)) : 1
+      currentPage = Math.min(currentPage, totalPages)
+      const visibleRows = new Set(
+        (pageSize
+          ? matchingRows.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+          : matchingRows
+        ).map(({ row }) => row)
+      )
+      rowEntries.forEach(({ row }) => {
+        row.hidden = !visibleRows.has(row)
+      })
+      if (pagination && pageSize) {
+        pagination.hidden = false
+        if (progress)
+          progress.textContent = replaceTokens(
+            pagination.dataset.pageTemplate ?? 'Page {page} of {pages}',
+            { page: currentPage, pages: totalPages }
+          )
+        pageButtons?.forEach((button) => {
+          const target = button.dataset.page
+          button.disabled =
+            target === 'first' || target === 'previous'
+              ? currentPage === 1
+              : currentPage === totalPages
+          button.dataset.targetPage = String(
+            target === 'first'
+              ? 1
+              : target === 'previous'
+              ? currentPage - 1
+              : target === 'next'
+              ? currentPage + 1
+              : totalPages
+          )
+        })
+      }
+
+      const isFiltered = normalizedQuery.length > 0
+      const message = updateInfo({ isFiltered, filteredCount: visibleCount, query: query.trim() })
+      if (shouldAnnounce) announce(message)
+    }
+
+    const getSortValue = (row: HTMLTableRowElement, columnIndex: number, sortKey?: string) => {
+      const rowCells = Array.from(row.cells)
+      let cell = rowCells[columnIndex]
+
+      if (sortKey) {
+        const keyedCell = rowCells.find((cell) => cell.dataset.sortKey === sortKey)
+        if (keyedCell) {
+          cell = keyedCell
+        }
+      }
+
+      if (!cell) return ''
+
+      const sortValue = cell.dataset.sortValue
+      return (sortValue ?? cell.textContent ?? '').trim()
+    }
+
+    const applySort = (
+      targetHeader: HTMLTableCellElement,
+      options: { toggle?: boolean; announce?: boolean } = {}
+    ) => {
+      const columnIndex = targetHeader.cellIndex
+      const sortType = targetHeader.dataset.sortType ?? 'text'
+      const sortKey = targetHeader.dataset.sortKey
+
+      const currentSort = targetHeader.getAttribute('aria-sort')
+      const shouldToggle = options.toggle !== false
+      const nextSort = shouldToggle
+        ? currentSort === 'ascending'
+          ? 'descending'
+          : 'ascending'
+        : currentSort ?? 'ascending'
+
+      sortableColumns.forEach(({ header }) => {
+        if (header === targetHeader) {
+          header.setAttribute('aria-sort', nextSort)
+        } else {
+          header.removeAttribute('aria-sort')
+        }
+      })
+
+      const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
+
+      const sortedRows = rowEntries.slice().sort((a, b) => {
+        const valueA = getSortValue(a.row, columnIndex, sortKey)
+        const valueB = getSortValue(b.row, columnIndex, sortKey)
+
+        if (sortType === 'number') {
+          const numericA = Number.parseFloat(valueA.replace(/[^0-9.-]+/g, ''))
+          const numericB = Number.parseFloat(valueB.replace(/[^0-9.-]+/g, ''))
+          const safeA = Number.isNaN(numericA) ? 0 : numericA
+          const safeB = Number.isNaN(numericB) ? 0 : numericB
+          const result = nextSort === 'ascending' ? safeA - safeB : safeB - safeA
+          return result === 0 ? a.index - b.index : result
+        }
+
+        const result =
+          nextSort === 'ascending'
+            ? collator.compare(valueA, valueB)
+            : collator.compare(valueB, valueA)
+        return result === 0 ? a.index - b.index : result
+      })
+
+      orderedRows = sortedRows
+      sortedRows.forEach(({ row }) => tbody.append(row))
+      if (options.toggle !== false) currentPage = 1
+      applyFilter(searchInput?.value ?? '', false)
+
+      const label = targetHeader.textContent?.trim() ?? 'column'
+      const directionLabel = nextSort === 'ascending' ? sortAscendingLabel : sortDescendingLabel
+      if (options.announce !== false)
+        announce(
+          replaceTokens(sortAnnouncementTemplate, {
+            column: label,
+            direction: directionLabel,
+          })
+        )
+    }
+
+    sortableColumns.forEach(({ header, button }) => {
+      button.addEventListener('click', () => applySort(header), { signal })
+    })
+
+    const initialSortedHeader = sortableColumns.find(({ header }) =>
+      header.hasAttribute('aria-sort')
+    )
+
+    if (initialSortedHeader) {
+      applySort(initialSortedHeader.header, { toggle: false, announce: false })
+    }
+
+    if (searchInput) {
+      if (!searchInput.getAttribute('aria-controls')) {
+        searchInput.setAttribute('aria-controls', table.id)
+      }
+
+      const updateClearButton = () => {
+        if (clearButton)
+          clearButton.hidden = !searchInput.value || searchInput.disabled || searchInput.readOnly
+      }
+      updateClearButton()
+      searchInput.addEventListener(
+        'input',
+        () => {
+          currentPage = 1
+          updateClearButton()
+          window.clearTimeout(debounceId)
+          debounceId = window.setTimeout(() => {
+            applyFilter(searchInput.value)
+          }, 300)
+        },
+        { signal }
+      )
+      clearButton?.addEventListener(
+        'click',
+        () => {
+          if (searchInput.disabled || searchInput.readOnly) return
+          window.clearTimeout(debounceId)
+          searchInput.value = ''
+          searchInput.focus()
+          searchInput.dispatchEvent(new Event('input', { bubbles: true }))
+        },
+        { signal }
+      )
+    }
+    applyFilter(searchInput?.value ?? '', false)
+    pageButtons?.forEach((button) =>
+      button.addEventListener(
+        'click',
+        () => {
+          currentPage = Number(button.dataset.targetPage)
+          applyFilter(searchInput?.value ?? '')
+          // A boundary button may become disabled. Keep focus in the navigation.
+          if (button.disabled) progress?.focus()
+        },
+        { signal }
+      )
+    )
+
+    const updateScrollableState = () => {
+      if (!scrollWrapper) return
+      const isScrollable = scrollWrapper.scrollWidth > scrollWrapper.clientWidth
+      if (isScrollable) {
+        scrollWrapper.setAttribute('tabindex', '0')
+        scrollWrapper.dataset.scrollable = 'true'
+      } else {
+        scrollWrapper.removeAttribute('tabindex')
+        scrollWrapper.dataset.scrollable = 'false'
+      }
+    }
+
+    updateScrollableState()
+    const observer = new ResizeObserver(updateScrollableState)
+    if (scrollWrapper) observer.observe(scrollWrapper)
+    observer.observe(table)
+    instances.set(component, () => {
+      controller.abort()
+      window.clearTimeout(debounceId)
+      observer.disconnect()
+    })
+  }
+
+  document.querySelectorAll<HTMLElement>(DATA_TABLE_SELECTOR).forEach(initializeDataTable)
+
+  document.addEventListener('astro:after-swap', () => {
+    for (const [component, cleanup] of instances) {
+      if (!component.isConnected) {
+        cleanup()
+        instances.delete(component)
+      }
+    }
+    document.querySelectorAll<HTMLElement>(DATA_TABLE_SELECTOR).forEach(initializeDataTable)
+  })
+</script>
+
+<style is:global>
+  :where(.data-table) {
+    --data-table-border: var(--color-default-border);
+    --data-table-divider: light-dark(
+      var(--color-neutral-200, hsl(214 14% 90%)),
+      var(--color-neutral-800, hsl(214 15% 24%))
+    );
+    --data-table-surface: light-dark(
+      var(--color-neutral-100, hsl(0 0% 100%)),
+      var(--color-neutral-900, hsl(215 25% 12%))
+    );
+    --data-table-header-surface: light-dark(
+      var(--color-neutral-200, hsl(210 20% 97%)),
+      var(--color-neutral-800, hsl(215 22% 16%))
+    );
+    --data-table-row-hover: light-dark(
+      var(--color-neutral-200, hsl(210 20% 96%)),
+      var(--color-neutral-800, hsl(215 22% 19%))
+    );
+    --data-table-muted: light-dark(
+      var(--color-neutral-700, hsl(214 10% 36%)),
+      var(--color-neutral-400, hsl(214 10% 72%))
+    );
+    --data-table-focus: var(
+      --outline-color,
+      light-dark(
+        var(--color-primary-500, hsl(288 100% 38%)),
+        var(--color-primary-100, hsl(300 100% 80%))
+      )
+    );
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    inline-size: 100%;
+    min-inline-size: 0;
+    color: inherit;
+  }
+
+  :where(.data-table .data-table__header) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-s);
+  }
+
+  :where(.data-table .data-table__search) {
+    display: grid;
+    gap: var(--space-4xs);
+    inline-size: min(100%, 22rem);
+  }
+
+  :where(.data-table .data-table__search input) {
+    appearance: none;
+    transition-duration: var(--animation-speed-instant, 0.1s);
+    transition-property: border-color, background-color;
+    transition-timing-function: var(--cubic-bezier, ease-out);
+    border: 2px solid var(--data-table-border);
+    border-radius: var(--radius-s);
+    background-color: var(--data-table-surface);
+    padding-inline: var(--space-xs);
+    padding-inline-end: 3rem;
+    padding-block: var(--space-2xs);
+    inline-size: 100%;
+    min-block-size: 2.75rem;
+    color: inherit;
+    line-height: 1.25;
+  }
+
+  :where(.data-table .data-table__search input::placeholder) {
+    opacity: 1;
+    color: var(--data-table-muted);
+  }
+
+  :where(.data-table .data-table__search-field) {
+    position: relative;
+  }
+
+  :where(.data-table .data-table__search input::-webkit-search-cancel-button) {
+    appearance: none;
+  }
+
+  :where(.data-table .data-table__clear) {
+    display: grid;
+    position: absolute;
+    place-items: center;
+    cursor: pointer;
+    inset-block: 2px;
+    inset-inline-end: 2px;
+    border: 0;
+    border-radius: var(--radius-s);
+    background: transparent;
+    inline-size: 2.5rem;
+    color: inherit;
+  }
+
+  :where(.data-table .data-table__clear[hidden]) {
+    display: none;
+  }
+
+  :where(.data-table .data-table__clear:hover) {
+    background-color: var(--data-table-row-hover);
+  }
+
+  :where(.data-table .data-table__clear:focus-visible) {
+    outline: 3px solid var(--data-table-focus);
+    outline-offset: -3px;
+  }
+
+  :where(.data-table .data-table__search input:focus-visible) {
+    outline: 3px solid var(--data-table-focus);
+    outline-offset: 2px;
+  }
+
+  :where(.data-table .data-table__scroll) {
+    box-shadow: var(--elevation-1, 0 1px 3px rgb(0 0 0 / 0.12));
+    border: 1px solid var(--data-table-border);
+    border-radius: var(--radius-s);
+    background-color: var(--data-table-surface);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-color: var(--data-table-border) transparent;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  :where(.data-table .data-table__scroll:focus-visible) {
+    outline: 3px solid var(--data-table-focus);
+    outline-offset: 2px;
+  }
+
+  :where(.data-table .data-table__scroll[data-scrollable='true']) {
+    scrollbar-gutter: stable;
+  }
+
+  :where(.data-table .data-table__table) {
+    border-collapse: collapse;
+    border-spacing: 0;
+    background-color: var(--data-table-surface);
+    inline-size: 100%;
+    min-inline-size: var(--data-table-min-width, 100%);
+    table-layout: fixed;
+    font-size: 1rem;
+  }
+
+  :where(.data-table .data-table__caption) {
+    border-block-end: 1px solid var(--data-table-divider);
+    padding-inline: var(--space-s);
+    padding-block: var(--space-xs);
+    font-weight: 600;
+    text-align: start;
+  }
+
+  :where(.data-table .data-table__head) {
+    background-color: var(--data-table-header-surface);
+  }
+
+  :where(.data-table .data-table__column) {
+    border-block-end: 1px solid var(--data-table-border);
+    inline-size: var(--data-table-column-width, auto);
+    color: var(--data-table-muted);
+    font-weight: 700;
+    font-size: var(--font-size--1, 0.875rem);
+    line-height: 1.25;
+    text-align: start;
+    overflow-wrap: anywhere;
+  }
+
+  :where(.data-table .data-table__column:not(.data-table__column--sortable)) {
+    padding-inline: var(--space-s);
+    padding-block: var(--space-xs);
+  }
+
+  :where(.data-table .data-table__column--numeric) {
+    text-align: end;
+  }
+
+  :where(.data-table .data-table__column--actions) {
+    text-align: end;
+  }
+
+  :where(.data-table .data-table__column--sortable .data-table__sort) {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: var(--space-3xs);
+    transition-duration: var(--animation-speed-instant, 0.1s);
+    transition-property: background-color, color;
+    transition-timing-function: var(--cubic-bezier, ease-out);
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding-inline: var(--space-s);
+    padding-block: var(--space-xs);
+    inline-size: 100%;
+    min-block-size: 2.75rem;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+  }
+
+  :where(.data-table .data-table__column--numeric .data-table__sort) {
+    justify-content: flex-end;
+  }
+
+  :where(.data-table .data-table__sort-label) {
+    min-inline-size: 0;
+  }
+
+  :where(.data-table .data-table__sort-icon) {
+    flex: none;
+    inline-size: 1rem;
+    block-size: 1rem;
+    overflow: visible;
+  }
+
+  :where(.data-table .data-table__sort-icon path) {
+    display: none;
+  }
+
+  :where(
+      .data-table
+        .data-table__column:not([aria-sort='ascending']):not([aria-sort='descending'])
+        .data-table__sort-icon-unsorted
+    ),
+  :where(.data-table .data-table__column[aria-sort='ascending'] .data-table__sort-icon-up),
+  :where(.data-table .data-table__column[aria-sort='descending'] .data-table__sort-icon-down) {
+    display: inline;
+  }
+
+  :where(.data-table .data-table__column--sortable .data-table__sort:hover),
+  :where(.data-table .data-table__column--sortable .data-table__sort:focus-visible) {
+    background-color: var(--data-table-row-hover);
+    color: inherit;
+  }
+
+  :where(.data-table .data-table__column--sortable .data-table__sort:focus-visible) {
+    outline: 3px solid var(--data-table-focus);
+    border-radius: var(--radius-s);
+  }
+
+  /* Keep the outline inside the scroll container, even with global focus styles. */
+  .data-table__sort:focus-visible {
+    outline-offset: -4px;
+  }
+
+  :where(.data-table .data-table__cell),
+  :where(.data-table .data-table__actions) {
+    vertical-align: middle;
+    transition-duration: var(--animation-speed-instant, 0.1s);
+    transition-property: background-color;
+    transition-timing-function: var(--cubic-bezier, ease-out);
+    border-block-end: 1px solid var(--data-table-divider);
+    background-color: var(--data-table-surface);
+    padding-inline: var(--space-s);
+    padding-block: var(--space-xs);
+    line-height: 1.4;
+    text-align: start;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  :where(.data-table .data-table__cell--numeric) {
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+
+  :where(.data-table .data-table__cell[scope='row']) {
+    font-weight: 600;
+  }
+
+  :where(.data-table .data-table__row:hover > .data-table__cell),
+  :where(.data-table .data-table__row:hover > .data-table__actions),
+  :where(.data-table .data-table__row:focus-within > .data-table__cell),
+  :where(.data-table .data-table__row:focus-within > .data-table__actions) {
+    background-color: var(--data-table-row-hover);
+  }
+
+  :where(.data-table .data-table__row:last-child > .data-table__cell),
+  :where(.data-table .data-table__row:last-child > .data-table__actions) {
+    border-block-end: 0;
+  }
+
+  :where(.data-table .data-table__actions) {
+    padding-block: var(--space-3xs);
+    text-align: end;
+    white-space: nowrap;
+  }
+
+  :where(.data-table .data-table__actions > button),
+  :where(.data-table .data-table__actions > a) {
+    white-space: nowrap;
+  }
+
+  :where(.data-table .data-table__actions > * + *) {
+    margin-inline-start: var(--space-3xs);
+  }
+
+  :where(.data-table .data-table__footer) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-s);
+    padding-block-start: var(--space-2xs);
+  }
+
+  :where(.data-table .data-table__info) {
+    margin: 0;
+    color: var(--data-table-muted);
+    font-size: var(--font-size--1, 0.875rem);
+    line-height: 1.4;
+    font-variant-numeric: tabular-nums;
+  }
+
+  :where(.data-table .data-table__pagination) {
+    margin-inline-start: auto;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 40rem) {
+    :where(.data-table .data-table__footer) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    :where(.data-table .data-table__pagination) {
+      margin-inline-start: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(.data-table .data-table__search input),
+    :where(.data-table .data-table__sort),
+    :where(.data-table .data-table__cell),
+    :where(.data-table .data-table__actions) {
+      transition-duration: 0s;
+    }
+  }
+
+  @media (forced-colors: active) {
+    :where(.data-table .data-table__search input),
+    :where(.data-table .data-table__scroll),
+    :where(.data-table .data-table__column),
+    :where(.data-table .data-table__cell),
+    :where(.data-table .data-table__actions) {
+      border-color: CanvasText;
+    }
+
+    :where(.data-table .data-table__search input:focus-visible),
+    :where(.data-table .data-table__clear:focus-visible),
+    :where(.data-table .data-table__scroll:focus-visible),
+    :where(.data-table .data-table__sort:focus-visible) {
+      outline-color: Highlight;
+    }
+  }
+</style>

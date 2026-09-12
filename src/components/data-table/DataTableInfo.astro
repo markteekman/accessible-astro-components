@@ -1,0 +1,75 @@
+---
+/**
+ * DataTableInfo Component
+ *
+ * @description Displays the current range and total entries for DataTable
+ */
+
+interface Props {
+  /**
+   * Start index for the current page
+   */
+  start: number
+  /**
+   * End index for the current page
+   */
+  end: number
+  /**
+   * Total number of entries
+   */
+  total: number
+  /**
+   * Template for the default info text
+   * @default "Showing {start} to {end} of {total} entries"
+   */
+  template?: string
+  /**
+   * Template for the filtered info text
+   * @default 'Showing {start} to {end} of {filtered} entries matching "{query}"'
+   */
+  filteredTemplate?: string
+  /**
+   * Text to display when no results match the filter
+   * @default 'No entries matching "{query}"'
+   */
+  emptyLabel?: string
+  /**
+   * Additional classes to apply to the info wrapper
+   */
+  class?: string
+  /**
+   * HTML attributes to spread on the info wrapper
+   */
+  [key: string]: string | number | boolean | undefined
+}
+
+const {
+  class: className,
+  start,
+  end,
+  total,
+  template = 'Showing {start} to {end} of {total} entries',
+  filteredTemplate = 'Showing {start} to {end} of {filtered} entries matching "{query}"',
+  emptyLabel = 'No entries matching "{query}"',
+  ...rest
+} = Astro.props
+
+const renderTemplate = (value: string, replacements: Record<string, number>) =>
+  value.replace(/\{(\w+)\}/g, (_, token) => String(replacements[token] ?? ''))
+
+const infoText = renderTemplate(template, { start, end, total })
+---
+
+<p class:list={['data-table__info', className]} {...rest}>
+  <span
+    data-table-info
+    data-start={start}
+    data-end={end}
+    data-total={total}
+    data-template={template}
+    data-filtered-template={filteredTemplate}
+    data-empty-label={emptyLabel}
+  >
+    {infoText}
+  </span>
+</p>

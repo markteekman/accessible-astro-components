@@ -1,0 +1,24 @@
+---
+/**
+ * DataTableRow Component
+ *
+ * @description Table row wrapper for DataTable cells
+ */
+
+interface Props {
+  /**
+   * Additional classes to apply to the table row
+   */
+  class?: string
+  /**
+   * HTML attributes to spread on the table row
+   */
+  [key: string]: string | number | boolean | undefined
+}
+
+const { class: className, ...rest } = Astro.props
+---
+
+<tr class:list={['data-table__row', className]} {...rest}>
+  <slot />
+</tr>

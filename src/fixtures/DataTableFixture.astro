@@ -1,0 +1,114 @@
+---
+import DataTable from '../components/data-table/DataTable.astro'
+import DataTableHeader from '../components/data-table/DataTableHeader.astro'
+import DataTableColumn from '../components/data-table/DataTableColumn.astro'
+import DataTableBody from '../components/data-table/DataTableBody.astro'
+import DataTableRow from '../components/data-table/DataTableRow.astro'
+import DataTableCell from '../components/data-table/DataTableCell.astro'
+import DataTableSearch from '../components/data-table/DataTableSearch.astro'
+import DataTableInfo from '../components/data-table/DataTableInfo.astro'
+import DataTablePagination from '../components/data-table/DataTablePagination.astro'
+
+interface Props {
+  captionHidden?: boolean
+  search?: boolean
+  info?: boolean
+  sortable?: boolean
+  empty?: boolean
+  instances?: number
+  value?: string
+  pageSize?: number
+  lifecycle?: boolean
+  longContent?: boolean
+}
+const {
+  captionHidden = false,
+  search = false,
+  info = false,
+  sortable = false,
+  empty = false,
+  instances = 1,
+  value = '',
+  pageSize,
+  lifecycle = false,
+  longContent = false,
+} = Astro.props
+const projects = empty
+  ? []
+  : [
+      {
+        name: longContent
+          ? 'A project with a long descriptive name that should wrap without resizing its column'
+          : 'Acme Starter',
+        status: 'Active',
+        users: 1280,
+        updated: '2026-02-10',
+      },
+      {
+        name: longContent
+          ? 'averylongunbrokenidentifier@example-with-an-unusually-long-domain.com'
+          : 'Beacon Dashboard',
+        status: 'Paused',
+        users: 642,
+        updated: '2026-01-22',
+      },
+      { name: 'Citrine Docs', status: 'Active', users: 2890, updated: '2026-02-17' },
+    ]
+---
+
+{
+  lifecycle && (
+    <button type="button" data-qa-reinitialize>
+      Reinitialize tables
+    </button>
+  )
+}
+
+{
+  Array.from({ length: instances }, (_, index) => (
+    <DataTable
+      caption={`Projects overview${instances > 1 ? ` ${index + 1}` : ''}`}
+      captionHidden={captionHidden}
+      pageSize={pageSize}
+    >
+      {search && <DataTableSearch slot="search" label="Search projects" value={value} />}
+      {info && (
+        <DataTableInfo
+          slot="info"
+          start={projects.length ? 1 : 0}
+          end={projects.length}
+          total={projects.length}
+        />
+      )}
+      <DataTableHeader>
+        <DataTableColumn sortable={sortable} width="40%">
+          Project
+        </DataTableColumn>
+        <DataTableColumn sortable={sortable}>Status</DataTableColumn>
+        <DataTableColumn sortable={sortable} numeric>
+          Users
+        </DataTableColumn>
+        <DataTableColumn sortable={sortable}>Updated</DataTableColumn>
+      </DataTableHeader>
+      <DataTableBody>
+        {projects.map((project) => (
+          <DataTableRow>
+            <DataTableCell as="th">{project.name}</DataTableCell>
+            <DataTableCell>{project.status}</DataTableCell>
+            <DataTableCell numeric sortValue={project.users}>
+              {project.users.toLocaleString('en-US')}
+            </DataTableCell>
+            <DataTableCell sortValue={project.updated}>{project.updated}</DataTableCell>
+          </DataTableRow>
+        ))}
+      </DataTableBody>
+      {pageSize && <DataTablePagination client slot="footer" />}
+    </DataTable>
+  ))
+}
+
+<script>
+  document.querySelector('[data-qa-reinitialize]')?.addEventListener('click', () => {
+    document.dispatchEvent(new Event('astro:after-swap'))
+  })
+</script>
