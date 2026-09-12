@@ -75,6 +75,7 @@ Check `index.js` for the current, complete list. Major component categories incl
 - **Form**: Form wrapper with validation
 - **Input**: Text inputs with validation states
 - **Radio**: Radio buttons with proper grouping
+- **Select**: Native select with option groups and validation
 - **Switch**: Toggle switch built on a native checkbox with `role="switch"`
 - **Textarea**: Multi-line text input
 

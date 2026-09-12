@@ -152,6 +152,36 @@ export const Disabled = {
   },
 }
 
+export const LongOptionText = {
+  args: {
+    ...baseArgs,
+    name: 'jurisdiction',
+    label: 'Jurisdiction',
+    placeholder: 'Select the jurisdiction that applies to this order',
+    options: [
+      {
+        value: 'eu-nl',
+        label: 'Netherlands — Kingdom of the Netherlands, European Union member state',
+      },
+      { value: 'uk-sct', label: 'Scotland — United Kingdom of Great Britain and Northern Ireland' },
+      { value: 'us-ca', label: 'California — United States of America, Pacific time zone' },
+    ],
+  },
+}
+
+export const Translated = {
+  args: {
+    ...baseArgs,
+    name: 'anrede',
+    label: 'Anrede',
+    required: true,
+    requiredText: '(Pflichtfeld)',
+    requiredValidationMessage: 'Bitte waehlen Sie eine Anrede aus',
+    placeholder: 'Bitte waehlen',
+    options: ['Frau', 'Herr', 'Keine Angabe'],
+  },
+}
+
 export const Invalid = {
   args: {
     ...baseArgs,

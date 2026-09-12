@@ -53,6 +53,7 @@ The Accessible Astro Components library provides a collection of pre-built, acce
   - **Textarea**: Multi-line text input with validation
   - **Checkbox**: Accessible checkbox with proper labeling
   - **Radio**: Radio button component with proper grouping
+  - **Select**: Native select with option groups, validation, and forced-colors support
   - **Switch**: Toggle switch built on a native checkbox with `role="switch"`
   - **Fieldset**: Form field grouping with legend support
 - **Heading**: Versatile heading component with proper accessibility and hierarchy

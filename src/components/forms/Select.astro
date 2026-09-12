@@ -121,6 +121,11 @@ interface Props {
    */
   autocomplete?: string
   /**
+   * Marks the field invalid before any client-side validation runs, for a server
+   * rendered error. Set to "true" to render the validation message immediately.
+   */
+  'aria-invalid'?: 'true' | 'false' | boolean
+  /**
    * HTML attributes
    */
   [key: string]: any
@@ -139,6 +144,7 @@ const {
   'data-validation-pattern': dataValidationPattern,
   'data-validation-fn': dataValidationFn,
   'aria-describedby': ariaDescribedby,
+  'aria-invalid': ariaInvalid,
   required = false,
   requiredText = '(required)',
   disabled = false,
@@ -158,6 +164,11 @@ const validationId = `${selectId}-validation`
 
 // Keep any consumer-supplied description, the validation message is appended to it
 const describedBy = [ariaDescribedby, validationId].filter(Boolean).join(' ')
+
+// A server-rendered error has to show its message straight away. Otherwise the
+// message stays empty so a pristine field is not described by an error it does
+// not have yet — Form.astro fills it in on submit.
+const isInvalid = ariaInvalid === true || ariaInvalid === 'true'
 
 // Use provided validation message or default
 const validationMessage = dataValidation || (required ? requiredValidationMessage : '')
@@ -222,6 +233,7 @@ const hasSelection = entries.some((entry) =>
       size={size}
       autocomplete={autocomplete}
       aria-describedby={describedBy}
+      aria-invalid={ariaInvalid}
       data-validation={validationMessage}
       data-validation-pattern={dataValidationPattern}
       data-validation-fn={dataValidationFn}
@@ -292,7 +304,7 @@ const hasSelection = entries.some((entry) =>
         </g>
       </svg>
     </span>
-    <span class="message">{validationMessage}</span>
+    <span class="message">{isInvalid ? validationMessage : ''}</span>
   </small>
 </div>
 
@@ -314,11 +326,18 @@ const hasSelection = entries.some((entry) =>
   :where(.select-control) {
     display: grid;
     position: relative;
+    /* Grid items refuse to shrink past min-content by default; without this a
+       long option label would push the control out of its container */
+    min-inline-size: 0;
   }
 
   :where(.select-group select) {
     /* System colors keep the field readable in light, dark and forced-colors modes */
     appearance: none;
+    /* The shared form styles opt every field into content-based sizing. A select
+       must not resize itself around whichever option happens to be selected, so
+       it is opted back out and stretched to its container instead. */
+    field-sizing: fixed;
     border: 2px solid var(--color-default-border);
     border-radius: var(--radius-s);
     background-color: Field;
@@ -326,6 +345,7 @@ const hasSelection = entries.some((entry) =>
     /* Room for the arrow so long option text never runs underneath it */
     padding-inline-end: calc(var(--space-2xs) * 2 + 1em);
     inline-size: 100%;
+    min-inline-size: 0;
     /* 44px floor keeps the pointer target at the AAA size (WCAG 2.5.5) */
     min-block-size: 2.75rem;
     color: FieldText;
