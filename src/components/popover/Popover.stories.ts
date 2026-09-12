@@ -39,21 +39,43 @@ export const WithLinks = {
   },
 }
 
-export const PlainTextDescription = {
+// Each position story has to make room on the side it is demonstrating. The popover flips
+// to the opposite side when the preferred one does not fit, so without the spacing below
+// these would all render underneath the trigger and look identical to Default.
+const spacerAbove = {
+  before: '<div style="block-size: 14rem"></div>',
+  beforeIsHtml: true,
+}
+
+export const PositionTop = {
   args: {
     ...baseArgs,
-    id: 'popover-plain-text',
-    association: 'description',
-    showClose: false,
-    slot: 'Shipping',
-    popoverSlot: 'Orders placed before 16:00 ship the same working day.',
+    ...spacerAbove,
+    id: 'popover-position-top',
+    position: 'top',
+    slot: 'Above',
   },
 }
 
-export const Position = {
+export const PositionLeft = {
   args: {
     ...baseArgs,
-    id: 'popover-position',
-    position: 'top',
+    ...spacerAbove,
+    id: 'popover-position-left',
+    position: 'left',
+    slot: 'Left',
+    // pushed across so the popover has somewhere to go on the inline-start side
+    style: 'margin-inline-start: 22rem; white-space: nowrap',
+  },
+}
+
+export const PositionRight = {
+  args: {
+    ...baseArgs,
+    ...spacerAbove,
+    id: 'popover-position-right',
+    position: 'right',
+    slot: 'Right',
+    style: 'white-space: nowrap',
   },
 }

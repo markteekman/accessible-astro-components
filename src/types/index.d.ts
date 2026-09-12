@@ -741,7 +741,6 @@ export const Pagination: Pagination
  * @param _props.offset - Offset distance from anchor - default: 'var(--space-2xs)'
  * @param _props.triggerLabel - Screen reader label for icon-only triggers
  * @param _props.showIcon - Whether to show the default info icon - default: true
- * @param _props.association - How the content is associated with the trigger ('details' uses aria-details, 'description' uses aria-describedby) - default: 'details'
  * @param _props.showClose - Whether to show the close button inside the popover - default: true
  * @param _props.closeText - Screen reader label for the close button - default: 'Close'
  * @param _props.class - Optional CSS class names applied to the trigger

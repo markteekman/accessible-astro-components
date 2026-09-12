@@ -33,14 +33,6 @@ interface Props {
    */
   showIcon?: boolean
   /**
-   * How the popover content is associated with the trigger.
-   * "details" uses aria-details and is correct when the popover holds links, lists or
-   * other interactive content. "description" uses aria-describedby and should only be
-   * used for a short, plain text popover.
-   * @default "details"
-   */
-  association?: 'details' | 'description'
-  /**
    * Whether to show the close button inside the popover
    * @default true
    */
@@ -70,7 +62,6 @@ const {
   offset = 'var(--space-2xs)',
   triggerLabel,
   showIcon = true,
-  association = 'details',
   showClose = true,
   closeText = 'Close',
   class: className,
@@ -107,8 +98,7 @@ const triggerStyle = [anchorStyle, styleProp].filter(Boolean).join(' ')
   popovertarget={id}
   aria-controls={id}
   aria-expanded="false"
-  aria-details={association === 'details' ? id : undefined}
-  aria-describedby={association === 'description' ? id : undefined}
+  aria-details={id}
   {...rest}
 >
   <slot />
